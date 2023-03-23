@@ -2,7 +2,6 @@ package sheets
 
 import (
 	"context"
-	"encoding/base64"
 	"os"
 	"strings"
 
@@ -21,9 +20,8 @@ type repo struct {
 	spreadsheetId string
 }
 
-func New(tokenFile, sheetName, spreadsheetId string) (homing.TelemetryRepo, error) {
-	//credBytes, err := base64.StdEncoding.DecodeString(os.Getenv("KEY_JSON_BASE64"))
-	credBytes, err := base64.StdEncoding.DecodeString(os.Getenv("KEY_JSON_BASE64"))
+func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, error) {
+	credBytes, err := os.ReadFile(credFile)
 	if err != nil {
 		return nil, err
 	}
@@ -40,6 +38,21 @@ func New(tokenFile, sheetName, spreadsheetId string) (homing.TelemetryRepo, erro
 	srv, err := sheets.NewService(context.Background(), option.WithHTTPClient(client))
 	if err != nil {
 		return nil, err
+	}
+
+	// Convert sheet ID to sheet name.
+	response1, err := srv.Spreadsheets.Get(spreadsheetId).Fields("sheets(properties(sheetId,title))").Do()
+	if err != nil || response1.HTTPStatusCode != 200 {
+		return nil, err
+	}
+
+	sheetName := ""
+	for _, v := range response1.Sheets {
+		prop := v.Properties
+		if prop.SheetId == int64(sheetID) {
+			sheetName = prop.Title
+			break
+		}
 	}
 
 	return &repo{
