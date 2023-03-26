@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/mainflux/et/internal"
 	jaegerClient "github.com/mainflux/et/internal/clients/jaeger"
 	"github.com/mainflux/et/internal/env"
 	"github.com/mainflux/et/internal/homing"
@@ -25,12 +26,12 @@ const (
 )
 
 type config struct {
-	LogLevel       string `env:"MF_USERS_LOG_LEVEL"             envDefault:"info"`
-	JaegerURL      string `env:"MF_JAEGER_URL"                  envDefault:"localhost:6831"`
-	GCPCredFile    string `env:"MF_GCP_CRED"					envDefault:"sammydrive-7c852a28ee7f.json"`
-	SpreadsheetId  string `env:"MF_SPREADSHEET_ID" 				envDefault:"1neq9yx6kEKx6HFWJepqhBBs_2qW0t56eE6Q5lZb-Hk8"`
-	SheetId        int    `env:"MF_SHEET_ID"					envDefault:1`
-	IPDatabaseFile string `env:"MF_IP_DB"						envDefault:"IP2LOCATION-LITE-DB5.BIN"`
+	LogLevel       string `env:"MF_USERS_LOG_LEVEL"  envDefault:"info"`
+	JaegerURL      string `env:"MF_JAEGER_URL"`
+	GCPCredFile    string `env:"MF_GCP_CRED"`
+	SpreadsheetId  string `env:"MF_SPREADSHEET_ID"`
+	SheetId        int    `env:"MF_SHEET_ID"         envDefault:"0"`
+	IPDatabaseFile string `env:"MF_IP_DB"`
 }
 
 func main() {
@@ -44,22 +45,25 @@ func main() {
 
 	logger, err := mflog.New(os.Stdout, cfg.LogLevel)
 	if err != nil {
-		logger.Debug(fmt.Sprintf("failed to init logger: %s", err.Error()))
-		return
+		log.Fatalf(fmt.Sprintf("failed to init logger: %s", err.Error()))
 	}
 
 	tracer, closer, err := jaegerClient.NewTracer("users", cfg.JaegerURL)
 	if err != nil {
-		logger.Debug(fmt.Sprintf("failed to init Jaeger: %s", err))
-		return
+		log.Fatalf(fmt.Sprintf("failed to init Jaeger: %s", err))
 	}
 	defer closer.Close()
 
-	svc := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId)
+	svc, err := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId)
+
+	if err != nil {
+		log.Printf("failed to initiailize service: %s", err.Error())
+		return
+	}
 
 	httpServerConfig := server.Config{Port: defSvcHttpPort}
 	if err := env.Parse(&httpServerConfig, env.Options{Prefix: envPrefixHttp, AltPrefix: envPrefix}); err != nil {
-		logger.Debug(fmt.Sprintf("failed to load %s HTTP server configuration : %s", svcName, err))
+		log.Printf(fmt.Sprintf("failed to load %s HTTP server configuration : %s", svcName, err.Error()))
 		return
 	}
 	hs := httpserver.New(ctx, cancel, svcName, httpServerConfig, api.MakeHandler(svc, tracer, logger), logger)
@@ -77,16 +81,18 @@ func main() {
 	}
 }
 
-func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int) homing.Service {
+func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int) (homing.Service, error) {
 	repo, err := sheets.New(credFile, spreadsheetID, sheetID)
 	if err != nil {
-		logger.Debug(err.Error())
-		return nil
+		return nil, err
 	}
 	locsvc, err := homing.NewLocationService(ipDB)
 	if err != nil {
-		logger.Debug(err.Error())
-		return nil
+		return nil, err
 	}
-	return homing.New(repo, locsvc)
+	svc := homing.New(repo, locsvc)
+	counter, latency := internal.MakeMetrics(svcName, "api")
+	svc = api.MetricsMiddleware(svc, counter, latency)
+	svc = api.LoggingMiddleware(svc, logger)
+	return svc, nil
 }

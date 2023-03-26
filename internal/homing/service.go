@@ -37,7 +37,7 @@ func (ts *telemetryService) GetAll(ctx context.Context, token string, pm PageMet
 
 // Save implements Service
 func (ts *telemetryService) Save(ctx context.Context, t Telemetry, serviceName string) error {
-	telemetry, err := ts.repo.RetrieveByIP(ctx, t.IpAddress)
+	telemetry, row, err := ts.repo.RetrieveByIP(ctx, t.IpAddress)
 	if err != nil {
 		return err
 	}
@@ -45,6 +45,7 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry, serviceName s
 	if err != nil {
 		return err
 	}
+
 	t.Latitutde = float64(lat)
 	t.Longitude = float64(long)
 
@@ -53,12 +54,13 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry, serviceName s
 		err = ts.repo.Save(ctx, t)
 		return err
 	}
+	t.ID = telemetry.ID
 	t.Services = telemetry.Services
 
 	if !slices.Contains(t.Services, serviceName) {
 		t.Services = append(t.Services, serviceName)
 	}
 
-	return ts.repo.UpdateTelemetry(ctx, t)
+	return ts.repo.UpdateTelemetry(ctx, t, row)
 
 }
