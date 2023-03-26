@@ -40,12 +40,10 @@ func (ts *telemetryService) GetAll(ctx context.Context, token string, pm PageMet
 	if err != nil {
 		return TelemetryPage{}, err
 	}
-
 	if err := ts.authorize(ctx, res.GetId(), usersObjectKey, memberRelationKey); err != nil {
 		return TelemetryPage{}, err
 	}
 	telemetry, err := ts.repo.RetrieveAll(ctx, pm)
-
 	return TelemetryPage{
 		Telemetry:    telemetry,
 		PageMetadata: pm,
@@ -62,10 +60,8 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry, serviceName s
 	if err != nil {
 		return err
 	}
-
 	t.Latitutde = float64(lat)
 	t.Longitude = float64(long)
-
 	if telemetry == nil {
 		t.Services = append(t.Services, serviceName)
 		err = ts.repo.Save(ctx, t)
@@ -73,13 +69,10 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry, serviceName s
 	}
 	t.ID = telemetry.ID
 	t.Services = telemetry.Services
-
 	if !slices.Contains(t.Services, serviceName) {
 		t.Services = append(t.Services, serviceName)
 	}
-
 	return ts.repo.UpdateTelemetry(ctx, t)
-
 }
 
 func (ts *telemetryService) authorize(ctx context.Context, subject, object string, relation string) error {
