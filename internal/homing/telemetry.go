@@ -33,10 +33,10 @@ type TelemetryRepo interface {
 	Save(ctx context.Context, t Telemetry) error
 
 	// Update updates Telemetry event
-	UpdateTelemetry(ctx context.Context, u Telemetry, row int) error
+	UpdateTelemetry(ctx context.Context, u Telemetry) error
 
 	// RetrieveByIP retrieves telemetry by its unique identifier (i.e. ip address).
-	RetrieveByIP(ctx context.Context, email string) (*Telemetry, int, error)
+	RetrieveByIP(ctx context.Context, email string) (*Telemetry, error)
 
 	// RetrieveAll retrieves all telemetry for given array of telemetry IDs.
 	RetrieveAll(ctx context.Context, pm PageMetadata) ([]Telemetry, error)

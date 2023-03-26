@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/mainflux/et/internal"
+	authClient "github.com/mainflux/et/internal/clients/grpc/auth"
 	jaegerClient "github.com/mainflux/et/internal/clients/jaeger"
 	"github.com/mainflux/et/internal/env"
 	"github.com/mainflux/et/internal/homing"
@@ -14,6 +15,7 @@ import (
 	"github.com/mainflux/et/internal/homing/sheets"
 	"github.com/mainflux/et/internal/server"
 	httpserver "github.com/mainflux/et/internal/server/http"
+	"github.com/mainflux/mainflux"
 	mflog "github.com/mainflux/mainflux/logger"
 	"golang.org/x/sync/errgroup"
 )
@@ -27,7 +29,7 @@ const (
 
 type config struct {
 	LogLevel       string `env:"MF_USERS_LOG_LEVEL"  envDefault:"info"`
-	JaegerURL      string `env:"MF_JAEGER_URL"`
+	JaegerURL      string `env:"MF_JAEGER_URL"       envDefault:"localhost:6831"`
 	GCPCredFile    string `env:"MF_GCP_CRED"`
 	SpreadsheetId  string `env:"MF_SPREADSHEET_ID"`
 	SheetId        int    `env:"MF_SHEET_ID"         envDefault:"0"`
@@ -54,7 +56,16 @@ func main() {
 	}
 	defer closer.Close()
 
-	svc, err := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId)
+	// Setup new auth grpc client
+	auth, authHandler, err := authClient.Setup(envPrefix, cfg.JaegerURL)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	defer authHandler.Close()
+	logger.Info("Successfully connected to auth grpc server " + authHandler.Secure())
+
+	svc, err := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId, auth)
 
 	if err != nil {
 		log.Printf("failed to initiailize service: %s", err.Error())
@@ -81,7 +92,7 @@ func main() {
 	}
 }
 
-func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int) (homing.Service, error) {
+func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int, auth mainflux.AuthServiceClient) (homing.Service, error) {
 	repo, err := sheets.New(credFile, spreadsheetID, sheetID)
 	if err != nil {
 		return nil, err
@@ -90,7 +101,7 @@ func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheet
 	if err != nil {
 		return nil, err
 	}
-	svc := homing.New(repo, locsvc)
+	svc := homing.New(repo, locsvc, auth)
 	counter, latency := internal.MakeMetrics(svcName, "api")
 	svc = api.MetricsMiddleware(svc, counter, latency)
 	svc = api.LoggingMiddleware(svc, logger)

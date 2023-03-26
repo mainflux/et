@@ -26,29 +26,25 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 	if err != nil {
 		return nil, err
 	}
-	// authenticate and get configuration
 	config, err := google.JWTConfigFromJSON(credBytes, "https://www.googleapis.com/auth/spreadsheets")
 	if err != nil {
 		return nil, err
 	}
 
-	// create client with config and context
 	client := config.Client(context.Background())
 
-	// create new service using client
 	srv, err := sheets.NewService(context.Background(), option.WithHTTPClient(client))
 	if err != nil {
 		return nil, err
 	}
 
-	// Convert sheet ID to sheet name.
-	response1, err := srv.Spreadsheets.Get(spreadsheetId).Fields("sheets(properties(sheetId,title))").Do()
-	if err != nil || response1.HTTPStatusCode != 200 {
+	res, err := srv.Spreadsheets.Get(spreadsheetId).Fields("sheets(properties(sheetId,title))").Do()
+	if err != nil || res.HTTPStatusCode != 200 {
 		return nil, err
 	}
 
 	sheetName := ""
-	for _, v := range response1.Sheets {
+	for _, v := range res.Sheets {
 		prop := v.Properties
 		if prop.SheetId == int64(sheetID) {
 			sheetName = prop.Title
@@ -79,40 +75,38 @@ func (r *repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) ([]homin
 }
 
 // RetrieveByIP implements homing.TelemetryRepo
-func (r *repo) RetrieveByIP(ctx context.Context, ip string) (*homing.Telemetry, int, error) {
+func (r *repo) RetrieveByIP(ctx context.Context, ip string) (*homing.Telemetry, error) {
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
-	for i, row := range resp.Values {
+	for _, row := range resp.Values {
 		if len(row) >= 2 && row[1] == ip {
 			var tel homing.Telemetry
 			tel.FromRow(row)
-			return &tel, i, nil
+			return &tel, nil
 		}
 	}
-	return nil, 0, nil
+	return nil, nil
 
 }
 
 // Save implements homing.TelemetryRepo
 func (r *repo) Save(ctx context.Context, t homing.Telemetry) error {
 	t.ID = uuid.New().String()
-	// Append value to the sheet.
 	row := &sheets.ValueRange{
 		Values: [][]interface{}{t.ToRow()},
 	}
 
-	response2, err := r.sheetsSvc.Spreadsheets.Values.Append(r.spreadsheetId, r.sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(ctx).Do()
-	if err != nil || response2.HTTPStatusCode != 200 {
+	res, err := r.sheetsSvc.Spreadsheets.Values.Append(r.spreadsheetId, r.sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(ctx).Do()
+	if err != nil || res.HTTPStatusCode != 200 {
 		return err
 	}
 	return nil
 }
 
 // UpdateTelemetry implements homing.TelemetryRepo
-func (r *repo) UpdateTelemetry(ctx context.Context, t homing.Telemetry, row int) error {
-	//updateRange := fmt.Sprintf("Sheet1!C%d", row)
+func (r *repo) UpdateTelemetry(ctx context.Context, t homing.Telemetry) error {
 	updateValueRange := &sheets.ValueRange{
 		Values: [][]interface{}{t.ToRow()},
 	}
