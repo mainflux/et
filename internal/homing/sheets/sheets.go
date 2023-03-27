@@ -91,7 +91,6 @@ func (r *repo) RetrieveByIP(ctx context.Context, ip string) (*homing.Telemetry, 
 		}
 	}
 	return nil, nil
-
 }
 
 // Save implements homing.TelemetryRepo.
