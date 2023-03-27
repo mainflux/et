@@ -2,17 +2,21 @@ package homing
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Telemetry struct {
-	ID        string   `json:"-"`
-	Services  []string `json:"-"`
-	Longitude float64  `json:"-"`
-	Latitutde float64  `json:"-"`
-	IpAddress string   `json:"ip_address"`
-	Version   string   `json:"mainflux_version"`
+	ID        string    `json:"-"`
+	Services  []string  `json:"-"`
+	Longitude float64   `json:"-"`
+	Latitutde float64   `json:"-"`
+	IpAddress string    `json:"ip_address"`
+	Version   string    `json:"mainflux_version"`
+	LastSeen  time.Time `json:"last_seen"`
 }
 
 type PageMetadata struct {
@@ -32,27 +36,66 @@ type TelemetryRepo interface {
 	// operation failure.
 	Save(ctx context.Context, t Telemetry) error
 
-	// Update updates Telemetry event
+	// Update updates Telemetry event.
 	UpdateTelemetry(ctx context.Context, u Telemetry) error
 
 	// RetrieveByIP retrieves telemetry by its unique identifier (i.e. ip address).
 	RetrieveByIP(ctx context.Context, email string) (*Telemetry, error)
 
-	// RetrieveAll retrieves all telemetry for given array of telemetry IDs.
+	// RetrieveAll retrieves all telemetry events.
 	RetrieveAll(ctx context.Context, pm PageMetadata) ([]Telemetry, error)
 }
 
-func (t *Telemetry) ToRow() []interface{} {
-	return []interface{}{t.ID, t.IpAddress, t.Latitutde, t.Longitude, strings.Join(t.Services, ","), t.Version}
+// ToRow converts telemetry event to google sheets row.
+func (t *Telemetry) ToRow() ([]interface{}, error) {
+	lastSeen, err := t.LastSeen.MarshalText()
+	if err != nil {
+		return nil, err
+	}
+	return []interface{}{t.ID, t.IpAddress, t.Latitutde, t.Longitude, strings.Join(t.Services, ","), t.Version, string(lastSeen)}, nil
 }
 
-func (t *Telemetry) FromRow(row []interface{}) {
-	t.ID = row[0].(string)
-	t.IpAddress = row[1].(string)
-	lat, _ := strconv.ParseFloat(row[2].(string), 64)
+// FromRow converts a Google Sheets row to a Telemetry struct.
+func (t *Telemetry) FromRow(row []interface{}) error {
+	if len(row) != 6 {
+		return fmt.Errorf("invalid row length: expected 6, got %d", len(row))
+	}
+	id, ok := row[0].(string)
+	if !ok {
+		return errors.New("failed to convert ID to string")
+	}
+	t.ID = id
+	ipAddress, ok := row[1].(string)
+	if !ok {
+		return errors.New("failed to convert IP address to string")
+	}
+	t.IpAddress = ipAddress
+	lat, err := strconv.ParseFloat(row[2].(string), 64)
+	if err != nil {
+		return fmt.Errorf("failed to convert latitude to float64: %v", err)
+	}
 	t.Latitutde = lat
-	long, _ := strconv.ParseFloat(row[3].(string), 64)
+	long, err := strconv.ParseFloat(row[3].(string), 64)
+	if err != nil {
+		return fmt.Errorf("failed to convert longitude to float64: %v", err)
+	}
 	t.Longitude = long
-	t.Version = row[5].(string)
-	t.Services = strings.Split(row[4].(string), ",")
+	services, ok := row[4].(string)
+	if !ok {
+		return errors.New("failed to convert services to string")
+	}
+	t.Services = strings.Split(services, ",")
+	version, ok := row[5].(string)
+	if !ok {
+		return errors.New("failed to convert version to string")
+	}
+	t.Version = version
+	lastSeen, ok := row[6].(string)
+	if !ok {
+		return errors.New("failed to convert lastSeen to string")
+	}
+	if err = t.LastSeen.UnmarshalText([]byte(lastSeen)); err != nil {
+		return fmt.Errorf("failed to parse last seen: %v", err)
+	}
+	return nil
 }

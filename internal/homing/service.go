@@ -13,6 +13,7 @@ const (
 	memberRelationKey = "member"
 )
 
+// Service Service to recieve homing telemetry data, persist and retrieve it.
 type Service interface {
 	Save(ctx context.Context, t Telemetry, serviceName string) error
 	GetAll(ctx context.Context, token string, pm PageMetadata) (TelemetryPage, error)
@@ -26,6 +27,7 @@ type telemetryService struct {
 	auth   mainflux.AuthServiceClient
 }
 
+// New creates new telemetry service
 func New(repo TelemetryRepo, locSvc LocationService, auth mainflux.AuthServiceClient) Service {
 	return &telemetryService{
 		repo:   repo,
@@ -52,16 +54,16 @@ func (ts *telemetryService) GetAll(ctx context.Context, token string, pm PageMet
 
 // Save implements Service
 func (ts *telemetryService) Save(ctx context.Context, t Telemetry, serviceName string) error {
-	telemetry, err := ts.repo.RetrieveByIP(ctx, t.IpAddress)
-	if err != nil {
-		return err
-	}
 	long, lat, err := ts.locSvc.GetLocation(t.IpAddress)
 	if err != nil {
 		return err
 	}
 	t.Latitutde = float64(lat)
 	t.Longitude = float64(long)
+	telemetry, err := ts.repo.RetrieveByIP(ctx, t.IpAddress)
+	if err != nil {
+		return err
+	}
 	if telemetry == nil {
 		t.Services = append(t.Services, serviceName)
 		err = ts.repo.Save(ctx, t)

@@ -16,7 +16,7 @@ type metricsMiddleware struct {
 	svc     homing.Service
 }
 
-// GetAll implements homing.Service
+// GetAll implements homing.Service.
 func (mm *metricsMiddleware) GetAll(ctx context.Context, token string, pm homing.PageMetadata) (homing.TelemetryPage, error) {
 	defer func(begin time.Time) {
 		mm.counter.With("method", "get all").Add(1)
@@ -26,7 +26,7 @@ func (mm *metricsMiddleware) GetAll(ctx context.Context, token string, pm homing
 	return mm.svc.GetAll(ctx, token, pm)
 }
 
-// Save implements homing.Service
+// Save implements homing.Service.
 func (mm *metricsMiddleware) Save(ctx context.Context, t homing.Telemetry, serviceName string) error {
 	defer func(begin time.Time) {
 		mm.counter.With("method", "save").Add(1)

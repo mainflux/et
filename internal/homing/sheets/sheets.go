@@ -21,6 +21,7 @@ type repo struct {
 	spreadsheetId string
 }
 
+// New Creates a new telementry repo using google sheets.
 func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, error) {
 	credBytes, err := os.ReadFile(credFile)
 	if err != nil {
@@ -59,7 +60,7 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 	}, nil
 }
 
-// RetrieveAll implements homing.TelemetryRepo
+// RetrieveAll implements homing.TelemetryRepo.
 func (r *repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) ([]homing.Telemetry, error) {
 	var ts []homing.Telemetry
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
@@ -68,13 +69,15 @@ func (r *repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) ([]homin
 	}
 	for _, row := range resp.Values {
 		var tel homing.Telemetry
-		tel.FromRow(row)
+		if err = tel.FromRow(row); err != nil {
+			return ts, err
+		}
 		ts = append(ts, tel)
 	}
 	return ts, nil
 }
 
-// RetrieveByIP implements homing.TelemetryRepo
+// RetrieveByIP implements homing.TelemetryRepo.
 func (r *repo) RetrieveByIP(ctx context.Context, ip string) (*homing.Telemetry, error) {
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
@@ -83,19 +86,23 @@ func (r *repo) RetrieveByIP(ctx context.Context, ip string) (*homing.Telemetry, 
 	for _, row := range resp.Values {
 		if len(row) >= 2 && row[1] == ip {
 			var tel homing.Telemetry
-			tel.FromRow(row)
-			return &tel, nil
+			err = tel.FromRow(row)
+			return &tel, err
 		}
 	}
 	return nil, nil
 
 }
 
-// Save implements homing.TelemetryRepo
+// Save implements homing.TelemetryRepo.
 func (r *repo) Save(ctx context.Context, t homing.Telemetry) error {
 	t.ID = uuid.New().String()
+	rrow, err := t.ToRow()
+	if err != nil {
+		return err
+	}
 	row := &sheets.ValueRange{
-		Values: [][]interface{}{t.ToRow()},
+		Values: [][]interface{}{rrow},
 	}
 
 	res, err := r.sheetsSvc.Spreadsheets.Values.Append(r.spreadsheetId, r.sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(ctx).Do()
@@ -105,13 +112,16 @@ func (r *repo) Save(ctx context.Context, t homing.Telemetry) error {
 	return nil
 }
 
-// UpdateTelemetry implements homing.TelemetryRepo
+// UpdateTelemetry implements homing.TelemetryRepo.
 func (r *repo) UpdateTelemetry(ctx context.Context, t homing.Telemetry) error {
+	rrow, err := t.ToRow()
+	if err != nil {
+		return err
+	}
 	updateValueRange := &sheets.ValueRange{
-		Values: [][]interface{}{t.ToRow()},
+		Values: [][]interface{}{rrow},
 	}
 	if _, err := r.sheetsSvc.Spreadsheets.Values.Update(r.spreadsheetId, sheetRange, updateValueRange).ValueInputOption("USER_ENTERED").Do(); err != nil {
-
 		return err
 	}
 	return nil
