@@ -1,0 +1,112 @@
+openapi: 3.0.0
+info:
+  description: "Mainflux Homing Server"
+  version: 0.0.1
+  title: ET
+  termsOfService: ""
+  contact:
+    email: "infos@mainflux.com"
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: telemetry
+    description: Telemetry Service
+    externalDocs:
+      description: Find out more
+      url: https://github.com/mainflux/et
+paths:
+  /telemetry:
+    post:
+      tags:
+        - telemetry
+      summary: Create new telemetry record
+      description: "Cretae telemetry record"
+      operationId: save
+      requestBody:
+        $ref: "#/components/requestBodies/TelemetryReq"
+      responses:
+        "201":
+          description: Created
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - telemetry
+      summary: Get all telemetry events
+      description: Get all telemetry events
+      operationId: getAll
+      parameters:
+      - $ref: "#/components/parameters/Limit"
+      - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TelemetryRes"
+        "400":
+          description: Invalid status value
+servers:
+  - url: https://localhost:8080
+components:
+  parameters:
+    Limit:
+      name: limit
+      description: Size of the subset to retrieve.
+      in: query
+      schema:
+        type: integer
+        default: 10
+        maximum: 100
+        minimum: 1
+      required: false
+    Offset:
+      name: offset
+      description: Number of items to skip during retrieval.
+      in: query
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+      required: false
+
+  requestBodies:
+    TelemetryReq:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TelemetryReq"
+      description: Telemetry request
+      required: true
+  schemas:
+    TelemetryReq:
+      type: object
+      properties:
+        ip_address:
+          type: string
+        service:
+          type: string
+        mainflux_version:
+          type: string
+        last_seen:
+          type: string
+    TelemetryRes:
+        type: object
+        properties:
+          ip_address:
+            type: string
+          mainflux_version:
+            type: string
+          last_seen:
+            type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        * Users access: "Authorization: Bearer <user_token>"
