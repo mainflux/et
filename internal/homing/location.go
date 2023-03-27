@@ -4,7 +4,8 @@ import "github.com/ip2location/ip2location-go/v9"
 
 // LocationService service to obtain location from IP Address.
 type LocationService interface {
-	GetLocation(ip string) (longitude float32, latitude float32, err error)
+	// GetLocation from ip address
+	GetLocation(ip string) (ip2location.IP2Locationrecord, error)
 }
 
 // NewLocationService creates new location service.
@@ -26,7 +27,6 @@ type locationService struct {
 }
 
 // GetLocation implements LocationService.
-func (ls *locationService) GetLocation(ip string) (longitude float32, latitude float32, err error) {
-	recs, err := ls.db.Get_all(ip)
-	return recs.Longitude, recs.Latitude, err
+func (ls *locationService) GetLocation(ip string) (ip2location.IP2Locationrecord, error) {
+	return ls.db.Get_all(ip)
 }

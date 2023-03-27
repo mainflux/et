@@ -17,6 +17,8 @@ type Telemetry struct {
 	IpAddress string    `json:"ip_address"`
 	Version   string    `json:"mainflux_version"`
 	LastSeen  time.Time `json:"last_seen"`
+	Country   string    `json:"-"`
+	City      string    `json:"-"`
 }
 
 type PageMetadata struct {
@@ -52,13 +54,14 @@ func (t *Telemetry) ToRow() ([]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return []interface{}{t.ID, t.IpAddress, t.Latitutde, t.Longitude, strings.Join(t.Services, ","), t.Version, string(lastSeen)}, nil
+	return []interface{}{t.ID, t.IpAddress, t.Latitutde, t.Longitude, strings.Join(t.Services, ","), t.Version, string(lastSeen), t.City, t.Country}, nil
 }
 
 // FromRow converts a Google Sheets row to a Telemetry struct.
 func (t *Telemetry) FromRow(row []interface{}) error {
 	if len(row) != 6 {
 		return fmt.Errorf("invalid row length: expected 6, got %d", len(row))
+
 	}
 	id, ok := row[0].(string)
 	if !ok {
@@ -97,5 +100,15 @@ func (t *Telemetry) FromRow(row []interface{}) error {
 	if err = t.LastSeen.UnmarshalText([]byte(lastSeen)); err != nil {
 		return fmt.Errorf("failed to parse last seen: %v", err)
 	}
+	city, ok := row[7].(string)
+	if !ok {
+		return errors.New("failed to convert ID to string")
+	}
+	t.City = city
+	country, ok := row[8].(string)
+	if !ok {
+		return errors.New("failed to convert ID to string")
+	}
+	t.Country = country
 	return nil
 }

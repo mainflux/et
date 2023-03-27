@@ -13,7 +13,7 @@ import (
 
 var _ homing.TelemetryRepo = (*repo)(nil)
 
-const sheetRange = "Sheet1!A:F"
+const sheetRange = "Sheet1!A:I"
 
 type repo struct {
 	sheetsSvc     *sheets.Service

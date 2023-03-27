@@ -54,12 +54,14 @@ func (ts *telemetryService) GetAll(ctx context.Context, token string, pm PageMet
 
 // Save implements Service
 func (ts *telemetryService) Save(ctx context.Context, t Telemetry, serviceName string) error {
-	long, lat, err := ts.locSvc.GetLocation(t.IpAddress)
+	locRec, err := ts.locSvc.GetLocation(t.IpAddress)
 	if err != nil {
 		return err
 	}
-	t.Latitutde = float64(lat)
-	t.Longitude = float64(long)
+	t.City = locRec.City
+	t.Country = locRec.Country_long
+	t.Latitutde = float64(locRec.Latitude)
+	t.Longitude = float64(locRec.Longitude)
 	telemetry, err := ts.repo.RetrieveByIP(ctx, t.IpAddress)
 	if err != nil {
 		return err
