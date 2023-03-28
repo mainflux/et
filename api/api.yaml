@@ -21,7 +21,7 @@ paths:
       tags:
         - telemetry
       summary: Create new telemetry record
-      description: "Cretae telemetry record"
+      description: "Create telemetry record"
       operationId: save
       requestBody:
         $ref: "#/components/requestBodies/TelemetryReq"

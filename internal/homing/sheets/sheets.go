@@ -21,7 +21,7 @@ type repo struct {
 	spreadsheetId string
 }
 
-// New Creates a new telementry repo using google sheets.
+// New Creates a new telemetry repo using google sheets.
 func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, error) {
 	credBytes, err := os.ReadFile(credFile)
 	if err != nil {
