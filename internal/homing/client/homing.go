@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/netip"
 	"time"
 
 	mflog "github.com/mainflux/mainflux/logger"
@@ -51,11 +52,17 @@ func (hs *homingService) CallHome(ctx context.Context) {
 			data.Version = hs.version
 			data.LastSeen = time.Now()
 			for _, endpoint := range ipEndpoints {
-				data.IpAddress, err = getIP(endpoint)
+				ip, err := getIP(endpoint)
 				if err != nil {
 					hs.logger.Warn(fmt.Sprintf("failed to get ip address with error: %v", err))
 					continue
 				}
+				parsedIP, err := netip.ParseAddr(ip)
+				if err != nil {
+					hs.logger.Warn(fmt.Sprintf("failed to parse ip address with error: %v", err))
+					continue
+				}
+				data.IpAddress = parsedIP.String()
 				break
 			}
 			if err = data.send(); err != nil && data.IpAddress != "" {
