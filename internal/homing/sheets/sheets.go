@@ -61,7 +61,7 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 }
 
 // RetrieveAll implements homing.TelemetryRepo.
-func (r *repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) ([]homing.Telemetry, error) {
+func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) ([]homing.Telemetry, error) {
 	var ts []homing.Telemetry
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
@@ -69,7 +69,7 @@ func (r *repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) ([]homin
 	}
 	for _, row := range resp.Values {
 		var tel homing.Telemetry
-		if err = tel.FromRow(row); err != nil {
+		if err := tel.FromRow(row); err != nil {
 			return ts, err
 		}
 		ts = append(ts, tel)
@@ -94,7 +94,7 @@ func (r *repo) RetrieveByIP(ctx context.Context, ip string) (*homing.Telemetry, 
 }
 
 // Save implements homing.TelemetryRepo.
-func (r *repo) Save(ctx context.Context, t homing.Telemetry) error {
+func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 	t.ID = uuid.New().String()
 	rrow, err := t.ToRow()
 	if err != nil {
@@ -112,7 +112,7 @@ func (r *repo) Save(ctx context.Context, t homing.Telemetry) error {
 }
 
 // UpdateTelemetry implements homing.TelemetryRepo.
-func (r *repo) UpdateTelemetry(ctx context.Context, t homing.Telemetry) error {
+func (r repo) UpdateTelemetry(ctx context.Context, t homing.Telemetry) error {
 	rrow, err := t.ToRow()
 	if err != nil {
 		return err
