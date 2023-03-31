@@ -30,6 +30,7 @@ func New(svc, version string, homingLogger mflog.Logger, cancel context.CancelFu
 		version:     version,
 		logger:      homingLogger,
 		cancel:      cancel,
+		httpClient:  *http.DefaultClient,
 	}
 }
 
@@ -38,6 +39,7 @@ type homingService struct {
 	version     string
 	logger      mflog.Logger
 	cancel      context.CancelFunc
+	httpClient  http.Client
 }
 
 func (hs *homingService) CallHome(ctx context.Context) {
@@ -52,7 +54,7 @@ func (hs *homingService) CallHome(ctx context.Context) {
 			data.Version = hs.version
 			data.LastSeen = time.Now()
 			for _, endpoint := range ipEndpoints {
-				ip, err := getIP(endpoint)
+				ip, err := hs.getIP(endpoint)
 				if err != nil {
 					hs.logger.Warn(fmt.Sprintf("failed to get ip address with error: %v", err))
 					continue
@@ -65,7 +67,7 @@ func (hs *homingService) CallHome(ctx context.Context) {
 				data.IpAddress = parsedIP.String()
 				break
 			}
-			if err = data.send(); err != nil && data.IpAddress != "" {
+			if err = hs.send(&data); err != nil && data.IpAddress != "" {
 				hs.logger.Warn(fmt.Sprintf("failed to send telemetry data with error: %v", err))
 				continue
 			}
@@ -92,12 +94,12 @@ type telemetryData struct {
 	LastSeen  time.Time `json:"last_seen"`
 }
 
-func getIP(endpoint string) (string, error) {
+func (hs *homingService) getIP(endpoint string) (string, error) {
 	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
 		return "", err
 	}
-	res, err := http.DefaultClient.Do(req)
+	res, err := hs.httpClient.Do(req)
 	if err != nil {
 		return "", err
 	}
@@ -109,7 +111,7 @@ func getIP(endpoint string) (string, error) {
 	return string(b), nil
 }
 
-func (telDat *telemetryData) send() error {
+func (hs *homingService) send(telDat *telemetryData) error {
 	b, err := json.Marshal(telDat)
 	if err != nil {
 		return err
@@ -118,6 +120,9 @@ func (telDat *telemetryData) send() error {
 	if err != nil {
 		return err
 	}
-	_, err = http.DefaultClient.Do(req)
-	return err
+	res, err := hs.httpClient.Do(req)
+	if err != nil || res.StatusCode != http.StatusCreated {
+		return fmt.Errorf("unsuccessful sending telemetry data")
+	}
+	return nil
 }
