@@ -2,7 +2,11 @@ package homing
 
 import (
 	"context"
+	"fmt"
 
+	goerrors "errors"
+
+	"github.com/mainflux/et/internal/homing/repository"
 	"github.com/mainflux/mainflux"
 	"github.com/mainflux/mainflux/pkg/errors"
 	"golang.org/x/exp/slices"
@@ -11,33 +15,37 @@ import (
 const (
 	usersObjectKey    = "users"
 	memberRelationKey = "member"
+	SheetsRepo        = "sheets"
+	TimescaleRepo     = "timescale"
 )
 
-// Service Service to recieve homing telemetry data, persist and retrieve it.
+// Service Service to receive homing telemetry data, persist and retrieve it.
 type Service interface {
-	Save(ctx context.Context, t Telemetry, serviceName string) error
-	GetAll(ctx context.Context, token string, pm PageMetadata) (TelemetryPage, error)
+	Save(ctx context.Context, t Telemetry) error
+	GetAll(ctx context.Context, repo, token string, pm PageMetadata) (TelemetryPage, error)
 }
 
 var _ Service = (*telemetryService)(nil)
 
 type telemetryService struct {
-	repo   TelemetryRepo
-	locSvc LocationService
-	auth   mainflux.AuthServiceClient
+	repo          TelemetryRepo
+	timescaleRepo TelemetryRepo
+	locSvc        LocationService
+	auth          mainflux.AuthServiceClient
 }
 
 // New creates new telemetry service
-func New(repo TelemetryRepo, locSvc LocationService, auth mainflux.AuthServiceClient) Service {
+func New(timescaleRepo, repo TelemetryRepo, locSvc LocationService, auth mainflux.AuthServiceClient) Service {
 	return &telemetryService{
-		repo:   repo,
-		locSvc: locSvc,
-		auth:   auth,
+		repo:          repo,
+		locSvc:        locSvc,
+		auth:          auth,
+		timescaleRepo: timescaleRepo,
 	}
 }
 
 // GetAll implements Service
-func (ts *telemetryService) GetAll(ctx context.Context, token string, pm PageMetadata) (TelemetryPage, error) {
+func (ts *telemetryService) GetAll(ctx context.Context, repo, token string, pm PageMetadata) (TelemetryPage, error) {
 	res, err := ts.auth.Identify(ctx, &mainflux.Token{Value: token})
 	if err != nil {
 		return TelemetryPage{}, err
@@ -45,36 +53,45 @@ func (ts *telemetryService) GetAll(ctx context.Context, token string, pm PageMet
 	if err := ts.authorize(ctx, res.GetId(), usersObjectKey, memberRelationKey); err != nil {
 		return TelemetryPage{}, err
 	}
-	telemetry, err := ts.repo.RetrieveAll(ctx, pm)
-	return TelemetryPage{
-		Telemetry:    telemetry,
-		PageMetadata: pm,
-	}, err
+
+	switch repo {
+	case SheetsRepo:
+		return ts.repo.RetrieveAll(ctx, pm)
+	case TimescaleRepo:
+		return ts.timescaleRepo.RetrieveAll(ctx, pm)
+	default:
+		return TelemetryPage{}, fmt.Errorf("undefined repository")
+	}
 }
 
 // Save implements Service
-func (ts *telemetryService) Save(ctx context.Context, t Telemetry, serviceName string) error {
+func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	locRec, err := ts.locSvc.GetLocation(t.IpAddress)
-	if err != nil {
+	if err != nil && goerrors.Is(err, repository.ErrRecordNotFound) {
 		return err
 	}
 	t.City = locRec.City
 	t.Country = locRec.Country_long
-	t.Latitutde = float64(locRec.Latitude)
+	t.Latitude = float64(locRec.Latitude)
 	t.Longitude = float64(locRec.Longitude)
+
+	if err := ts.timescaleRepo.Save(ctx, t); err != nil {
+		return err
+	}
+
 	telemetry, err := ts.repo.RetrieveByIP(ctx, t.IpAddress)
 	if err != nil {
 		return err
 	}
 	if telemetry == nil {
-		t.Services = append(t.Services, serviceName)
+		t.Services = append(t.Services, t.Service)
 		err = ts.repo.Save(ctx, t)
 		return err
 	}
 	t.ID = telemetry.ID
 	t.Services = telemetry.Services
-	if !slices.Contains(t.Services, serviceName) {
-		t.Services = append(t.Services, serviceName)
+	if !slices.Contains(t.Services, t.Service) {
+		t.Services = append(t.Services, t.Service)
 	}
 	return ts.repo.UpdateTelemetry(ctx, t)
 }

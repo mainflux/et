@@ -44,7 +44,7 @@ func MakeHandler(svc homing.Service, tracer opentracing.Tracer, logger logger.Lo
 		opts...,
 	))
 
-	mux.Get("/telemetry", kithttp.NewServer(
+	mux.Get("/telemetry/:repo", kithttp.NewServer(
 		kitot.TraceServer(tracer, "get all")(getAllEndpoint(svc)),
 		decodeGetAll,
 		encodeResponse,
@@ -127,11 +127,17 @@ func decodeGetAll(_ context.Context, r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 
+	repo := bone.GetValue(r, "repo")
+	if repo == "" {
+		repo = homing.SheetsRepo
+	}
+
 	req := listTelemetryReq{
 		token:     ExtractBearerToken(r),
 		offset:    o,
 		limit:     l,
 		IpAddress: ip,
+		repo:      repo,
 	}
 	return req, nil
 }

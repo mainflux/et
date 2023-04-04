@@ -40,6 +40,7 @@ type listTelemetryReq struct {
 	token     string
 	offset    uint64
 	limit     uint64
+	repo      string
 	IpAddress string `json:"ip_address"`
 }
 

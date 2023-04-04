@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/mainflux/et/internal/homing"
+	"github.com/mainflux/et/internal/homing/repository"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
@@ -61,20 +62,22 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 }
 
 // RetrieveAll implements homing.TelemetryRepo.
-func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) ([]homing.Telemetry, error) {
-	var ts []homing.Telemetry
+func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.TelemetryPage, error) {
+
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
-		return nil, err
+		return homing.TelemetryPage{}, err
 	}
+	var telPage homing.TelemetryPage
+	telPage.PageMetadata = pm
 	for _, row := range resp.Values {
 		var tel homing.Telemetry
 		if err := tel.FromRow(row); err != nil {
-			return ts, err
+			return telPage, err
 		}
-		ts = append(ts, tel)
+		telPage.Telemetry = append(telPage.Telemetry, tel)
 	}
-	return ts, nil
+	return telPage, nil
 }
 
 // RetrieveByIP implements homing.TelemetryRepo.
@@ -90,7 +93,7 @@ func (r *repo) RetrieveByIP(ctx context.Context, ip string) (*homing.Telemetry, 
 			return &tel, err
 		}
 	}
-	return nil, nil
+	return nil, repository.ErrRecordNotFound
 }
 
 // Save implements homing.TelemetryRepo.

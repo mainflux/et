@@ -10,15 +10,16 @@ import (
 )
 
 type Telemetry struct {
-	ID        string    `json:"-"`
-	Services  []string  `json:"-"`
-	Longitude float64   `json:"-"`
-	Latitutde float64   `json:"-"`
-	IpAddress string    `json:"ip_address"`
-	Version   string    `json:"mainflux_version"`
-	LastSeen  time.Time `json:"last_seen"`
-	Country   string    `json:"-"`
-	City      string    `json:"-"`
+	ID        string    `json:"-" db:"id"`
+	Services  []string  `json:"-" db:"-"`
+	Service   string    `json:"service,omitempty" db:"service"`
+	Longitude float64   `json:"-" db:"longitude"`
+	Latitude  float64   `json:"-" db:"latitude"`
+	IpAddress string    `json:"ip_address" db:"ip_address"`
+	Version   string    `json:"mainflux_version" db:"mf_version"`
+	LastSeen  time.Time `json:"last_seen" db:"last_seen"`
+	Country   string    `json:"-" db:"country"`
+	City      string    `json:"-" db:"city"`
 }
 
 type PageMetadata struct {
@@ -45,7 +46,7 @@ type TelemetryRepo interface {
 	RetrieveByIP(ctx context.Context, email string) (*Telemetry, error)
 
 	// RetrieveAll retrieves all telemetry events.
-	RetrieveAll(ctx context.Context, pm PageMetadata) ([]Telemetry, error)
+	RetrieveAll(ctx context.Context, pm PageMetadata) (TelemetryPage, error)
 }
 
 // ToRow converts telemetry event to google sheets row.
@@ -54,7 +55,7 @@ func (t *Telemetry) ToRow() ([]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return []interface{}{t.ID, t.IpAddress, t.Latitutde, t.Longitude, strings.Join(t.Services, ","), t.Version, string(lastSeen), t.City, t.Country}, nil
+	return []interface{}{t.ID, t.IpAddress, t.Latitude, t.Longitude, strings.Join(t.Services, ","), t.Version, string(lastSeen), t.City, t.Country}, nil
 }
 
 // FromRow converts a Google Sheets row to a Telemetry struct.
@@ -77,7 +78,7 @@ func (t *Telemetry) FromRow(row []interface{}) error {
 	if err != nil {
 		return fmt.Errorf("failed to convert latitude to float64: %v", err)
 	}
-	t.Latitutde = lat
+	t.Latitude = lat
 	long, err := strconv.ParseFloat(row[3].(string), 64)
 	if err != nil {
 		return fmt.Errorf("failed to convert longitude to float64: %v", err)

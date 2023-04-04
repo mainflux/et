@@ -20,8 +20,10 @@
 # Go workspace file
 go.work
 
-sammydrive-7c852a28ee7f.json
+creds.json
 
 .env
 
 *.BIN
+
+/build

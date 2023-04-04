@@ -13,7 +13,7 @@ func saveEndpoint(svc homing.Service) endpoint.Endpoint {
 		if err := req.validate(); err != nil {
 			return nil, err
 		}
-		if err := svc.Save(ctx, req.Telemetry, req.ServiceName); err != nil {
+		if err := svc.Save(ctx, req.Telemetry); err != nil {
 			return nil, err
 		}
 		res := saveTelemetryRes{
@@ -33,7 +33,7 @@ func getAllEndpoint(svc homing.Service) endpoint.Endpoint {
 			Offset: req.offset,
 			Limit:  req.limit,
 		}
-		tm, err := svc.GetAll(ctx, req.token, pm)
+		tm, err := svc.GetAll(ctx, req.repo, req.token, pm)
 		if err != nil {
 			return nil, err
 		}

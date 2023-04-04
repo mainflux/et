@@ -1,0 +1,4 @@
+FROM scratch
+ARG SVC
+COPY et-$SVC /exe
+ENTRYPOINT ["/exe"]

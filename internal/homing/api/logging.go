@@ -22,7 +22,7 @@ func LoggingMiddleware(svc homing.Service, logger logger.Logger) homing.Service 
 }
 
 // GetAll implements homing.Service.
-func (lm *loggingMiddleware) GetAll(ctx context.Context, token string, pm homing.PageMetadata) (telemetryPage homing.TelemetryPage, err error) {
+func (lm *loggingMiddleware) GetAll(ctx context.Context, repo, token string, pm homing.PageMetadata) (telemetryPage homing.TelemetryPage, err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method get all telemetry took %s to complete", time.Since(begin))
 		if err != nil {
@@ -33,11 +33,11 @@ func (lm *loggingMiddleware) GetAll(ctx context.Context, token string, pm homing
 
 	}(time.Now())
 
-	return lm.svc.GetAll(ctx, token, pm)
+	return lm.svc.GetAll(ctx, repo, token, pm)
 }
 
 // Save implements homing.Service.
-func (lm *loggingMiddleware) Save(ctx context.Context, t homing.Telemetry, serviceName string) (err error) {
+func (lm *loggingMiddleware) Save(ctx context.Context, t homing.Telemetry) (err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method save telemetry event took %s to complete", time.Since(begin))
 		if err != nil {
@@ -48,5 +48,5 @@ func (lm *loggingMiddleware) Save(ctx context.Context, t homing.Telemetry, servi
 
 	}(time.Now())
 
-	return lm.svc.Save(ctx, t, serviceName)
+	return lm.svc.Save(ctx, t)
 }
