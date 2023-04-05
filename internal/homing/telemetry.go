@@ -10,16 +10,16 @@ import (
 )
 
 type Telemetry struct {
-	ID        string    `json:"-" db:"id"`
-	Services  []string  `json:"-" db:"-"`
-	Service   string    `json:"service,omitempty" db:"service"`
-	Longitude float64   `json:"-" db:"longitude"`
-	Latitude  float64   `json:"-" db:"latitude"`
+	ID        string    `json:"id,omitempty" db:"id"`
+	Services  []string  `json:"services,omitempty" db:"-"`
+	Service   string    `json:"service" db:"service"`
+	Longitude float64   `json:"longitude,omitempty" db:"longitude"`
+	Latitude  float64   `json:"latitude,omitempty" db:"latitude"`
 	IpAddress string    `json:"ip_address" db:"ip_address"`
-	Version   string    `json:"mainflux_version" db:"mf_version"`
+	Version   string    `json:"mainflux_version,omitempty" db:"mf_version"`
 	LastSeen  time.Time `json:"last_seen" db:"last_seen"`
-	Country   string    `json:"-" db:"country"`
-	City      string    `json:"-" db:"city"`
+	Country   string    `json:"country,omitempty" db:"country"`
+	City      string    `json:"city,omitempty" db:"city"`
 }
 
 type PageMetadata struct {
@@ -43,7 +43,7 @@ type TelemetryRepo interface {
 	UpdateTelemetry(ctx context.Context, u Telemetry) error
 
 	// RetrieveByIP retrieves telemetry by its unique identifier (i.e. ip address).
-	RetrieveByIP(ctx context.Context, email string) (*Telemetry, error)
+	RetrieveByIP(ctx context.Context, email string) (Telemetry, error)
 
 	// RetrieveAll retrieves all telemetry events.
 	RetrieveAll(ctx context.Context, pm PageMetadata) (TelemetryPage, error)
@@ -60,7 +60,7 @@ func (t *Telemetry) ToRow() ([]interface{}, error) {
 
 // FromRow converts a Google Sheets row to a Telemetry struct.
 func (t *Telemetry) FromRow(row []interface{}) error {
-	if len(row) != 6 {
+	if len(row) != 9 {
 		return fmt.Errorf("invalid row length: expected 6, got %d", len(row))
 
 	}

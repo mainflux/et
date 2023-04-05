@@ -26,7 +26,7 @@ const (
 	svcName        = "homing"
 	envPrefix      = "MF_HOMING_"
 	envPrefixHttp  = "MF_HOMING_"
-	defSvcHttpPort = "8080"
+	defSvcHttpPort = "8855"
 )
 
 type config struct {

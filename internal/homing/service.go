@@ -3,9 +3,11 @@ package homing
 import (
 	"context"
 	"fmt"
+	"reflect"
 
 	goerrors "errors"
 
+	"github.com/google/uuid"
 	"github.com/mainflux/et/internal/homing/repository"
 	"github.com/mainflux/mainflux"
 	"github.com/mainflux/mainflux/pkg/errors"
@@ -67,9 +69,10 @@ func (ts *telemetryService) GetAll(ctx context.Context, repo, token string, pm P
 // Save implements Service
 func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	locRec, err := ts.locSvc.GetLocation(t.IpAddress)
-	if err != nil && goerrors.Is(err, repository.ErrRecordNotFound) {
+	if err != nil {
 		return err
 	}
+	t.ID = uuid.New().String()
 	t.City = locRec.City
 	t.Country = locRec.Country_long
 	t.Latitude = float64(locRec.Latitude)
@@ -80,10 +83,10 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	}
 
 	telemetry, err := ts.repo.RetrieveByIP(ctx, t.IpAddress)
-	if err != nil {
+	if err != nil && !goerrors.Is(err, repository.ErrRecordNotFound) {
 		return err
 	}
-	if telemetry == nil {
+	if reflect.ValueOf(telemetry).IsZero() {
 		t.Services = append(t.Services, t.Service)
 		err = ts.repo.Save(ctx, t)
 		return err

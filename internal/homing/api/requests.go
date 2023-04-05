@@ -18,11 +18,10 @@ const maxLimitSize = 100
 
 type telemetryReq struct {
 	homing.Telemetry
-	ServiceName string `json:"service"`
 }
 
 func (req telemetryReq) validate() error {
-	if req.ServiceName == "" {
+	if req.Service == "" {
 		return errors.ErrMalformedEntity
 	}
 

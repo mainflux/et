@@ -68,8 +68,8 @@ func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.T
 }
 
 // RetrieveByIP implements homing.TelemetryRepo
-func (repo) RetrieveByIP(ctx context.Context, email string) (*homing.Telemetry, error) {
-	return &homing.Telemetry{}, repository.ErrRecordNotFound
+func (repo) RetrieveByIP(ctx context.Context, email string) (homing.Telemetry, error) {
+	return homing.Telemetry{}, repository.ErrRecordNotFound
 }
 
 // Save implements homing.TelemetryRepo

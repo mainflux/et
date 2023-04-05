@@ -7,8 +7,6 @@ services:
     restart: on-failure
     env_file:
       - .env
-    ports:
-      - 5437:${MF_TIMESCALE_PORT}
     volumes:
       - timescaledb-data:/var/lib/postgresql/data
     environment:
@@ -18,7 +16,7 @@ services:
     networks:
       - et-base-net
   et-server:
-    image: mainflux/call-home:${ET_RELEASE_TAG}
+    image: et/call-home:${ET_RELEASE_TAG}
     container_name: et-server
     depends_on:
       - timescaledb
@@ -29,11 +27,14 @@ services:
       - ${ET_PORT}:${ET_PORT}
     networks:
       - et-base-net
+      - docker_mainflux-base-net
     volumes:
       - ./creds.json:/creds.json
       - ./IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN
 networks:
   et-base-net:
     driver: bridge
+  docker_mainflux-base-net:
+    external: true
 volumes:
   timescaledb-data:

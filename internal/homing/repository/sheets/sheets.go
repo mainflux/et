@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 
-	"github.com/google/uuid"
 	"github.com/mainflux/et/internal/homing"
 	"github.com/mainflux/et/internal/homing/repository"
 	"golang.org/x/oauth2/google"
@@ -81,24 +80,23 @@ func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.T
 }
 
 // RetrieveByIP implements homing.TelemetryRepo.
-func (r *repo) RetrieveByIP(ctx context.Context, ip string) (*homing.Telemetry, error) {
+func (r *repo) RetrieveByIP(ctx context.Context, ip string) (homing.Telemetry, error) {
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
-		return nil, err
+		return homing.Telemetry{}, err
 	}
 	for _, row := range resp.Values {
 		if len(row) >= 2 && row[1] == ip {
 			var tel homing.Telemetry
 			err = tel.FromRow(row)
-			return &tel, err
+			return tel, err
 		}
 	}
-	return nil, repository.ErrRecordNotFound
+	return homing.Telemetry{}, repository.ErrRecordNotFound
 }
 
 // Save implements homing.TelemetryRepo.
 func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
-	t.ID = uuid.New().String()
 	rrow, err := t.ToRow()
 	if err != nil {
 		return err

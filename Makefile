@@ -1,5 +1,5 @@
 PROGRAM = call-home
-MF_DOCKER_IMAGE_NAME_PREFIX ?= mainflux
+MF_DOCKER_IMAGE_NAME_PREFIX ?= et
 SOURCES = $(wildcard *.go) cmd/main.go
 CGO_ENABLED ?= 0
 GOARCH ?= amd64
@@ -41,5 +41,3 @@ clean:
 	rm -rf $(PROGRAM)
 docker-image:
 	$(call make_docker,$(GOARCH))
-docker-image-dev:
-	$(call make_docker_dev,$(@))
