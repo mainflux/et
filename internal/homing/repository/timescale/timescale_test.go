@@ -16,6 +16,18 @@ import (
 )
 
 func TestSave(t *testing.T) {
+	mockTelemetry := homing.Telemetry{
+		ID:        uuid.NewString(),
+		Services:  []string{},
+		Service:   "mock service",
+		Longitude: 1.2,
+		Latitude:  30.2,
+		IpAddress: "192.168.0.1",
+		Version:   "0.13",
+		LastSeen:  time.Now(),
+		Country:   "someCountry",
+		City:      "someCity",
+	}
 	t.Run("failed to start transactions", func(t *testing.T) {
 		sqlDB, mock, err := sqlmock.New()
 
@@ -27,19 +39,6 @@ func TestSave(t *testing.T) {
 		sqlxDB := sqlx.NewDb(sqlDB, "sqlmock")
 
 		repo := New(sqlxDB)
-
-		mockTelemetry := homing.Telemetry{
-			ID:        uuid.NewString(),
-			Services:  []string{},
-			Service:   "mock service",
-			Longitude: 1.2,
-			Latitude:  30.2,
-			IpAddress: "192.168.0.1",
-			Version:   "0.13",
-			LastSeen:  time.Now(),
-			Country:   "someCountry",
-			City:      "someCity",
-		}
 
 		err = repo.Save(context.Background(), mockTelemetry)
 		assert.NotNil(t, err)
@@ -56,19 +55,6 @@ func TestSave(t *testing.T) {
 		sqlxDB := sqlx.NewDb(sqlDB, "sqlmock")
 
 		repo := New(sqlxDB)
-
-		mockTelemetry := homing.Telemetry{
-			ID:        uuid.NewString(),
-			Services:  []string{},
-			Service:   "mock service",
-			Longitude: 1.2,
-			Latitude:  30.2,
-			IpAddress: "192.168.0.1",
-			Version:   "0.13",
-			LastSeen:  time.Now(),
-			Country:   "someCountry",
-			City:      "someCity",
-		}
 
 		err = repo.Save(context.Background(), mockTelemetry)
 		assert.NotNil(t, err)
@@ -90,19 +76,6 @@ func TestSave(t *testing.T) {
 
 		repo := New(sqlxDB)
 
-		mockTelemetry := homing.Telemetry{
-			ID:        uuid.NewString(),
-			Services:  []string{},
-			Service:   "mock service",
-			Longitude: 1.2,
-			Latitude:  30.2,
-			IpAddress: "192.168.0.1",
-			Version:   "0.13",
-			LastSeen:  time.Now(),
-			Country:   "someCountry",
-			City:      "someCity",
-		}
-
 		err = repo.Save(context.Background(), mockTelemetry)
 		assert.NotNil(t, err)
 	})
@@ -119,21 +92,59 @@ func TestSave(t *testing.T) {
 
 		repo := New(sqlxDB)
 
-		mockTelemetry := homing.Telemetry{
-			ID:        uuid.NewString(),
-			Services:  []string{},
-			Service:   "mock service",
-			Longitude: 1.2,
-			Latitude:  30.2,
-			IpAddress: "192.168.0.1",
-			Version:   "0.13",
-			LastSeen:  time.Now(),
-			Country:   "someCountry",
-			City:      "someCity",
-		}
-
 		err = repo.Save(context.Background(), mockTelemetry)
 		assert.Nil(t, err)
 	})
+}
 
+func TestRetrieveAll(t *testing.T) {
+	mTel := homing.Telemetry{
+		ID:        uuid.NewString(),
+		Service:   "mock service",
+		Longitude: 1.2,
+		Latitude:  30.2,
+		IpAddress: "192.168.0.1",
+		Version:   "0.13",
+		LastSeen:  time.Now(),
+		Country:   "someCountry",
+		City:      "someCity",
+	}
+	t.Run("error performing select", func(t *testing.T) {
+		sqlDB, mock, err := sqlmock.New()
+		assert.Nil(t, err)
+
+		defer sqlDB.Close()
+		sqlxDB := sqlx.NewDb(sqlDB, "sqlmock")
+
+		repo := New(sqlxDB)
+
+		mock.ExpectQuery("SELECT(.*)").WillReturnError(fmt.Errorf("any error"))
+
+		_, err = repo.RetrieveAll(context.Background(), homing.PageMetadata{Limit: 10, Offset: 0})
+		assert.NotNil(t, err)
+	})
+	t.Run("successful", func(t *testing.T) {
+		sqlDB, mock, err := sqlmock.New()
+		assert.Nil(t, err)
+
+		defer sqlDB.Close()
+		sqlxDB := sqlx.NewDb(sqlDB, "sqlmock")
+
+		repo := New(sqlxDB)
+
+		rows := sqlmock.NewRows(
+			[]string{"id", "ip_address", "longitude", "latitude", "mf_version", "service", "last_seen", "country", "city"},
+		).AddRow(mTel.ID, mTel.IpAddress, mTel.Longitude, mTel.Latitude, mTel.Version, mTel.Service, mTel.LastSeen, mTel.Country, mTel.City)
+
+		rows2 := sqlmock.NewRows(
+			[]string{"count"},
+		).AddRow(1)
+
+		mock.ExpectQuery("SELECT(.*)").WillReturnRows(rows)
+		mock.ExpectQuery("SELECT COUNT(.*) FROM telemetry").WillReturnRows(rows2)
+
+		tp, err := repo.RetrieveAll(context.Background(), homing.PageMetadata{Limit: 10, Offset: 0})
+		assert.Nil(t, err)
+		assert.Equal(t, mTel, tp.Telemetry[0])
+	})
 }
