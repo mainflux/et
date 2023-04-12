@@ -8,7 +8,7 @@ info:
     email: "infos@mainflux.com"
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    url: https://raw.githubusercontent.com/mainflux/callhome/f5bef94fec5f1d1e35333fbde959fe1eeb42d944/LICENCE
 tags:
   - name: telemetry
     description: Telemetry Service
