@@ -62,7 +62,6 @@ func (t *Telemetry) ToRow() ([]interface{}, error) {
 func (t *Telemetry) FromRow(row []interface{}) error {
 	if len(row) != 9 {
 		return fmt.Errorf("invalid row length: expected 6, got %d", len(row))
-
 	}
 	id, ok := row[0].(string)
 	if !ok {

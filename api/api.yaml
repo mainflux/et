@@ -30,6 +30,13 @@ paths:
           description: Created
   /telemetry/{repository}:
     get:
+      parameters:
+        - in: path
+          name: repository
+          schema:
+            type: string
+          required: true
+          description: Repository to fetch data from sheets or timescale
       security:
         - bearerAuth: []
       tags:

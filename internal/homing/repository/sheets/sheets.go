@@ -13,7 +13,10 @@ import (
 
 var _ homing.TelemetryRepo = (*repo)(nil)
 
-const sheetRange = "Sheet1!A:I"
+const (
+	sheetRange = "Sheet1!A:I"
+	sheetsAuth = "https://www.googleapis.com/auth/spreadsheets"
+)
 
 type repo struct {
 	sheetsSvc     *sheets.Service
@@ -27,7 +30,7 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 	if err != nil {
 		return nil, err
 	}
-	config, err := google.JWTConfigFromJSON(credBytes, "https://www.googleapis.com/auth/spreadsheets")
+	config, err := google.JWTConfigFromJSON(credBytes, sheetsAuth)
 	if err != nil {
 		return nil, err
 	}

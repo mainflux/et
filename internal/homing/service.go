@@ -88,8 +88,7 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	}
 	if reflect.ValueOf(telemetry).IsZero() {
 		t.Services = append(t.Services, t.Service)
-		err = ts.repo.Save(ctx, t)
-		return err
+		return ts.repo.Save(ctx, t)
 	}
 	t.ID = telemetry.ID
 	t.Services = telemetry.Services
