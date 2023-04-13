@@ -10,7 +10,7 @@ import (
 	jaegerClient "github.com/mainflux/et/internal/clients/jaeger"
 	"github.com/mainflux/mainflux/pkg/errors"
 	"github.com/opentracing/opentracing-go"
-	gogrpc "google.golang.org/grpc"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -36,7 +36,7 @@ type ClientHandler interface {
 }
 
 type Client struct {
-	*gogrpc.ClientConn
+	*grpc.ClientConn
 	opentracing.Tracer
 	io.Closer
 	secure bool
@@ -50,8 +50,8 @@ func NewClientHandler(c *Client) ClientHandler {
 }
 
 // Connect creates new gRPC client and connect to gRPC server
-func Connect(cfg Config) (*gogrpc.ClientConn, bool, error) {
-	var opts []gogrpc.DialOption
+func Connect(cfg Config) (*grpc.ClientConn, bool, error) {
+	var opts []grpc.DialOption
 	secure := false
 	tc := insecure.NewCredentials()
 
@@ -64,9 +64,9 @@ func Connect(cfg Config) (*gogrpc.ClientConn, bool, error) {
 		secure = true
 	}
 
-	opts = append(opts, gogrpc.WithTransportCredentials(tc))
+	opts = append(opts, grpc.WithTransportCredentials(tc))
 
-	conn, err := gogrpc.Dial(cfg.URL, opts...)
+	conn, err := grpc.Dial(cfg.URL, opts...)
 	if err != nil {
 		return nil, secure, err
 	}

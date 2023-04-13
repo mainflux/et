@@ -34,19 +34,15 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 	if err != nil {
 		return nil, err
 	}
-
 	client := config.Client(context.Background())
-
 	srv, err := sheets.NewService(context.Background(), option.WithHTTPClient(client))
 	if err != nil {
 		return nil, err
 	}
-
 	res, err := srv.Spreadsheets.Get(spreadsheetId).Fields("sheets(properties(sheetId,title))").Do()
 	if err != nil || res.HTTPStatusCode != 200 {
 		return nil, err
 	}
-
 	sheetName := ""
 	for _, v := range res.Sheets {
 		prop := v.Properties
@@ -55,7 +51,6 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 			break
 		}
 	}
-
 	return &repo{
 		sheetsSvc:     srv,
 		sheetName:     sheetName,
@@ -65,7 +60,6 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 
 // RetrieveAll implements homing.TelemetryRepo.
 func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.TelemetryPage, error) {
-
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
 		return homing.TelemetryPage{}, err
@@ -107,7 +101,6 @@ func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 	row := &sheets.ValueRange{
 		Values: [][]interface{}{rrow},
 	}
-
 	res, err := r.sheetsSvc.Spreadsheets.Values.Append(r.spreadsheetId, r.sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(ctx).Do()
 	if err != nil || res.HTTPStatusCode != 200 {
 		return err

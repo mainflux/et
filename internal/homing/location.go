@@ -2,6 +2,12 @@ package homing
 
 import "github.com/ip2location/ip2location-go/v9"
 
+var _ LocationService = (*locationService)(nil)
+
+type locationService struct {
+	db *ip2location.DB
+}
+
 // LocationService service to obtain location from IP Address.
 type LocationService interface {
 	// GetLocation from ip address
@@ -18,12 +24,6 @@ func NewLocationService(dbfilepath string) (LocationService, error) {
 		db: db,
 	}, nil
 
-}
-
-var _ LocationService = (*locationService)(nil)
-
-type locationService struct {
-	db *ip2location.DB
 }
 
 // GetLocation implements LocationService.
