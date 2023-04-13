@@ -11,7 +11,11 @@ Server to recive and store information regarding mainfflux deployments. This inf
 
 ## Usage
 To Run:
-`go run ./cmd/homing-server/main.go`
+
+```bash
+go run ./cmd/homing-server/main.go
+\```
+
 
 ### Requirements
 - [IP to Location database](https://lite.ip2location.com/)
