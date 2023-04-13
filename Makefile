@@ -1,5 +1,5 @@
 PROGRAM = call-home
-MF_DOCKER_IMAGE_NAME_PREFIX ?= et
+MF_DOCKER_IMAGE_NAME_PREFIX ?= MF
 SOURCES = $(wildcard *.go) cmd/main.go
 CGO_ENABLED ?= 0
 GOARCH ?= amd64
