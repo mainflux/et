@@ -47,6 +47,11 @@ func main() {
 		log.Fatalf("failed to load %s configuration : %s", svcName, err)
 	}
 
+	logger, err := mflog.New(os.Stdout, cfg.LogLevel)
+	if err != nil {
+		log.Fatalf(fmt.Sprintf("failed to init logger: %s", err.Error()))
+	}
+
 	timescaleConf := timescale.Config{}
 	if err := env.Parse(&timescaleConf); err != nil {
 		log.Fatalf("failed to load %s timescale configuration : %s", svcName, err)
@@ -55,11 +60,6 @@ func main() {
 	timescaleDB, err := timescale.Connect(timescaleConf)
 	if err != nil {
 		log.Fatalf("failed to connect to timescale db : %s", err)
-	}
-
-	logger, err := mflog.New(os.Stdout, cfg.LogLevel)
-	if err != nil {
-		log.Fatalf(fmt.Sprintf("failed to init logger: %s", err.Error()))
 	}
 
 	tracer, closer, err := jaegerClient.NewTracer("users", cfg.JaegerURL)
