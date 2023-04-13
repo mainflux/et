@@ -30,7 +30,7 @@ const (
 )
 
 type config struct {
-	LogLevel       string `env:"MF_USERS_LOG_LEVEL"  envDefault:"info"`
+	LogLevel       string `env:"MF_HOMING_LOG_LEVEL"  envDefault:"info"`
 	JaegerURL      string `env:"MF_JAEGER_URL"       envDefault:"localhost:6831"`
 	GCPCredFile    string `env:"MF_GCP_CRED"`
 	SpreadsheetId  string `env:"MF_SPREADSHEET_ID"`
