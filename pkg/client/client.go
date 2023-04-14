@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	HomeUrl      = "localhost:9022"
-	stopWaitTime = 5 * time.Second
+	HomeUrl           = "localhost:9022"
+	stopWaitTime      = 5 * time.Second
+	callHomeSleepTime = 2 * time.Hour
 )
 
 var ipEndpoints = []string{
@@ -72,7 +73,7 @@ func (hs *homingService) CallHome(ctx context.Context) {
 				continue
 			}
 		}
-		time.Sleep(time.Hour * 2)
+		time.Sleep(callHomeSleepTime)
 	}
 }
 

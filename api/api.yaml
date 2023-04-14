@@ -8,7 +8,7 @@ info:
     email: "infos@mainflux.com"
   license:
     name: Apache 2.0
-    url: https://raw.githubusercontent.com/mainflux/callhome/f5bef94fec5f1d1e35333fbde959fe1eeb42d944/LICENCE
+    url: https://github.com/mainflux/callhome/blob/master/LICENSE
 tags:
   - name: telemetry
     description: Telemetry Service
@@ -37,6 +37,8 @@ paths:
             type: string
           required: true
           description: Repository to fetch data from sheets or timescale
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
       security:
         - bearerAuth: []
       tags:
@@ -44,9 +46,6 @@ paths:
       summary: Get all telemetry events
       description: Get all telemetry events
       operationId: getAll
-      parameters:
-      - $ref: "#/components/parameters/Limit"
-      - $ref: "#/components/parameters/Offset"
       responses:
         "200":
           description: successful operation
