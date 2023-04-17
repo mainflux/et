@@ -16,12 +16,12 @@ type loggingMiddleware struct {
 	svc           homing.Service
 }
 
-// LoggingMiddleware adds logging facilities to the core service.
+// LoggingMiddleware is a middleware that adds logging facilities to the core homing service.
 func LoggingMiddleware(svc homing.Service, logger logger.Logger) homing.Service {
 	return &loggingMiddleware{logger, svc}
 }
 
-// GetAll implements homing.Service.
+// GetAll adds logging middleware to get all service.
 func (lm *loggingMiddleware) GetAll(ctx context.Context, repo, token string, pm homing.PageMetadata) (telemetryPage homing.TelemetryPage, err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method get all telemetry took %s to complete", time.Since(begin))
@@ -36,7 +36,7 @@ func (lm *loggingMiddleware) GetAll(ctx context.Context, repo, token string, pm 
 	return lm.svc.GetAll(ctx, repo, token, pm)
 }
 
-// Save implements homing.Service.
+// Save adds logging middleware to save service.
 func (lm *loggingMiddleware) Save(ctx context.Context, t homing.Telemetry) (err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method save telemetry event took %s to complete", time.Since(begin))

@@ -8,13 +8,13 @@ type locationService struct {
 	db *ip2location.DB
 }
 
-// LocationService service to obtain location from IP Address.
+// LocationService provides a service for obtaining location information from an IP address.
 type LocationService interface {
-	// GetLocation from ip address
+	// GetLocation returns the location information for a given IP address.
 	GetLocation(ip string) (ip2location.IP2Locationrecord, error)
 }
 
-// NewLocationService creates new location service.
+// NewLocationService creates a new LocationService that uses the specified IP2Location database file.
 func NewLocationService(dbfilepath string) (LocationService, error) {
 	db, err := ip2location.OpenDB(dbfilepath)
 	if err != nil {
@@ -26,7 +26,7 @@ func NewLocationService(dbfilepath string) (LocationService, error) {
 
 }
 
-// GetLocation implements LocationService.
+// GetLocation returns the location information for a given IP address.
 func (ls *locationService) GetLocation(ip string) (ip2location.IP2Locationrecord, error) {
 	return ls.db.Get_all(ip)
 }

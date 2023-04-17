@@ -15,6 +15,18 @@ type authServiceMock struct {
 	mock.Mock
 }
 
+type mockConstructorTestingTNewTelemetryRepo interface {
+	mock.TestingT
+	Cleanup(func())
+}
+
+// NewTelemetryRepo creates a new instance of TelemetryRepo. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+func NewAuthMockRepo(t mockConstructorTestingTNewTelemetryRepo) *authServiceMock {
+	mock := &authServiceMock{}
+	mock.Mock.Test(t)
+	return mock
+}
+
 // AddPolicy implements mainflux.AuthServiceClient
 func (*authServiceMock) AddPolicy(ctx context.Context, in *mainflux.AddPolicyReq, opts ...grpc.CallOption) (*mainflux.AddPolicyRes, error) {
 	panic("unimplemented")
@@ -55,16 +67,4 @@ func (*authServiceMock) ListPolicies(ctx context.Context, in *mainflux.ListPolic
 // Members implements mainflux.AuthServiceClient
 func (*authServiceMock) Members(ctx context.Context, in *mainflux.MembersReq, opts ...grpc.CallOption) (*mainflux.MembersRes, error) {
 	panic("unimplemented")
-}
-
-type mockConstructorTestingTNewTelemetryRepo interface {
-	mock.TestingT
-	Cleanup(func())
-}
-
-// NewTelemetryRepo creates a new instance of TelemetryRepo. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
-func NewAuthMockRepo(t mockConstructorTestingTNewTelemetryRepo) *authServiceMock {
-	mock := &authServiceMock{}
-	mock.Mock.Test(t)
-	return mock
 }

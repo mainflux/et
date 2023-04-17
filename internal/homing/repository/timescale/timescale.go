@@ -23,7 +23,7 @@ func New(db *sqlx.DB) homing.TelemetryRepo {
 	return &repo{db: db}
 }
 
-// RetrieveAll implements homing.TelemetryRepo
+// RetrieveAll gets all records from repo.
 func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.TelemetryPage, error) {
 	q := `SELECT * FROM telemetry LIMIT :limit OFFSET :offset;`
 
@@ -67,12 +67,12 @@ func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.T
 	return results, nil
 }
 
-// RetrieveByIP implements homing.TelemetryRepo
+// RetrieveByIP get record given an ip address.
 func (repo) RetrieveByIP(ctx context.Context, email string) (homing.Telemetry, error) {
 	return homing.Telemetry{}, repository.ErrRecordNotFound
 }
 
-// Save implements homing.TelemetryRepo
+// Save creates record in repo.
 func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 	q := `INSERT INTO telemetry (id, ip_address, longitude, latitude,
 		mf_version, service, last_seen, country, city)
@@ -108,7 +108,7 @@ func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 
 }
 
-// UpdateTelemetry implements homing.TelemetryRepo
+// UpdateTelemetry updates record to repo.
 func (repo) UpdateTelemetry(ctx context.Context, u homing.Telemetry) error {
 	return nil
 }

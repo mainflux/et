@@ -58,7 +58,7 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 	}, nil
 }
 
-// RetrieveAll implements homing.TelemetryRepo.
+// RetrieveAll gets all records from repo.
 func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.TelemetryPage, error) {
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
@@ -76,7 +76,7 @@ func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.T
 	return telPage, nil
 }
 
-// RetrieveByIP implements homing.TelemetryRepo.
+// RetrieveByIP get record by ip address.
 func (r *repo) RetrieveByIP(ctx context.Context, ip string) (homing.Telemetry, error) {
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
@@ -92,7 +92,7 @@ func (r *repo) RetrieveByIP(ctx context.Context, ip string) (homing.Telemetry, e
 	return homing.Telemetry{}, repository.ErrRecordNotFound
 }
 
-// Save implements homing.TelemetryRepo.
+// Save adds record to repo.
 func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 	rrow, err := t.ToRow()
 	if err != nil {
@@ -108,7 +108,7 @@ func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 	return nil
 }
 
-// UpdateTelemetry implements homing.TelemetryRepo.
+// UpdateTelemetry update record to repo.
 func (r repo) UpdateTelemetry(ctx context.Context, t homing.Telemetry) error {
 	rrow, err := t.ToRow()
 	if err != nil {
