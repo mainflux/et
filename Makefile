@@ -3,7 +3,7 @@ MF_DOCKER_IMAGE_NAME_PREFIX ?= et
 SOURCES = $(wildcard *.go) cmd/main.go
 CGO_ENABLED ?= 0
 GOARCH ?= amd64
-VERSION ?= $(shell git describe --abbrev=0 --tags)
+VERSION ?= $(shell git describe --abbrev=0 --tags 2>/dev/null || echo "0.13.0")
 COMMIT ?= $(shell git rev-parse HEAD)
 TIME ?= $(shell date +%F_%T)
 
