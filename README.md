@@ -7,7 +7,7 @@ Server to recive and store information regarding mainfflux deployments. This inf
 - IP Address
 - Mainflux Version
 - Last Seen
-- Mianflux Service
+- Mainflux Service
 
 ## Usage
 To Run:
