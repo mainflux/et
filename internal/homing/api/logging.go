@@ -24,7 +24,7 @@ func LoggingMiddleware(svc homing.Service, logger logger.Logger) homing.Service 
 // GetAll adds logging middleware to get all service.
 func (lm *loggingMiddleware) GetAll(ctx context.Context, repo, token string, pm homing.PageMetadata) (telemetryPage homing.TelemetryPage, err error) {
 	defer func(begin time.Time) {
-		message := fmt.Sprintf("Method get all telemetry took %s to complete", time.Since(begin))
+		message := fmt.Sprintf("Method get all telemetry with token %s took %s to complete", token, time.Since(begin))
 		if err != nil {
 			lm.hommingLogger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
 			return

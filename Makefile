@@ -42,5 +42,6 @@ $(PROGRAM): $(SOURCES)
 
 clean:
 	rm -rf $(PROGRAM)
+
 docker-image:
 	$(call make_docker,$(GOARCH))
