@@ -49,11 +49,11 @@ func (hs *homingService) CallHome(ctx context.Context) {
 		case <-ctx.Done():
 			hs.Stop()
 		default:
-			var data telemetryData
-			var err error
-			data.Service = hs.serviceName
-			data.Version = hs.version
-			data.LastSeen = time.Now()
+			data := telemetryData{
+				Service:  hs.serviceName,
+				Version:  hs.version,
+				LastSeen: time.Now(),
+			}
 			for _, endpoint := range ipEndpoints {
 				ip, err := hs.getIP(endpoint)
 				if err != nil {
@@ -68,7 +68,7 @@ func (hs *homingService) CallHome(ctx context.Context) {
 				data.IpAddress = parsedIP.String()
 				break
 			}
-			if err = hs.send(&data); err != nil && data.IpAddress != "" {
+			if err := hs.send(&data); err != nil && data.IpAddress != "" {
 				hs.logger.Warn(fmt.Sprintf("failed to send telemetry data with error: %v", err))
 				continue
 			}

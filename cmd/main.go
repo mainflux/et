@@ -30,7 +30,7 @@ const (
 )
 
 type config struct {
-	LogLevel       string `env:"MF_HOMING_LOG_LEVEL"  envDefault:"info"`
+	LogLevel       string `env:"MF_HOMING_LOG_LEVEL" envDefault:"info"`
 	JaegerURL      string `env:"MF_JAEGER_URL"       envDefault:"localhost:6831"`
 	GCPCredFile    string `env:"MF_GCP_CRED"`
 	SpreadsheetId  string `env:"MF_SPREADSHEET_ID"`
@@ -78,7 +78,6 @@ func main() {
 	logger.Info("Successfully connected to auth grpc server " + authHandler.Secure())
 
 	svc, err := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId, auth, timescaleDB)
-
 	if err != nil {
 		log.Printf("failed to initialize service: %s", err.Error())
 		return
@@ -100,7 +99,7 @@ func main() {
 	})
 
 	if err := g.Wait(); err != nil {
-		logger.Error(fmt.Sprintf("HTTP adapter service terminated: %s", err))
+		logger.Error(fmt.Sprintf("%s service terminated: %s", svcName, err))
 	}
 }
 

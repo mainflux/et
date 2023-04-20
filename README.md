@@ -14,7 +14,7 @@ To Run:
 
 ```bash
 go run ./cmd/homing-server/main.go
-\```
+```
 
 
 ### Requirements
@@ -24,7 +24,7 @@ go run ./cmd/homing-server/main.go
 
 example .env file:
 ```
-MF_USERS_LOG_LEVEL="info"
+MF_CALLHOME_LOG_LEVEL="info"
 MF_JAEGER_URL="localhost:6831"
 MF_GCP_CRED="*.json"
 MF_SPREADSHEET_ID=''

@@ -1,5 +1,14 @@
 version: "3.8"
 
+networks:
+  et-base-net:
+    driver: bridge
+  docker_mainflux-base-net:
+    external: true
+
+volumes:
+  timescaledb-data:
+
 services:
   timescaledb:
     image: timescale/timescaledb:latest-pg14
@@ -31,10 +40,3 @@ services:
     volumes:
       - ./creds.json:/creds.json
       - ./IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN
-networks:
-  et-base-net:
-    driver: bridge
-  docker_mainflux-base-net:
-    external: true
-volumes:
-  timescaledb-data:
