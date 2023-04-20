@@ -2,7 +2,7 @@
 
 # E.T. Phone Home
 
-Server to recive and store information regarding mainfflux deployments. This information includes:
+Server to receive and store information regarding mainflux deployments. This information includes:
 
 - IP Address
 - Mainflux Version
