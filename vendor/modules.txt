@@ -25,7 +25,6 @@ github.com/go-gorp/gorp/v3
 # github.com/go-kit/kit v0.12.0
 ## explicit; go 1.17
 github.com/go-kit/kit/endpoint
-github.com/go-kit/kit/log
 github.com/go-kit/kit/metrics
 github.com/go-kit/kit/metrics/internal/lv
 github.com/go-kit/kit/metrics/prometheus
@@ -35,7 +34,7 @@ github.com/go-kit/kit/tracing/opentracing
 github.com/go-kit/kit/transport
 github.com/go-kit/kit/transport/grpc
 github.com/go-kit/kit/transport/http
-# github.com/go-kit/log v0.2.0
+# github.com/go-kit/log v0.2.1
 ## explicit; go 1.17
 github.com/go-kit/log
 # github.com/go-logfmt/logfmt v0.5.1
@@ -44,7 +43,7 @@ github.com/go-logfmt/logfmt
 # github.com/go-zoo/bone v1.3.0
 ## explicit; go 1.9
 github.com/go-zoo/bone
-# github.com/gofrs/uuid v4.2.0+incompatible
+# github.com/gofrs/uuid v4.3.0+incompatible
 ## explicit
 github.com/gofrs/uuid
 # github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da
@@ -111,12 +110,12 @@ github.com/jackc/pgx/v5/pgconn/internal/ctxwatch
 github.com/jackc/pgx/v5/pgproto3
 github.com/jackc/pgx/v5/pgtype
 github.com/jackc/pgx/v5/stdlib
-# github.com/jmoiron/sqlx v1.3.4
+# github.com/jmoiron/sqlx v1.3.5
 ## explicit; go 1.10
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
-# github.com/mainflux/mainflux v0.0.0-20220415135135-92d8fb99bf82
-## explicit; go 1.17
+# github.com/mainflux/mainflux v0.0.0-20230417142557-ffd67ae154c0
+## explicit; go 1.19
 github.com/mainflux/mainflux
 github.com/mainflux/mainflux/auth
 github.com/mainflux/mainflux/auth/api/grpc
@@ -126,11 +125,11 @@ github.com/mainflux/mainflux/pkg/errors
 github.com/mainflux/mainflux/pkg/ulid
 github.com/mainflux/mainflux/pkg/uuid
 github.com/mainflux/mainflux/readers
-# github.com/matttproud/golang_protobuf_extensions v1.0.1
-## explicit
+# github.com/matttproud/golang_protobuf_extensions v1.0.4
+## explicit; go 1.9
 github.com/matttproud/golang_protobuf_extensions/pbutil
-# github.com/oklog/ulid/v2 v2.0.2
-## explicit
+# github.com/oklog/ulid/v2 v2.1.0
+## explicit; go 1.15
 github.com/oklog/ulid/v2
 # github.com/opentracing/opentracing-go v1.2.0
 ## explicit; go 1.14
@@ -175,8 +174,8 @@ github.com/stretchr/objx
 ## explicit; go 1.13
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/mock
-# github.com/subosito/gotenv v1.2.0
-## explicit
+# github.com/subosito/gotenv v1.4.1
+## explicit; go 1.18
 github.com/subosito/gotenv
 # github.com/uber/jaeger-client-go v2.30.0+incompatible
 ## explicit
@@ -219,8 +218,8 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
-# go.uber.org/atomic v1.9.0
-## explicit; go 1.13
+# go.uber.org/atomic v1.10.0
+## explicit; go 1.18
 go.uber.org/atomic
 # golang.org/x/crypto v0.6.0
 ## explicit; go 1.17

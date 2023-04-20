@@ -27,6 +27,12 @@ var (
 	// ErrNameSize indicates that name size exceeds the max.
 	ErrNameSize = errors.New("invalid name size")
 
+	// ErrEmailSize indicates that email size exceeds the max.
+	ErrEmailSize = errors.New("invalid email size")
+
+	// ErrInvalidStatus indicates an invalid user account status.
+	ErrInvalidStatus = errors.New("invalid user account status")
+
 	// ErrLimitSize indicates that an invalid limit.
 	ErrLimitSize = errors.New("invalid limit size")
 
@@ -54,8 +60,11 @@ var (
 	// ErrMissingPolicyAct indicates missing policies action.
 	ErrMissingPolicyAct = errors.New("falmormed policy action")
 
-	// ErrMissingCertData indicates missing cert data (ttl, key_type or key_bits).
+	// ErrMissingCertData indicates missing cert data (ttl).
 	ErrMissingCertData = errors.New("missing certificate data")
+
+	// ErrInvalidCertData indicates invalid cert data (ttl).
+	ErrInvalidCertData = errors.New("invalid certificate data")
 
 	// ErrInvalidTopic indicates an invalid subscription topic.
 	ErrInvalidTopic = errors.New("invalid Subscription topic")

@@ -54,24 +54,24 @@ func main() {
 
 	timescaleConf := timescale.Config{}
 	if err := env.Parse(&timescaleConf); err != nil {
-		log.Fatalf("failed to load %s timescale configuration : %s", svcName, err)
+		logger.Fatal(fmt.Sprintf("failed to load %s timescale configuration : %s", svcName, err))
 	}
 
 	timescaleDB, err := timescale.Connect(timescaleConf)
 	if err != nil {
-		log.Fatalf("failed to connect to timescale db : %s", err)
+		logger.Fatal(fmt.Sprintf("failed to connect to timescale db : %s", err))
 	}
 
 	tracer, closer, err := jaegerClient.NewTracer("users", cfg.JaegerURL)
 	if err != nil {
-		log.Fatalf(fmt.Sprintf("failed to init Jaeger: %s", err))
+		logger.Fatal(fmt.Sprintf("failed to init Jaeger: %s", err))
 	}
 	defer closer.Close()
 
 	// Setup new auth grpc client
 	auth, authHandler, err := authClient.Setup(envPrefix, cfg.JaegerURL)
 	if err != nil {
-		log.Println(err.Error())
+		logger.Error(err.Error())
 		return
 	}
 	defer authHandler.Close()
@@ -79,13 +79,13 @@ func main() {
 
 	svc, err := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId, auth, timescaleDB)
 	if err != nil {
-		log.Printf("failed to initialize service: %s", err.Error())
+		logger.Error(fmt.Sprintf("failed to initialize service: %s", err.Error()))
 		return
 	}
 
 	httpServerConfig := server.Config{Port: defSvcHttpPort}
 	if err := env.Parse(&httpServerConfig, env.Options{Prefix: envPrefixHttp, AltPrefix: envPrefix}); err != nil {
-		log.Printf("failed to load %s HTTP server configuration : %s", svcName, err.Error())
+		logger.Error(fmt.Sprintf("failed to load %s HTTP server configuration : %s", svcName, err.Error()))
 		return
 	}
 	hs := httpserver.New(ctx, cancel, svcName, httpServerConfig, api.MakeHandler(svc, tracer, logger), logger)
