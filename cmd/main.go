@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	svcName        = "homing"
+	svcName        = "callhome"
 	envPrefix      = "MF_HOMING_"
 	envPrefixHttp  = "MF_HOMING_"
 	defSvcHttpPort = "8855"
