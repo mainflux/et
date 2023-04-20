@@ -11,7 +11,7 @@ COPY . .
 RUN apk update \
     && apk add make\
     && make $SVC \
-    && mv build/et-$SVC /exe
+    && mv build/callhome-$SVC /exe
 
 FROM scratch
 # Certificates are needed so that mailing util can work.

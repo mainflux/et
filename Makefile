@@ -1,5 +1,5 @@
-PROGRAM = call-home
-MF_DOCKER_IMAGE_NAME_PREFIX ?= et
+PROGRAM = callhome
+MF_DOCKER_IMAGE_NAME_PREFIX ?= callhome
 SOURCES = $(wildcard *.go) cmd/main.go
 CGO_ENABLED ?= 0
 GOARCH ?= amd64
@@ -38,7 +38,7 @@ $(PROGRAM): $(SOURCES)
 	-X 'github.com/mainflux/mainflux.BuildTime=$(TIME)' \
 	-X 'github.com/mainflux/mainflux.Version=$(VERSION)' \
 	-X 'github.com/mainflux/mainflux.Commit=$(COMMIT)'" \
-	-o ./build/et-$(PROGRAM) cmd/main.go
+	-o ./build/$(PROGRAM)-$(PROGRAM) cmd/main.go
 
 clean:
 	rm -rf $(PROGRAM)
