@@ -1,8 +1,8 @@
 package auth
 
 import (
-	grpcClient "github.com/mainflux/et/internal/clients/grpc"
-	"github.com/mainflux/et/internal/env"
+	grpcClient "github.com/mainflux/callhome/internal/clients/grpc"
+	"github.com/mainflux/callhome/internal/env"
 	"github.com/mainflux/mainflux"
 	authapi "github.com/mainflux/mainflux/auth/api/grpc"
 	"github.com/mainflux/mainflux/pkg/errors"

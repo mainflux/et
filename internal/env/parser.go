@@ -2,7 +2,7 @@ package env
 
 import (
 	"github.com/caarlos0/env/v7"
-	"github.com/mainflux/et/internal/server"
+	"github.com/mainflux/callhome/internal/server"
 )
 
 type Options struct {

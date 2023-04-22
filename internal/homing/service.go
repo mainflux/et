@@ -8,7 +8,7 @@ import (
 	goerrors "errors"
 
 	"github.com/google/uuid"
-	"github.com/mainflux/et/internal/homing/repository"
+	"github.com/mainflux/callhome/internal/homing/repository"
 	"github.com/mainflux/mainflux"
 	"github.com/mainflux/mainflux/pkg/errors"
 	"golang.org/x/exp/slices"

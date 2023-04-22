@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 
-	"github.com/mainflux/et/internal/homing"
-	"github.com/mainflux/et/internal/homing/repository"
+	"github.com/mainflux/callhome/internal/homing"
+	"github.com/mainflux/callhome/internal/homing/repository"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"

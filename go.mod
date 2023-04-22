@@ -1,4 +1,4 @@
-module github.com/mainflux/et
+module github.com/mainflux/callhome
 
 go 1.20
 

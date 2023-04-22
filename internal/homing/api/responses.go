@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/mainflux/et/internal/homing"
+	"github.com/mainflux/callhome/internal/homing"
 )
 
 type saveTelemetryRes struct {

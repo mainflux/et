@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
-	"github.com/mainflux/et/internal/homing"
+	"github.com/mainflux/callhome/internal/homing"
 	"github.com/stretchr/testify/assert"
 )
 

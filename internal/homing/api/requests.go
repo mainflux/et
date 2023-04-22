@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/mainflux/et/internal/homing"
+	"github.com/mainflux/callhome/internal/homing"
 	"github.com/mainflux/mainflux/pkg/errors"
 )
 

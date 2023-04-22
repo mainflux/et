@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mainflux/et/internal/homing"
-	"github.com/mainflux/et/internal/homing/mocks"
+	"github.com/mainflux/callhome/internal/homing"
+	"github.com/mainflux/callhome/internal/homing/mocks"
 	"github.com/mainflux/mainflux/logger"
 	"github.com/opentracing/opentracing-go"
 	"github.com/stretchr/testify/assert"

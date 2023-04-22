@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-kit/kit/metrics"
-	"github.com/mainflux/et/internal/homing"
+	"github.com/mainflux/callhome/internal/homing"
 )
 
 var _ homing.Service = (*metricsMiddleware)(nil)

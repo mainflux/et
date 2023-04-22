@@ -3,7 +3,7 @@ package client
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -39,7 +39,7 @@ func TestSend(t *testing.T) {
 		client := NewTestClient(func(req *http.Request) *http.Response {
 			return &http.Response{
 				StatusCode: http.StatusCreated,
-				Body:       ioutil.NopCloser(bytes.NewBufferString(`OK`)),
+				Body:       io.NopCloser(bytes.NewBufferString(`OK`)),
 				Header:     make(http.Header),
 			}
 		})
@@ -56,7 +56,7 @@ func TestSend(t *testing.T) {
 		client := NewTestClient(func(req *http.Request) *http.Response {
 			return &http.Response{
 				StatusCode: http.StatusBadRequest,
-				Body:       ioutil.NopCloser(bytes.NewBufferString(`some error`)),
+				Body:       io.NopCloser(bytes.NewBufferString(`some error`)),
 				Header:     make(http.Header),
 			}
 		})

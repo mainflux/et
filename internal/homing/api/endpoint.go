@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
-	"github.com/mainflux/et/internal/homing"
+	"github.com/mainflux/callhome/internal/homing"
 )
 
 func saveEndpoint(svc homing.Service) endpoint.Endpoint {

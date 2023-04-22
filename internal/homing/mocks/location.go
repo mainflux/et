@@ -2,7 +2,7 @@ package mocks
 
 import (
 	ip2location "github.com/ip2location/ip2location-go/v9"
-	"github.com/mainflux/et/internal/homing"
+	"github.com/mainflux/callhome/internal/homing"
 	mock "github.com/stretchr/testify/mock"
 )
 

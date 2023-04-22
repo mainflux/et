@@ -3,7 +3,7 @@ package mocks
 import (
 	"context"
 
-	"github.com/mainflux/et/internal/homing"
+	"github.com/mainflux/callhome/internal/homing"
 	"github.com/stretchr/testify/mock"
 )
 
