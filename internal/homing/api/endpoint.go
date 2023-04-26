@@ -9,7 +9,7 @@ import (
 
 func saveEndpoint(svc homing.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(telemetryReq)
+		req := request.(saveTelemetryReq)
 		if err := req.validate(); err != nil {
 			return nil, err
 		}
@@ -23,7 +23,7 @@ func saveEndpoint(svc homing.Service) endpoint.Endpoint {
 	}
 }
 
-func getAllEndpoint(svc homing.Service) endpoint.Endpoint {
+func retrieveEndpoint(svc homing.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(listTelemetryReq)
 		if err := req.validate(); err != nil {
@@ -33,7 +33,7 @@ func getAllEndpoint(svc homing.Service) endpoint.Endpoint {
 			Offset: req.offset,
 			Limit:  req.limit,
 		}
-		tm, err := svc.GetAll(ctx, req.repo, pm)
+		tm, err := svc.Retrieve(ctx, req.repo, pm)
 		if err != nil {
 			return nil, err
 		}

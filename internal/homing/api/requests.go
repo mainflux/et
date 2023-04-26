@@ -16,11 +16,11 @@ var (
 
 const maxLimitSize = 100
 
-type telemetryReq struct {
+type saveTelemetryReq struct {
 	homing.Telemetry
 }
 
-func (req telemetryReq) validate() error {
+func (req saveTelemetryReq) validate() error {
 	if req.Service == "" {
 		return errors.ErrMalformedEntity
 	}

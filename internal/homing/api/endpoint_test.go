@@ -15,9 +15,9 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestEndpointsGetAll(t *testing.T) {
+func TestEndpointsRetrieve(t *testing.T) {
 	svc := mocks.NewService(t)
-	svc.On("GetAll", mock.Anything, homing.SheetsRepo, mock.AnythingOfType("string"), homing.PageMetadata{Limit: 10}).Return(homing.TelemetryPage{}, nil)
+	svc.On("Retrieve", mock.Anything, homing.SheetsRepo, mock.AnythingOfType("string"), homing.PageMetadata{Limit: 10}).Return(homing.TelemetryPage{}, nil)
 	h := MakeHandler(svc, opentracing.NoopTracer{}, logger.NewMock())
 	server := httptest.NewServer(h)
 	client := server.Client()

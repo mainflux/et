@@ -40,7 +40,7 @@ type TelemetryRepo interface {
 	Save(ctx context.Context, t Telemetry) error
 
 	// Update updates Telemetry event.
-	UpdateTelemetry(ctx context.Context, u Telemetry) error
+	Update(ctx context.Context, u Telemetry) error
 
 	// RetrieveByIP retrieves telemetry by its unique identifier (i.e. ip address).
 	RetrieveByIP(ctx context.Context, email string) (Telemetry, error)

@@ -17,13 +17,13 @@ services:
     volumes:
       - timescaledb-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: ${MF_TIMESCALE_PASSWORD}
-      POSTGRES_USER: ${MF_TIMESCALE_USER}
-      POSTGRES_DB: ${MF_TIMESCALE_DB_NAME}
+      POSTGRES_PASSWORD: ${MF_CALLHOME_TIMESCALE_PASSWORD}
+      POSTGRES_USER: ${MF_CALLHOME_TIMESCALE_USER}
+      POSTGRES_DB: ${MF_CALLHOME_TIMESCALE_DB_NAME}
     networks:
       - et-base-net
   et-server:
-    image: mainflux/callhome:${ET_RELEASE_TAG}
+    image: mainflux/callhome:${MF_CALLHOME_RELEASE_TAG}
     container_name: callhome-server
     depends_on:
       - timescaledb

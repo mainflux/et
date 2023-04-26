@@ -109,7 +109,7 @@ func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 }
 
 // UpdateTelemetry update record to repo.
-func (r repo) UpdateTelemetry(ctx context.Context, t homing.Telemetry) error {
+func (r repo) Update(ctx context.Context, t homing.Telemetry) error {
 	rrow, err := t.ToRow()
 	if err != nil {
 		return err

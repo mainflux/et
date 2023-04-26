@@ -22,18 +22,18 @@ import (
 
 const (
 	svcName        = "callhome"
-	envPrefix      = "MF_HOMING_"
-	envPrefixHttp  = "MF_HOMING_"
+	envPrefix      = "MF_CALLHOME_"
+	envPrefixHttp  = "MF_CALLHOME_"
 	defSvcHttpPort = "8855"
 )
 
 type config struct {
-	LogLevel       string `env:"MF_CALLHOME_LOG_LEVEL" envDefault:"info"`
-	JaegerURL      string `env:"MF_JAEGER_URL"       envDefault:"localhost:6831"`
-	GCPCredFile    string `env:"MF_GCP_CRED"`
-	SpreadsheetId  string `env:"MF_SPREADSHEET_ID"`
-	SheetId        int    `env:"MF_SHEET_ID"         envDefault:"0"`
-	IPDatabaseFile string `env:"MF_IP_DB"`
+	LogLevel       string `env:"MF_CALLHOME_LOG_LEVEL"       envDefault:"info"`
+	JaegerURL      string `env:"MF_CALLHOME_JAEGER_URL"      envDefault:"localhost:6831"`
+	GCPCredFile    string `env:"MF_CALLHOME_GCP_CRED"`
+	SpreadsheetId  string `env:"MF_CALLHOME_SPREADSHEET_ID"`
+	SheetId        int    `env:"MF_CALLHOME_SHEET_ID"        envDefault:"0"`
+	IPDatabaseFile string `env:"MF_CALLHOME_IP_DB"`
 }
 
 func main() {

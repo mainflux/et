@@ -26,13 +26,13 @@ func MetricsMiddleware(svc homing.Service, counter metrics.Counter, latency metr
 }
 
 // GetAll add metrics middleware to get all service.
-func (mm *metricsMiddleware) GetAll(ctx context.Context, repo string, pm homing.PageMetadata) (homing.TelemetryPage, error) {
+func (mm *metricsMiddleware) Retrieve(ctx context.Context, repo string, pm homing.PageMetadata) (homing.TelemetryPage, error) {
 	defer func(begin time.Time) {
 		mm.counter.With("method", "get all").Add(1)
 		mm.latency.With("method", "get all").Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	return mm.svc.GetAll(ctx, repo, pm)
+	return mm.svc.Retrieve(ctx, repo, pm)
 }
 
 // Save adds metrics middleware to save service.

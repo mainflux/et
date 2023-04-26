@@ -35,7 +35,7 @@ func (mr *mockRepo) Save(ctx context.Context, t homing.Telemetry) error {
 	return r0
 }
 
-func (mr *mockRepo) UpdateTelemetry(ctx context.Context, u homing.Telemetry) error {
+func (mr *mockRepo) Update(ctx context.Context, u homing.Telemetry) error {
 	ret := mr.Called(ctx, u)
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, homing.Telemetry) error); ok {

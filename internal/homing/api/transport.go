@@ -46,7 +46,7 @@ func MakeHandler(svc homing.Service, tracer opentracing.Tracer, logger logger.Lo
 	))
 
 	mux.Get("/telemetry/:repo", kithttp.NewServer(
-		kitot.TraceServer(tracer, "get all")(getAllEndpoint(svc)),
+		kitot.TraceServer(tracer, "get all")(retrieveEndpoint(svc)),
 		decodeGetAll,
 		encodeResponse,
 		opts...,
@@ -139,7 +139,7 @@ func decodeSaveTelemetryReq(_ context.Context, r *http.Request) (interface{}, er
 		return nil, errors.ErrUnsupportedContentType
 	}
 
-	var telemetry telemetryReq
+	var telemetry saveTelemetryReq
 	if err := json.NewDecoder(r.Body).Decode(&telemetry); err != nil {
 		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
 	}

@@ -24,7 +24,7 @@ type Service interface {
 	// Save saves the homing telemetry data and its location information.
 	Save(ctx context.Context, t Telemetry) error
 	// GetAll retrieves homing telemetry data from the specified repository.
-	GetAll(ctx context.Context, repo string, pm PageMetadata) (TelemetryPage, error)
+	Retrieve(ctx context.Context, repo string, pm PageMetadata) (TelemetryPage, error)
 }
 
 var _ Service = (*telemetryService)(nil)
@@ -45,7 +45,7 @@ func New(timescaleRepo, repo TelemetryRepo, locSvc LocationService) Service {
 }
 
 // GetAll retrieves homing telemetry data from the specified repository.
-func (ts *telemetryService) GetAll(ctx context.Context, repo string, pm PageMetadata) (TelemetryPage, error) {
+func (ts *telemetryService) Retrieve(ctx context.Context, repo string, pm PageMetadata) (TelemetryPage, error) {
 	switch repo {
 	case SheetsRepo:
 		return ts.repo.RetrieveAll(ctx, pm)
@@ -85,5 +85,5 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	if !slices.Contains(t.Services, t.Service) {
 		t.Services = append(t.Services, t.Service)
 	}
-	return ts.repo.UpdateTelemetry(ctx, t)
+	return ts.repo.Update(ctx, t)
 }

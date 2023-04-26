@@ -13,7 +13,7 @@ type Service struct {
 	mock.Mock
 }
 
-func (s *Service) GetAll(ctx context.Context, repo string, pm homing.PageMetadata) (homing.TelemetryPage, error) {
+func (s *Service) Retrieve(ctx context.Context, repo string, pm homing.PageMetadata) (homing.TelemetryPage, error) {
 	ret := s.Called(ctx, repo, pm)
 	var r0 homing.TelemetryPage
 	var r1 error

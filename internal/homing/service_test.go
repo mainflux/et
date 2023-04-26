@@ -26,7 +26,7 @@ func TestGetAll(t *testing.T) {
 		experr := fmt.Errorf("failed to identify")
 		authMock.On("Identify", context.Background(), &mainflux.Token{}, mock.Anything).Return(&mainflux.UserIdentity{}, experr)
 
-		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
+		_, err := svc.Retrieve(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
 		assert.NotNil(t, err)
 		assert.Equal(t, experr, err)
 	})
@@ -38,7 +38,7 @@ func TestGetAll(t *testing.T) {
 		experr := fmt.Errorf("failed authentication")
 		authMock.On("Identify", context.Background(), &mainflux.Token{}, mock.Anything).Return(&mainflux.UserIdentity{}, nil)
 		authMock.On("Authorize", context.Background(), &mainflux.AuthorizeReq{Obj: "users", Act: "member"}, mock.Anything).Return(&mainflux.AuthorizeRes{Authorized: false}, experr)
-		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
+		_, err := svc.Retrieve(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
 		assert.NotNil(t, err)
 
 	})
@@ -50,7 +50,7 @@ func TestGetAll(t *testing.T) {
 		sheetRepo.On("RetrieveAll", context.Background(), homing.PageMetadata{}).Return(homing.TelemetryPage{}, repository.ErrSaveEvent)
 		authMock.On("Identify", context.Background(), &mainflux.Token{}, mock.Anything).Return(&mainflux.UserIdentity{}, nil)
 		authMock.On("Authorize", context.Background(), &mainflux.AuthorizeReq{Obj: "users", Act: "member"}, mock.Anything).Return(&mainflux.AuthorizeRes{Authorized: true}, nil)
-		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
+		_, err := svc.Retrieve(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
 		assert.NotNil(t, err)
 		assert.Equal(t, repository.ErrSaveEvent, err)
 	})
@@ -62,7 +62,7 @@ func TestGetAll(t *testing.T) {
 		sheetRepo.On("RetrieveAll", context.Background(), homing.PageMetadata{}).Return(homing.TelemetryPage{}, nil)
 		authMock.On("Identify", context.Background(), &mainflux.Token{}, mock.Anything).Return(&mainflux.UserIdentity{}, nil)
 		authMock.On("Authorize", context.Background(), &mainflux.AuthorizeReq{Obj: "users", Act: "member"}, mock.Anything).Return(&mainflux.AuthorizeRes{Authorized: true}, nil)
-		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
+		_, err := svc.Retrieve(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
 		assert.Nil(t, err)
 	})
 }

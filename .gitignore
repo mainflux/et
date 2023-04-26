@@ -24,8 +24,6 @@ creds.json
 
 .env
 
-*.BIN
-
 /build
 
 *.cov
