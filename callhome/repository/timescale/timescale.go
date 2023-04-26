@@ -6,25 +6,25 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
-	"github.com/mainflux/callhome/internal/homing"
-	"github.com/mainflux/callhome/internal/homing/repository"
+	"github.com/mainflux/callhome/callhome"
+	"github.com/mainflux/callhome/callhome/repository"
 	"github.com/mainflux/mainflux/readers"
 	"github.com/pkg/errors"
 )
 
-var _ homing.TelemetryRepo = (*repo)(nil)
+var _ callhome.TelemetryRepo = (*repo)(nil)
 
 type repo struct {
 	db *sqlx.DB
 }
 
 // New returns new TimescaleSQL writer.
-func New(db *sqlx.DB) homing.TelemetryRepo {
+func New(db *sqlx.DB) callhome.TelemetryRepo {
 	return &repo{db: db}
 }
 
 // RetrieveAll gets all records from repo.
-func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.TelemetryPage, error) {
+func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
 	q := `SELECT * FROM telemetry LIMIT :limit OFFSET :offset;`
 
 	params := map[string]interface{}{
@@ -34,16 +34,16 @@ func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.T
 
 	rows, err := r.db.NamedQuery(q, params)
 	if err != nil {
-		return homing.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
+		return callhome.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
 	}
 	defer rows.Close()
 
-	var results homing.TelemetryPage
+	var results callhome.TelemetryPage
 
 	for rows.Next() {
-		var result homing.Telemetry
+		var result callhome.Telemetry
 		if err := rows.StructScan(&result); err != nil {
-			return homing.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
+			return callhome.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
 		}
 
 		results.Telemetry = append(results.Telemetry, result)
@@ -52,7 +52,7 @@ func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.T
 	q = `SELECT COUNT(*) FROM telemetry;`
 	rows, err = r.db.NamedQuery(q, params)
 	if err != nil {
-		return homing.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
+		return callhome.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
 	}
 	defer rows.Close()
 
@@ -68,12 +68,12 @@ func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.T
 }
 
 // RetrieveByIP get record given an ip address.
-func (repo) RetrieveByIP(ctx context.Context, email string) (homing.Telemetry, error) {
-	return homing.Telemetry{}, repository.ErrRecordNotFound
+func (repo) RetrieveByIP(ctx context.Context, email string) (callhome.Telemetry, error) {
+	return callhome.Telemetry{}, repository.ErrRecordNotFound
 }
 
 // Save creates record in repo.
-func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
+func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 	q := `INSERT INTO telemetry (id, ip_address, longitude, latitude,
 		mf_version, service, last_seen, country, city)
 		VALUES (:id, :ip_address, :longitude, :latitude,
@@ -109,6 +109,6 @@ func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 }
 
 // UpdateTelemetry updates record to repo.
-func (repo) Update(ctx context.Context, u homing.Telemetry) error {
+func (repo) Update(ctx context.Context, u callhome.Telemetry) error {
 	return nil
 }

@@ -2,11 +2,11 @@ package mocks
 
 import (
 	ip2location "github.com/ip2location/ip2location-go/v9"
-	"github.com/mainflux/callhome/internal/homing"
+	"github.com/mainflux/callhome/callhome"
 	mock "github.com/stretchr/testify/mock"
 )
 
-var _ homing.LocationService = (*LocationService)(nil)
+var _ callhome.LocationService = (*LocationService)(nil)
 
 type LocationService struct {
 	mock.Mock

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/mainflux/callhome/internal/homing"
+	"github.com/mainflux/callhome/callhome"
 	"github.com/mainflux/mainflux/pkg/errors"
 )
 
@@ -17,7 +17,7 @@ var (
 const maxLimitSize = 100
 
 type saveTelemetryReq struct {
-	homing.Telemetry
+	callhome.Telemetry
 }
 
 func (req saveTelemetryReq) validate() error {

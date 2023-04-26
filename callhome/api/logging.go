@@ -5,24 +5,24 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mainflux/callhome/internal/homing"
+	"github.com/mainflux/callhome/callhome"
 	"github.com/mainflux/mainflux/logger"
 )
 
-var _ homing.Service = (*loggingMiddleware)(nil)
+var _ callhome.Service = (*loggingMiddleware)(nil)
 
 type loggingMiddleware struct {
 	hommingLogger logger.Logger
-	svc           homing.Service
+	svc           callhome.Service
 }
 
 // LoggingMiddleware is a middleware that adds logging facilities to the core homing service.
-func LoggingMiddleware(svc homing.Service, logger logger.Logger) homing.Service {
+func LoggingMiddleware(svc callhome.Service, logger logger.Logger) callhome.Service {
 	return &loggingMiddleware{logger, svc}
 }
 
 // GetAll adds logging middleware to get all service.
-func (lm *loggingMiddleware) Retrieve(ctx context.Context, repo string, pm homing.PageMetadata) (telemetryPage homing.TelemetryPage, err error) {
+func (lm *loggingMiddleware) Retrieve(ctx context.Context, repo string, pm callhome.PageMetadata) (telemetryPage callhome.TelemetryPage, err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method get all telemetry with took %s to complete", time.Since(begin))
 		if err != nil {
@@ -37,7 +37,7 @@ func (lm *loggingMiddleware) Retrieve(ctx context.Context, repo string, pm homin
 }
 
 // Save adds logging middleware to save service.
-func (lm *loggingMiddleware) Save(ctx context.Context, t homing.Telemetry) (err error) {
+func (lm *loggingMiddleware) Save(ctx context.Context, t callhome.Telemetry) (err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method save telemetry event took %s to complete", time.Since(begin))
 		if err != nil {

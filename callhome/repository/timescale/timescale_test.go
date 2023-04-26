@@ -11,12 +11,12 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
-	"github.com/mainflux/callhome/internal/homing"
+	"github.com/mainflux/callhome/callhome"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSave(t *testing.T) {
-	mockTelemetry := homing.Telemetry{
+	mockTelemetry := callhome.Telemetry{
 		ID:        uuid.NewString(),
 		Services:  []string{},
 		Service:   "mock service",
@@ -98,7 +98,7 @@ func TestSave(t *testing.T) {
 }
 
 func TestRetrieveAll(t *testing.T) {
-	mTel := homing.Telemetry{
+	mTel := callhome.Telemetry{
 		ID:        uuid.NewString(),
 		Service:   "mock service",
 		Longitude: 1.2,
@@ -120,7 +120,7 @@ func TestRetrieveAll(t *testing.T) {
 
 		mock.ExpectQuery("SELECT(.*)").WillReturnError(fmt.Errorf("any error"))
 
-		_, err = repo.RetrieveAll(context.Background(), homing.PageMetadata{Limit: 10, Offset: 0})
+		_, err = repo.RetrieveAll(context.Background(), callhome.PageMetadata{Limit: 10, Offset: 0})
 		assert.NotNil(t, err)
 	})
 	t.Run("successful", func(t *testing.T) {
@@ -143,7 +143,7 @@ func TestRetrieveAll(t *testing.T) {
 		mock.ExpectQuery("SELECT(.*)").WillReturnRows(rows)
 		mock.ExpectQuery("SELECT COUNT(.*) FROM telemetry").WillReturnRows(rows2)
 
-		tp, err := repo.RetrieveAll(context.Background(), homing.PageMetadata{Limit: 10, Offset: 0})
+		tp, err := repo.RetrieveAll(context.Background(), callhome.PageMetadata{Limit: 10, Offset: 0})
 		assert.Nil(t, err)
 		assert.Equal(t, mTel, tp.Telemetry[0])
 	})

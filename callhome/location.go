@@ -1,4 +1,4 @@
-package homing
+package callhome
 
 import "github.com/ip2location/ip2location-go/v9"
 

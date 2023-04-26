@@ -1,4 +1,4 @@
-package homing
+package callhome
 
 import (
 	"context"

@@ -4,14 +4,14 @@ import (
 	"context"
 	"os"
 
-	"github.com/mainflux/callhome/internal/homing"
-	"github.com/mainflux/callhome/internal/homing/repository"
+	"github.com/mainflux/callhome/callhome"
+	"github.com/mainflux/callhome/callhome/repository"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
 )
 
-var _ homing.TelemetryRepo = (*repo)(nil)
+var _ callhome.TelemetryRepo = (*repo)(nil)
 
 const (
 	sheetRange = "Sheet1!A:I"
@@ -25,7 +25,7 @@ type repo struct {
 }
 
 // New Creates a new telemetry repo using google sheets.
-func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, error) {
+func New(credFile, spreadsheetId string, sheetID int) (callhome.TelemetryRepo, error) {
 	credBytes, err := os.ReadFile(credFile)
 	if err != nil {
 		return nil, err
@@ -59,15 +59,15 @@ func New(credFile, spreadsheetId string, sheetID int) (homing.TelemetryRepo, err
 }
 
 // RetrieveAll gets all records from repo.
-func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.TelemetryPage, error) {
+func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
-		return homing.TelemetryPage{}, err
+		return callhome.TelemetryPage{}, err
 	}
-	var telPage homing.TelemetryPage
+	var telPage callhome.TelemetryPage
 	telPage.PageMetadata = pm
 	for _, row := range resp.Values {
-		var tel homing.Telemetry
+		var tel callhome.Telemetry
 		if err := tel.FromRow(row); err != nil {
 			return telPage, err
 		}
@@ -77,23 +77,23 @@ func (r repo) RetrieveAll(ctx context.Context, pm homing.PageMetadata) (homing.T
 }
 
 // RetrieveByIP get record by ip address.
-func (r *repo) RetrieveByIP(ctx context.Context, ip string) (homing.Telemetry, error) {
+func (r *repo) RetrieveByIP(ctx context.Context, ip string) (callhome.Telemetry, error) {
 	resp, err := r.sheetsSvc.Spreadsheets.Values.Get(r.spreadsheetId, sheetRange).Do()
 	if err != nil {
-		return homing.Telemetry{}, err
+		return callhome.Telemetry{}, err
 	}
 	for _, row := range resp.Values {
 		if len(row) >= 2 && row[1] == ip {
-			var tel homing.Telemetry
+			var tel callhome.Telemetry
 			err = tel.FromRow(row)
 			return tel, err
 		}
 	}
-	return homing.Telemetry{}, repository.ErrRecordNotFound
+	return callhome.Telemetry{}, repository.ErrRecordNotFound
 }
 
 // Save adds record to repo.
-func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
+func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 	rrow, err := t.ToRow()
 	if err != nil {
 		return err
@@ -109,7 +109,7 @@ func (r repo) Save(ctx context.Context, t homing.Telemetry) error {
 }
 
 // UpdateTelemetry update record to repo.
-func (r repo) Update(ctx context.Context, t homing.Telemetry) error {
+func (r repo) Update(ctx context.Context, t callhome.Telemetry) error {
 	rrow, err := t.ToRow()
 	if err != nil {
 		return err

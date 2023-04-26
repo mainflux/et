@@ -1,4 +1,4 @@
-package homing
+package callhome
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	goerrors "errors"
 
 	"github.com/google/uuid"
-	"github.com/mainflux/callhome/internal/homing/repository"
+	"github.com/mainflux/callhome/callhome/repository"
 	"golang.org/x/exp/slices"
 )
 

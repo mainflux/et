@@ -9,8 +9,8 @@ import (
 	kitot "github.com/go-kit/kit/tracing/opentracing"
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/go-zoo/bone"
-	"github.com/mainflux/callhome/internal/homing"
-	"github.com/mainflux/callhome/internal/homing/repository"
+	"github.com/mainflux/callhome/callhome"
+	"github.com/mainflux/callhome/callhome/repository"
 	"github.com/mainflux/mainflux"
 	"github.com/mainflux/mainflux/logger"
 	"github.com/mainflux/mainflux/pkg/errors"
@@ -31,7 +31,7 @@ const (
 )
 
 // MakeHandler returns a HTTP handler for API endpoints.
-func MakeHandler(svc homing.Service, tracer opentracing.Tracer, logger logger.Logger) http.Handler {
+func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.Logger) http.Handler {
 	opts := []kithttp.ServerOption{
 		kithttp.ServerErrorEncoder(LoggingErrorEncoder(logger, encodeError)),
 	}
@@ -122,7 +122,7 @@ func decodeGetAll(_ context.Context, r *http.Request) (interface{}, error) {
 
 	repo := bone.GetValue(r, "repo")
 	if repo == "" {
-		repo = homing.SheetsRepo
+		repo = callhome.SheetsRepo
 	}
 
 	req := listTelemetryReq{

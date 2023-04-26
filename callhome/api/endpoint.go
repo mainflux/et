@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
-	"github.com/mainflux/callhome/internal/homing"
+	"github.com/mainflux/callhome/callhome"
 )
 
-func saveEndpoint(svc homing.Service) endpoint.Endpoint {
+func saveEndpoint(svc callhome.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(saveTelemetryReq)
 		if err := req.validate(); err != nil {
@@ -23,13 +23,13 @@ func saveEndpoint(svc homing.Service) endpoint.Endpoint {
 	}
 }
 
-func retrieveEndpoint(svc homing.Service) endpoint.Endpoint {
+func retrieveEndpoint(svc callhome.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(listTelemetryReq)
 		if err := req.validate(); err != nil {
 			return nil, err
 		}
-		pm := homing.PageMetadata{
+		pm := callhome.PageMetadata{
 			Offset: req.offset,
 			Limit:  req.limit,
 		}

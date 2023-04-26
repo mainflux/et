@@ -7,13 +7,13 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/mainflux/callhome/callhome"
+	"github.com/mainflux/callhome/callhome/api"
+	"github.com/mainflux/callhome/callhome/repository/sheets"
+	"github.com/mainflux/callhome/callhome/repository/timescale"
 	"github.com/mainflux/callhome/internal"
 	jaegerClient "github.com/mainflux/callhome/internal/clients/jaeger"
 	"github.com/mainflux/callhome/internal/env"
-	"github.com/mainflux/callhome/internal/homing"
-	"github.com/mainflux/callhome/internal/homing/api"
-	"github.com/mainflux/callhome/internal/homing/repository/sheets"
-	"github.com/mainflux/callhome/internal/homing/repository/timescale"
 	"github.com/mainflux/callhome/internal/server"
 	httpserver "github.com/mainflux/callhome/internal/server/http"
 	mflog "github.com/mainflux/mainflux/logger"
@@ -92,17 +92,17 @@ func main() {
 	}
 }
 
-func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int, timescaleDB *sqlx.DB) (homing.Service, error) {
+func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int, timescaleDB *sqlx.DB) (callhome.Service, error) {
 	repo, err := sheets.New(credFile, spreadsheetID, sheetID)
 	if err != nil {
 		return nil, err
 	}
 	timescaleRepo := timescale.New(timescaleDB)
-	locSvc, err := homing.NewLocationService(ipDB)
+	locSvc, err := callhome.NewLocationService(ipDB)
 	if err != nil {
 		return nil, err
 	}
-	svc := homing.New(timescaleRepo, repo, locSvc)
+	svc := callhome.New(timescaleRepo, repo, locSvc)
 	counter, latency := internal.MakeMetrics(svcName, "api")
 	svc = api.MetricsMiddleware(svc, counter, latency)
 	svc = api.LoggingMiddleware(svc, logger)

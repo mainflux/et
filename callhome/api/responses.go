@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/mainflux/callhome/internal/homing"
+	"github.com/mainflux/callhome/callhome"
 )
 
 type saveTelemetryRes struct {
@@ -38,7 +38,7 @@ type pageRes struct {
 
 type telemetryPageRes struct {
 	pageRes
-	Telemetry []homing.Telemetry `json:"telemetry"`
+	Telemetry []callhome.Telemetry `json:"telemetry"`
 }
 
 func (res telemetryPageRes) Code() int {
