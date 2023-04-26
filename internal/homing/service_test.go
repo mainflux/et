@@ -22,11 +22,11 @@ func TestGetAll(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		authMock := mocks.NewAuthMockRepo(t)
-		svc := homing.New(timescaleRepo, sheetRepo, nil, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, nil)
 		experr := fmt.Errorf("failed to identify")
 		authMock.On("Identify", context.Background(), &mainflux.Token{}, mock.Anything).Return(&mainflux.UserIdentity{}, experr)
 
-		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, "", homing.PageMetadata{})
+		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
 		assert.NotNil(t, err)
 		assert.Equal(t, experr, err)
 	})
@@ -34,11 +34,11 @@ func TestGetAll(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		authMock := mocks.NewAuthMockRepo(t)
-		svc := homing.New(timescaleRepo, sheetRepo, nil, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, nil)
 		experr := fmt.Errorf("failed authentication")
 		authMock.On("Identify", context.Background(), &mainflux.Token{}, mock.Anything).Return(&mainflux.UserIdentity{}, nil)
 		authMock.On("Authorize", context.Background(), &mainflux.AuthorizeReq{Obj: "users", Act: "member"}, mock.Anything).Return(&mainflux.AuthorizeRes{Authorized: false}, experr)
-		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, "", homing.PageMetadata{})
+		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
 		assert.NotNil(t, err)
 
 	})
@@ -46,11 +46,11 @@ func TestGetAll(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		authMock := mocks.NewAuthMockRepo(t)
-		svc := homing.New(timescaleRepo, sheetRepo, nil, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, nil)
 		sheetRepo.On("RetrieveAll", context.Background(), homing.PageMetadata{}).Return(homing.TelemetryPage{}, repository.ErrSaveEvent)
 		authMock.On("Identify", context.Background(), &mainflux.Token{}, mock.Anything).Return(&mainflux.UserIdentity{}, nil)
 		authMock.On("Authorize", context.Background(), &mainflux.AuthorizeReq{Obj: "users", Act: "member"}, mock.Anything).Return(&mainflux.AuthorizeRes{Authorized: true}, nil)
-		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, "", homing.PageMetadata{})
+		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
 		assert.NotNil(t, err)
 		assert.Equal(t, repository.ErrSaveEvent, err)
 	})
@@ -58,11 +58,11 @@ func TestGetAll(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		authMock := mocks.NewAuthMockRepo(t)
-		svc := homing.New(timescaleRepo, sheetRepo, nil, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, nil)
 		sheetRepo.On("RetrieveAll", context.Background(), homing.PageMetadata{}).Return(homing.TelemetryPage{}, nil)
 		authMock.On("Identify", context.Background(), &mainflux.Token{}, mock.Anything).Return(&mainflux.UserIdentity{}, nil)
 		authMock.On("Authorize", context.Background(), &mainflux.AuthorizeReq{Obj: "users", Act: "member"}, mock.Anything).Return(&mainflux.AuthorizeRes{Authorized: true}, nil)
-		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, "", homing.PageMetadata{})
+		_, err := svc.GetAll(context.Background(), homing.SheetsRepo, homing.PageMetadata{})
 		assert.Nil(t, err)
 	})
 }
@@ -71,17 +71,15 @@ func TestSave(t *testing.T) {
 	t.Run("error obtaining location", func(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
-		authMock := mocks.NewAuthMockRepo(t)
 		locMock := mocks.NewLocationService(t)
 		locMock.On("GetLocation", "").Return(ip2location.IP2Locationrecord{}, fmt.Errorf("error getting loc"))
-		svc := homing.New(timescaleRepo, sheetRepo, locMock, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, locMock)
 		err := svc.Save(context.Background(), homing.Telemetry{})
 		assert.NotNil(t, err)
 	})
 	t.Run("error saving to timescale", func(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
-		authMock := mocks.NewAuthMockRepo(t)
 		locMock := mocks.NewLocationService(t)
 		locMock.On("GetLocation", "").Return(ip2location.IP2Locationrecord{
 			Latitude:     1.2,
@@ -90,7 +88,7 @@ func TestSave(t *testing.T) {
 			City:         "someCity",
 		}, nil)
 		timescaleRepo.On("Save", context.Background(), mock.AnythingOfType("homing.Telemetry")).Return(repository.ErrSaveEvent)
-		svc := homing.New(timescaleRepo, sheetRepo, locMock, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, locMock)
 		err := svc.Save(context.Background(), homing.Telemetry{})
 		assert.NotNil(t, err)
 		assert.Equal(t, repository.ErrSaveEvent, err)
@@ -98,7 +96,6 @@ func TestSave(t *testing.T) {
 	t.Run("error retrieve by ip", func(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
-		authMock := mocks.NewAuthMockRepo(t)
 		locMock := mocks.NewLocationService(t)
 		locMock.On("GetLocation", "").Return(ip2location.IP2Locationrecord{
 			Latitude:     1.2,
@@ -108,14 +105,13 @@ func TestSave(t *testing.T) {
 		}, nil)
 		timescaleRepo.On("Save", context.Background(), mock.AnythingOfType("homing.Telemetry")).Return(nil)
 		sheetRepo.On("RetrieveByIP", context.Background(), "").Return(homing.Telemetry{}, fmt.Errorf("error getting record"))
-		svc := homing.New(timescaleRepo, sheetRepo, locMock, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, locMock)
 		err := svc.Save(context.Background(), homing.Telemetry{})
 		assert.NotNil(t, err)
 	})
 	t.Run("successful save", func(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
-		authMock := mocks.NewAuthMockRepo(t)
 		locMock := mocks.NewLocationService(t)
 		locMock.On("GetLocation", "").Return(ip2location.IP2Locationrecord{
 			Latitude:     1.2,
@@ -126,14 +122,13 @@ func TestSave(t *testing.T) {
 		timescaleRepo.On("Save", context.Background(), mock.AnythingOfType("homing.Telemetry")).Return(nil)
 		sheetRepo.On("RetrieveByIP", context.Background(), "").Return(homing.Telemetry{}, repository.ErrRecordNotFound)
 		sheetRepo.On("Save", context.Background(), mock.AnythingOfType("homing.Telemetry")).Return(nil)
-		svc := homing.New(timescaleRepo, sheetRepo, locMock, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, locMock)
 		err := svc.Save(context.Background(), homing.Telemetry{})
 		assert.Nil(t, err)
 	})
 	t.Run("successful update", func(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
-		authMock := mocks.NewAuthMockRepo(t)
 		locMock := mocks.NewLocationService(t)
 		locMock.On("GetLocation", "").Return(ip2location.IP2Locationrecord{
 			Latitude:     1.2,
@@ -145,7 +140,7 @@ func TestSave(t *testing.T) {
 		sheetRepo.On("RetrieveByIP", context.Background(), "").Return(homing.Telemetry{ID: uuid.NewString()}, nil)
 		sheetRepo.On("Save", context.Background(), mock.AnythingOfType("homing.Telemetry")).Return(nil)
 		sheetRepo.On("UpdateTelemetry", context.Background(), mock.AnythingOfType("homing.Telemetry")).Return(nil)
-		svc := homing.New(timescaleRepo, sheetRepo, locMock, authMock)
+		svc := homing.New(timescaleRepo, sheetRepo, locMock)
 		err := svc.Save(context.Background(), homing.Telemetry{})
 		assert.Nil(t, err)
 	})

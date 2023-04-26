@@ -3,8 +3,6 @@ version: "3.8"
 networks:
   et-base-net:
     driver: bridge
-  docker_mainflux-base-net:
-    external: true
 
 volumes:
   timescaledb-data:
@@ -36,7 +34,6 @@ services:
       - ${ET_PORT}:${ET_PORT}
     networks:
       - et-base-net
-      - docker_mainflux-base-net
     volumes:
       - ./creds.json:/creds.json
       - ./IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN

@@ -8,7 +8,6 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/mainflux/callhome/internal"
-	authClient "github.com/mainflux/callhome/internal/clients/grpc/auth"
 	jaegerClient "github.com/mainflux/callhome/internal/clients/jaeger"
 	"github.com/mainflux/callhome/internal/env"
 	"github.com/mainflux/callhome/internal/homing"
@@ -17,7 +16,6 @@ import (
 	"github.com/mainflux/callhome/internal/homing/repository/timescale"
 	"github.com/mainflux/callhome/internal/server"
 	httpserver "github.com/mainflux/callhome/internal/server/http"
-	"github.com/mainflux/mainflux"
 	mflog "github.com/mainflux/mainflux/logger"
 	"golang.org/x/sync/errgroup"
 )
@@ -68,16 +66,7 @@ func main() {
 	}
 	defer closer.Close()
 
-	// Setup new auth grpc client
-	auth, authHandler, err := authClient.Setup(envPrefix, cfg.JaegerURL)
-	if err != nil {
-		logger.Error(err.Error())
-		return
-	}
-	defer authHandler.Close()
-	logger.Info("Successfully connected to auth grpc server " + authHandler.Secure())
-
-	svc, err := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId, auth, timescaleDB)
+	svc, err := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId, timescaleDB)
 	if err != nil {
 		logger.Error(fmt.Sprintf("failed to initialize service: %s", err.Error()))
 		return
@@ -103,7 +92,7 @@ func main() {
 	}
 }
 
-func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int, auth mainflux.AuthServiceClient, timescaleDB *sqlx.DB) (homing.Service, error) {
+func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int, timescaleDB *sqlx.DB) (homing.Service, error) {
 	repo, err := sheets.New(credFile, spreadsheetID, sheetID)
 	if err != nil {
 		return nil, err
@@ -113,7 +102,7 @@ func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheet
 	if err != nil {
 		return nil, err
 	}
-	svc := homing.New(timescaleRepo, repo, locSvc, auth)
+	svc := homing.New(timescaleRepo, repo, locSvc)
 	counter, latency := internal.MakeMetrics(svcName, "api")
 	svc = api.MetricsMiddleware(svc, counter, latency)
 	svc = api.LoggingMiddleware(svc, logger)

@@ -13,21 +13,21 @@ type Service struct {
 	mock.Mock
 }
 
-func (s *Service) GetAll(ctx context.Context, repo string, token string, pm homing.PageMetadata) (homing.TelemetryPage, error) {
-	ret := s.Called(ctx, repo, token, pm)
+func (s *Service) GetAll(ctx context.Context, repo string, pm homing.PageMetadata) (homing.TelemetryPage, error) {
+	ret := s.Called(ctx, repo, pm)
 	var r0 homing.TelemetryPage
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, homing.PageMetadata) (homing.TelemetryPage, error)); ok {
-		return rf(ctx, repo, token, pm)
+	if rf, ok := ret.Get(0).(func(context.Context, string, homing.PageMetadata) (homing.TelemetryPage, error)); ok {
+		return rf(ctx, repo, pm)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, homing.PageMetadata) homing.TelemetryPage); ok {
-		r0 = rf(ctx, repo, token, pm)
+	if rf, ok := ret.Get(0).(func(context.Context, string, homing.PageMetadata) homing.TelemetryPage); ok {
+		r0 = rf(ctx, repo, pm)
 	} else {
 		r0 = ret.Get(0).(homing.TelemetryPage)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, string, homing.PageMetadata) error); ok {
-		r1 = rf(ctx, repo, token, pm)
+	if rf, ok := ret.Get(1).(func(context.Context, string, homing.PageMetadata) error); ok {
+		r1 = rf(ctx, repo, pm)
 	} else {
 		r1 = ret.Error(1)
 	}

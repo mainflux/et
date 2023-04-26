@@ -33,7 +33,7 @@ func getAllEndpoint(svc homing.Service) endpoint.Endpoint {
 			Offset: req.offset,
 			Limit:  req.limit,
 		}
-		tm, err := svc.GetAll(ctx, req.repo, req.token, pm)
+		tm, err := svc.GetAll(ctx, req.repo, pm)
 		if err != nil {
 			return nil, err
 		}

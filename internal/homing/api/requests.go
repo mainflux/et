@@ -36,7 +36,6 @@ func (req telemetryReq) validate() error {
 }
 
 type listTelemetryReq struct {
-	token     string
 	offset    uint64
 	limit     uint64
 	repo      string
@@ -44,10 +43,6 @@ type listTelemetryReq struct {
 }
 
 func (req listTelemetryReq) validate() error {
-	if req.token == "" {
-		return ErrBearerToken
-	}
-
 	if req.limit > maxLimitSize || req.limit < 1 {
 		return ErrLimitSize
 	}

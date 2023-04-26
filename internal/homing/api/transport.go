@@ -126,7 +126,6 @@ func decodeGetAll(_ context.Context, r *http.Request) (interface{}, error) {
 	}
 
 	req := listTelemetryReq{
-		token:     ExtractBearerToken(r),
 		offset:    o,
 		limit:     l,
 		IpAddress: ip,
