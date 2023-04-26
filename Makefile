@@ -1,5 +1,5 @@
 PROGRAM = callhome
-MF_DOCKER_IMAGE_NAME_PREFIX ?= callhome
+MF_DOCKER_IMAGE_NAME_PREFIX ?= mainflux
 SOURCES = $(wildcard *.go) cmd/main.go
 CGO_ENABLED ?= 0
 GOARCH ?= amd64
@@ -22,14 +22,6 @@ define make_docker
 		--build-arg TIME=$(TIME) \
 		--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(PROGRAM) \
 		-f docker/Dockerfile .
-endef
-
-define make_docker_dev
-	docker build \
-		--no-cache \
-		--build-arg SVC=$(PROGRAM) \
-		--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(PROGRAM) \
-		-f docker/Dockerfile.dev ./build
 endef
 
 $(PROGRAM): $(SOURCES)

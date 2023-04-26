@@ -23,7 +23,7 @@ services:
     networks:
       - et-base-net
   et-server:
-    image: sammyoina/et-test:0.01
+    image: mainflux/callhome:${ET_RELEASE_TAG}
     container_name: callhome-server
     depends_on:
       - timescaledb
