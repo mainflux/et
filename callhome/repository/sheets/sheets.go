@@ -2,7 +2,11 @@ package sheets
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/mainflux/callhome/callhome"
 	"github.com/mainflux/callhome/callhome/repository"
@@ -16,6 +20,13 @@ var _ callhome.TelemetryRepo = (*repo)(nil)
 const (
 	sheetRange = "Sheet1!A:I"
 	sheetsAuth = "https://www.googleapis.com/auth/spreadsheets"
+)
+
+var (
+	errFailedStringConversion error  = errors.New("failed to convert field to string")
+	errFailedFloatConversion  error  = errors.New("failed to convert field to float64")
+	errFailedParsingLastSeen  error  = errors.New("failed to parse last seen")
+	errInvalidRowLength       string = "invalid row length: expected 9, got %d"
 )
 
 type repo struct {
@@ -67,8 +78,8 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 	var telPage callhome.TelemetryPage
 	telPage.PageMetadata = pm
 	for _, row := range resp.Values {
-		var tel callhome.Telemetry
-		if err := tel.FromRow(row); err != nil {
+		tel, err := fromRow(row)
+		if err != nil {
 			return telPage, err
 		}
 		telPage.Telemetry = append(telPage.Telemetry, tel)
@@ -84,8 +95,7 @@ func (r *repo) RetrieveByIP(ctx context.Context, ip string) (callhome.Telemetry,
 	}
 	for _, row := range resp.Values {
 		if len(row) >= 2 && row[1] == ip {
-			var tel callhome.Telemetry
-			err = tel.FromRow(row)
+			tel, err := fromRow(row)
 			return tel, err
 		}
 	}
@@ -94,7 +104,7 @@ func (r *repo) RetrieveByIP(ctx context.Context, ip string) (callhome.Telemetry,
 
 // Save adds record to repo.
 func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
-	rrow, err := t.ToRow()
+	rrow, err := toRow(t)
 	if err != nil {
 		return err
 	}
@@ -108,9 +118,9 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 	return nil
 }
 
-// UpdateTelemetry update record to repo.
+// Update update record to repo.
 func (r repo) Update(ctx context.Context, t callhome.Telemetry) error {
-	rrow, err := t.ToRow()
+	rrow, err := toRow(t)
 	if err != nil {
 		return err
 	}
@@ -121,4 +131,69 @@ func (r repo) Update(ctx context.Context, t callhome.Telemetry) error {
 		return err
 	}
 	return nil
+}
+
+// ToRow converts telemetry event to google sheets row.
+func toRow(t callhome.Telemetry) ([]interface{}, error) {
+	lastSeen, err := t.LastSeen.MarshalText()
+	if err != nil {
+		return nil, err
+	}
+	return []interface{}{t.ID, t.IpAddress, t.Latitude, t.Longitude, strings.Join(t.Services, ","), t.Version, string(lastSeen), t.City, t.Country}, nil
+}
+
+// FromRow converts a Google Sheets row to a Telemetry struct.
+func fromRow(row []interface{}) (callhome.Telemetry, error) {
+	var t callhome.Telemetry
+	if len(row) != 9 {
+		return callhome.Telemetry{}, fmt.Errorf(errInvalidRowLength, len(row))
+	}
+	id, ok := row[0].(string)
+	if !ok {
+		return callhome.Telemetry{}, errFailedStringConversion
+	}
+	t.ID = id
+	ipAddress, ok := row[1].(string)
+	if !ok {
+		return callhome.Telemetry{}, errFailedStringConversion
+	}
+	t.IpAddress = ipAddress
+	lat, err := strconv.ParseFloat(row[2].(string), 64)
+	if err != nil {
+		return callhome.Telemetry{}, errors.Join(errFailedFloatConversion, err)
+	}
+	t.Latitude = lat
+	long, err := strconv.ParseFloat(row[3].(string), 64)
+	if err != nil {
+		return callhome.Telemetry{}, errors.Join(errFailedFloatConversion, err)
+	}
+	t.Longitude = long
+	services, ok := row[4].(string)
+	if !ok {
+		return callhome.Telemetry{}, errFailedStringConversion
+	}
+	t.Services = strings.Split(services, ",")
+	version, ok := row[5].(string)
+	if !ok {
+		return callhome.Telemetry{}, errFailedStringConversion
+	}
+	t.Version = version
+	lastSeen, ok := row[6].(string)
+	if !ok {
+		return callhome.Telemetry{}, errFailedStringConversion
+	}
+	if err = t.LastSeen.UnmarshalText([]byte(lastSeen)); err != nil {
+		return callhome.Telemetry{}, errors.Join(errFailedParsingLastSeen, err)
+	}
+	city, ok := row[7].(string)
+	if !ok {
+		return callhome.Telemetry{}, errFailedStringConversion
+	}
+	t.City = city
+	country, ok := row[8].(string)
+	if !ok {
+		return callhome.Telemetry{}, errFailedStringConversion
+	}
+	t.Country = country
+	return t, nil
 }

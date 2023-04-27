@@ -43,9 +43,9 @@ paths:
         - bearerAuth: []
       tags:
         - telemetry
-      summary: Get all telemetry events
-      description: Get all telemetry events
-      operationId: getAll
+      summary: Retrieve telemetry events
+      description: Retrieve telemetry events
+      operationId: retrieve
       responses:
         "200":
           description: successful operation
@@ -58,7 +58,7 @@ paths:
         "400":
           description: Invalid status value
 servers:
-  - url: https://localhost:8080
+  - url: https://localhost:8855
 components:
   parameters:
     Limit:

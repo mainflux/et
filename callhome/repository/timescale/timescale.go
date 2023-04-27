@@ -108,7 +108,7 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 
 }
 
-// UpdateTelemetry updates record to repo.
+// Update updates record to repo.
 func (repo) Update(ctx context.Context, u callhome.Telemetry) error {
 	return nil
 }

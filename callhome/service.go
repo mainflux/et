@@ -2,7 +2,7 @@ package callhome
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"reflect"
 
 	goerrors "errors"
@@ -19,11 +19,13 @@ const (
 	TimescaleRepo     = "timescale"
 )
 
+var errInvalidRepo error = errors.New("undefined repository")
+
 // Service Service to receive homing telemetry data, persist and retrieve it.
 type Service interface {
 	// Save saves the homing telemetry data and its location information.
 	Save(ctx context.Context, t Telemetry) error
-	// GetAll retrieves homing telemetry data from the specified repository.
+	// Retrieve retrieves homing telemetry data from the specified repository.
 	Retrieve(ctx context.Context, repo string, pm PageMetadata) (TelemetryPage, error)
 }
 
@@ -44,7 +46,7 @@ func New(timescaleRepo, repo TelemetryRepo, locSvc LocationService) Service {
 	}
 }
 
-// GetAll retrieves homing telemetry data from the specified repository.
+// Retrieve retrieves homing telemetry data from the specified repository.
 func (ts *telemetryService) Retrieve(ctx context.Context, repo string, pm PageMetadata) (TelemetryPage, error) {
 	switch repo {
 	case SheetsRepo:
@@ -52,7 +54,7 @@ func (ts *telemetryService) Retrieve(ctx context.Context, repo string, pm PageMe
 	case TimescaleRepo:
 		return ts.timescaleRepo.RetrieveAll(ctx, pm)
 	default:
-		return TelemetryPage{}, fmt.Errorf("undefined repository")
+		return TelemetryPage{}, errInvalidRepo
 	}
 }
 

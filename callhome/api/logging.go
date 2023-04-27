@@ -21,10 +21,10 @@ func LoggingMiddleware(svc callhome.Service, logger logger.Logger) callhome.Serv
 	return &loggingMiddleware{logger, svc}
 }
 
-// GetAll adds logging middleware to get all service.
+// Retrieve adds logging middleware to retrieve service.
 func (lm *loggingMiddleware) Retrieve(ctx context.Context, repo string, pm callhome.PageMetadata) (telemetryPage callhome.TelemetryPage, err error) {
 	defer func(begin time.Time) {
-		message := fmt.Sprintf("Method get all telemetry with took %s to complete", time.Since(begin))
+		message := fmt.Sprintf("Method retrieve with took %s to complete", time.Since(begin))
 		if err != nil {
 			lm.hommingLogger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
 			return

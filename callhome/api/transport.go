@@ -46,8 +46,8 @@ func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.
 	))
 
 	mux.Get("/telemetry/:repo", kithttp.NewServer(
-		kitot.TraceServer(tracer, "get all")(retrieveEndpoint(svc)),
-		decodeGetAll,
+		kitot.TraceServer(tracer, "retrieve")(retrieveEndpoint(svc)),
+		decodeRetrieve,
 		encodeResponse,
 		opts...,
 	))
@@ -105,7 +105,7 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	}
 }
 
-func decodeGetAll(_ context.Context, r *http.Request) (interface{}, error) {
+func decodeRetrieve(_ context.Context, r *http.Request) (interface{}, error) {
 	o, err := ReadUintQuery(r, offsetKey, defOffset)
 	if err != nil {
 		return nil, err

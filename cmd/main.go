@@ -29,11 +29,11 @@ const (
 
 type config struct {
 	LogLevel       string `env:"MF_CALLHOME_LOG_LEVEL"       envDefault:"info"`
-	JaegerURL      string `env:"MF_CALLHOME_JAEGER_URL"      envDefault:"localhost:6831"`
+	JaegerURL      string `env:"MF_JAEGER_URL"               envDefault:"localhost:6831"`
 	GCPCredFile    string `env:"MF_CALLHOME_GCP_CRED"`
 	SpreadsheetId  string `env:"MF_CALLHOME_SPREADSHEET_ID"`
 	SheetId        int    `env:"MF_CALLHOME_SHEET_ID"        envDefault:"0"`
-	IPDatabaseFile string `env:"MF_CALLHOME_IP_DB"`
+	IPDatabaseFile string `env:"MF_CALLHOME_IP_DB"           envDefault:"IP2LOCATION-LITE-DB5.BIN"`
 }
 
 func main() {

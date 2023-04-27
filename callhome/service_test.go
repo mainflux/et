@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestGetAll(t *testing.T) {
+func TestRetrieve(t *testing.T) {
 
 	t.Run("failed to identify", func(t *testing.T) {
 		sheetRepo := repoMocks.NewTelemetryRepo(t)
@@ -139,7 +139,7 @@ func TestSave(t *testing.T) {
 		timescaleRepo.On("Save", context.Background(), mock.AnythingOfType("callhome.Telemetry")).Return(nil)
 		sheetRepo.On("RetrieveByIP", context.Background(), "").Return(callhome.Telemetry{ID: uuid.NewString()}, nil)
 		sheetRepo.On("Save", context.Background(), mock.AnythingOfType("callhome.Telemetry")).Return(nil)
-		sheetRepo.On("UpdateTelemetry", context.Background(), mock.AnythingOfType("callhome.Telemetry")).Return(nil)
+		sheetRepo.On("Update", context.Background(), mock.AnythingOfType("callhome.Telemetry")).Return(nil)
 		svc := callhome.New(timescaleRepo, sheetRepo, locMock)
 		err := svc.Save(context.Background(), callhome.Telemetry{})
 		assert.Nil(t, err)
