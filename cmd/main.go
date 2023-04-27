@@ -51,8 +51,7 @@ func main() {
 	}
 
 	timescaleConf := timescale.Config{}
-	if err := env.Parse(&timescaleConf); err != nil {
-		logger.Fatal(fmt.Sprintf("failed to load %s timescale configuration : %s", svcName, err))
+env.Parse(&timescaleConf, env.Options{Prefix: envPrefix})
 	}
 
 	timescaleDB, err := timescale.Connect(timescaleConf)
