@@ -47,17 +47,17 @@ func migrateDB(db *sqlx.DB) error {
 				Id: "telemetry_1",
 				Up: []string{
 					`CREATE TABLE IF NOT EXISTS telemetry (
-						id			UUID,
+						time	TIMESTAMPTZ,
 						ip_address	TEXT	NOT	NULL,
 					 	longitude 	FLOAT	NOT	NULL,
 						latitude	FLOAT	NOT NULL,
 						mf_version	TEXT,
 						service		TEXT,
-						last_seen	TIMESTAMPTZ,
 						country 	TEXT,
 						city 		TEXT,
-						PRIMARY KEY (id)
-					)`,
+						PRIMARY KEY (time, ip_address)
+					);
+					SELECT create_hypertable('telemetry', 'time', chunk_time_interval => INTERVAL '1 day');
 				},
 				Down: []string{"DROP TABLE telemetry;"},
 			},
