@@ -10,15 +10,15 @@ import (
 
 // Config defines the options that are used when connecting to a TimescaleSQL instance
 type Config struct {
-	Host        string `env:"MF_CALLHOME_TIMESCALE_HOST"      envDefault:"localhost"`
-	Port        string `env:"MF_CALLHOME_TIMESCALE_PORT"      envDefault:"5432"`
-	User        string `env:"MF_CALLHOME_TIMESCALE_USER"`
-	Pass        string `env:"MF_CALLHOME_TIMESCALE_PASSWORD"`
-	Name        string `env:"MF_CALLHOME_TIMESCALE_DB_NAME"`
-	SSLMode     string `env:"MF_CALLHOME_TIMESCALE_SSL_MODE"  envDefault:"disable"`
-	SSLCert     string `env:"MF_CALLHOME_TIMESCALE_SSL_CERT"`
-	SSLKey      string `env:"MF_CALLHOME_TIMESCALE_SSL_KEY"`
-	SSLRootCert string `env:"MF_CALLHOME_TIMESCALE_SSL_ROOT_CERT"`
+	Host        string `env:"TIMESCALE_HOST"            envDefault:"localhost"`
+	Port        string `env:"TIMESCALE_PORT"            envDefault:"5432"`
+	User        string `env:"TIMESCALE_USER"            envDefault:"postgres"`
+	Pass        string `env:"TIMESCALE_PASSWORD"        envDefault:"password"`
+	Name        string `env:"TIMESCALE_DB_NAME"         envDefault:"postgres"`
+	SSLMode     string `env:"TIMESCALE_SSL_MODE"        envDefault:"disable"`
+	SSLCert     string `env:"TIMESCALE_SSL_CERT"        envDefault:""`
+	SSLKey      string `env:"TIMESCALE_SSL_KEY"         envDefault:""`
+	SSLRootCert string `env:"TIMESCALE_SSL_ROOT_CERT"   envDefault:""`
 }
 
 // Connect creates a connection to the TimescaleSQL instance and applies any
