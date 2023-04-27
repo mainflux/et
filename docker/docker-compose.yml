@@ -36,4 +36,4 @@ services:
       - et-base-net
     volumes:
       - ./creds.json:/creds.json
-      - ./IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN
+      - ../cmd/IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN
