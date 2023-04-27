@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
@@ -17,7 +16,6 @@ import (
 
 func TestSave(t *testing.T) {
 	mockTelemetry := callhome.Telemetry{
-		ID:        uuid.NewString(),
 		Services:  []string{},
 		Service:   "mock service",
 		Longitude: 1.2,
@@ -99,7 +97,6 @@ func TestSave(t *testing.T) {
 
 func TestRetrieveAll(t *testing.T) {
 	mTel := callhome.Telemetry{
-		ID:        uuid.NewString(),
 		Service:   "mock service",
 		Longitude: 1.2,
 		Latitude:  30.2,
@@ -134,7 +131,7 @@ func TestRetrieveAll(t *testing.T) {
 
 		rows := sqlmock.NewRows(
 			[]string{"id", "ip_address", "longitude", "latitude", "mf_version", "service", "last_seen", "country", "city"},
-		).AddRow(mTel.ID, mTel.IpAddress, mTel.Longitude, mTel.Latitude, mTel.Version, mTel.Service, mTel.LastSeen, mTel.Country, mTel.City)
+		).AddRow(mTel.IpAddress, mTel.Longitude, mTel.Latitude, mTel.Version, mTel.Service, mTel.LastSeen, mTel.Country, mTel.City)
 
 		rows2 := sqlmock.NewRows(
 			[]string{"count"},

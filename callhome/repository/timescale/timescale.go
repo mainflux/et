@@ -74,10 +74,10 @@ func (repo) RetrieveByIP(ctx context.Context, email string) (callhome.Telemetry,
 
 // Save creates record in repo.
 func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
-	q := `INSERT INTO telemetry (id, ip_address, longitude, latitude,
-		mf_version, service, last_seen, country, city)
-		VALUES (:id, :ip_address, :longitude, :latitude,
-			:mf_version, :service, :last_seen, :country, :city);`
+	q := `INSERT INTO telemetry (ip_address, longitude, latitude,
+		mf_version, service, time, country, city)
+		VALUES (:ip_address, :longitude, :latitude,
+			:mf_version, :service, :time, :country, :city);`
 
 	tx, err := r.db.BeginTxx(context.Background(), nil)
 	if err != nil {

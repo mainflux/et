@@ -13,6 +13,7 @@ import (
 	"github.com/mainflux/callhome/callhome/repository/timescale"
 	"github.com/mainflux/callhome/internal"
 	jaegerClient "github.com/mainflux/callhome/internal/clients/jaeger"
+	"github.com/mainflux/callhome/internal/clients/postgres"
 	"github.com/mainflux/callhome/internal/env"
 	"github.com/mainflux/callhome/internal/server"
 	httpserver "github.com/mainflux/callhome/internal/server/http"
@@ -50,13 +51,9 @@ func main() {
 		log.Fatalf(fmt.Sprintf("failed to init logger: %s", err.Error()))
 	}
 
-	timescaleConf := timescale.Config{}
-env.Parse(&timescaleConf, env.Options{Prefix: envPrefix})
-	}
-
-	timescaleDB, err := timescale.Connect(timescaleConf)
+	timescaleDB, err := postgres.Setup(envPrefix, timescale.Migration())
 	if err != nil {
-		logger.Fatal(fmt.Sprintf("failed to connect to timescale db : %s", err))
+		logger.Fatal(fmt.Sprintf("failed to setup timescale db : %s", err))
 	}
 
 	tracer, closer, err := jaegerClient.NewTracer("users", cfg.JaegerURL)

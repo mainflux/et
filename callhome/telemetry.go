@@ -6,14 +6,13 @@ import (
 )
 
 type Telemetry struct {
-	ID        string    `json:"id,omitempty" db:"id"`
 	Services  []string  `json:"services,omitempty" db:"-"`
-	Service   string    `json:"service" db:"service"`
+	Service   string    `json:"service,omitempty" db:"service"`
 	Longitude float64   `json:"longitude,omitempty" db:"longitude"`
 	Latitude  float64   `json:"latitude,omitempty" db:"latitude"`
 	IpAddress string    `json:"ip_address" db:"ip_address"`
 	Version   string    `json:"mainflux_version,omitempty" db:"mf_version"`
-	LastSeen  time.Time `json:"last_seen" db:"last_seen"`
+	LastSeen  time.Time `json:"last_seen" db:"time"`
 	Country   string    `json:"country,omitempty" db:"country"`
 	City      string    `json:"city,omitempty" db:"city"`
 }

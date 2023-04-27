@@ -1,7 +1,7 @@
 version: "3.8"
 
 networks:
-  et-base-net:
+  callhome-base-net:
     driver: bridge
 
 volumes:
@@ -21,7 +21,7 @@ services:
       POSTGRES_USER: ${MF_CALLHOME_TIMESCALE_USER}
       POSTGRES_DB: ${MF_CALLHOME_TIMESCALE_DB_NAME}
     networks:
-      - et-base-net
+      - callhome-base-net
   callhome-server:
     image: mainflux/callhome:${MF_CALLHOME_RELEASE_TAG}
     container_name: callhome-server
@@ -33,7 +33,7 @@ services:
     ports:
       - ${MF_CALLHOME_PORT}:${MF_CALLHOME_PORT}
     networks:
-      - et-base-net
+      - callhome-base-net
     volumes:
       - ./creds.json:/creds.json
       - ../cmd/IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN

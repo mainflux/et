@@ -7,7 +7,6 @@ import (
 
 	goerrors "errors"
 
-	"github.com/google/uuid"
 	"github.com/mainflux/callhome/callhome/repository"
 	"golang.org/x/exp/slices"
 )
@@ -64,7 +63,6 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	if err != nil {
 		return err
 	}
-	t.ID = uuid.New().String()
 	t.City = locRec.City
 	t.Country = locRec.Country_long
 	t.Latitude = float64(locRec.Latitude)
@@ -82,7 +80,6 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 		t.Services = append(t.Services, t.Service)
 		return ts.repo.Save(ctx, t)
 	}
-	t.ID = telemetry.ID
 	t.Services = telemetry.Services
 	if !slices.Contains(t.Services, t.Service) {
 		t.Services = append(t.Services, t.Service)

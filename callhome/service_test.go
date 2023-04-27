@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/ip2location/ip2location-go/v9"
 	"github.com/mainflux/callhome/callhome"
 	"github.com/mainflux/callhome/callhome/mocks"
@@ -137,7 +136,7 @@ func TestSave(t *testing.T) {
 			City:         "someCity",
 		}, nil)
 		timescaleRepo.On("Save", context.Background(), mock.AnythingOfType("callhome.Telemetry")).Return(nil)
-		sheetRepo.On("RetrieveByIP", context.Background(), "").Return(callhome.Telemetry{ID: uuid.NewString()}, nil)
+		sheetRepo.On("RetrieveByIP", context.Background(), "").Return(callhome.Telemetry{}, nil)
 		sheetRepo.On("Save", context.Background(), mock.AnythingOfType("callhome.Telemetry")).Return(nil)
 		sheetRepo.On("Update", context.Background(), mock.AnythingOfType("callhome.Telemetry")).Return(nil)
 		svc := callhome.New(timescaleRepo, sheetRepo, locMock)
