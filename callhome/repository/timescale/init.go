@@ -13,7 +13,7 @@ func Migration() migrate.MemoryMigrationSource {
 				Id: "telemetry_1",
 				Up: []string{
 					`CREATE TABLE IF NOT EXISTS telemetry (
-						time	TIMESTAMPTZ,
+						time		TIMESTAMPTZ,
 						ip_address	TEXT	NOT	NULL,
 					 	longitude 	FLOAT	NOT	NULL,
 						latitude	FLOAT	NOT NULL,

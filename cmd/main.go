@@ -34,7 +34,7 @@ type config struct {
 	GCPCredFile    string `env:"MF_CALLHOME_GCP_CRED"`
 	SpreadsheetId  string `env:"MF_CALLHOME_SPREADSHEET_ID"`
 	SheetId        int    `env:"MF_CALLHOME_SHEET_ID"        envDefault:"0"`
-	IPDatabaseFile string `env:"MF_CALLHOME_IP_DB"           envDefault:"IP2LOCATION-LITE-DB5.BIN"`
+	IPDatabaseFile string `env:"MF_CALLHOME_IP_DB"           envDefault:"./IP2LOCATION-LITE-DB5.BIN"`
 }
 
 func main() {

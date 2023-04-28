@@ -68,7 +68,8 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 }
 
 // RetrieveByIP get record given an ip address.
-func (repo) RetrieveByIP(ctx context.Context, email string) (callhome.Telemetry, error) {
+// Not used in timescale repository.
+func (repo) RetrieveByIP(ctx context.Context, ip string) (callhome.Telemetry, error) {
 	return callhome.Telemetry{}, repository.ErrRecordNotFound
 }
 

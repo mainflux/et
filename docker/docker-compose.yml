@@ -36,4 +36,4 @@ services:
       - callhome-base-net
     volumes:
       - ./creds.json:/creds.json
-      - ../cmd/IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN
+      - ../IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN
