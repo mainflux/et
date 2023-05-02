@@ -18,6 +18,7 @@ const (
 	HomeUrl           = "http://callhome-server:8855/telemetry"
 	stopWaitTime      = 5 * time.Second
 	callHomeSleepTime = 30 * time.Minute
+	apiKey            = "77e04a7c-f207-40dd-8950-c344871fd516"
 )
 
 var ipEndpoints = []string{
@@ -125,6 +126,7 @@ func (hs *homingService) send(telDat *telemetryData) error {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("apikey", apiKey)
 	res, err := hs.httpClient.Do(req)
 	if err != nil || res.StatusCode != http.StatusCreated {
 		return fmt.Errorf("unsuccessful sending telemetry data")

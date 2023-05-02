@@ -25,15 +25,34 @@ services:
   callhome-server:
     image: mainflux/callhome:${MF_CALLHOME_RELEASE_TAG}
     container_name: callhome-server
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
       - timescaledb
     restart: on-failure
     env_file:
       - .env
-    ports:
-      - ${MF_CALLHOME_PORT}:${MF_CALLHOME_PORT}
     networks:
       - callhome-base-net
     volumes:
       - ./creds.json:/creds.json
       - ../IP2LOCATION-LITE-DB5.BIN:/IP2LOCATION-LITE-DB5.BIN
+  nginx:
+    image: nginx
+    container_name: callhome-nginx
+    depends_on:
+      - "callhome-server"        
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - callhome-base-net
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+  certbot:
+    image: certbot/certbot
+    volumes:
+     - ./certbot/conf:/etc/letsencrypt
+     - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"

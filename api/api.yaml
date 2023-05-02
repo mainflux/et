@@ -28,6 +28,10 @@ paths:
       responses:
         "201":
           description: Created
+        "429":
+          description: Too many requests
+        "401":
+          description: Request is unauthorized
     get:
       parameters:
         - in: path
@@ -38,8 +42,6 @@ paths:
           description: Repository to fetch data from sheets or timescale
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Offset"
-      security:
-        - bearerAuth: []
       tags:
         - telemetry
       summary: Retrieve telemetry events
@@ -49,15 +51,19 @@ paths:
         "200":
           description: successful operation
           content:
-            application/xml:
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/TelemetryRes"
         "400":
           description: Invalid status value
+        "429":
+          description: Too many requests
+        "401":
+          description: Request is unauthorized
 servers:
-  - url: https://localhost:8855
+  - url: https://localhost
 components:
   parameters:
     Limit:
@@ -79,7 +85,6 @@ components:
         default: 0
         minimum: 0
       required: false
-
   requestBodies:
     TelemetryReq:
       content:
@@ -109,10 +114,24 @@ components:
             type: string
           last_seen:
             type: string
+          services:
+            type: array
+            items:
+              type: string
+          longitude:
+            type: number
+            format: float
+          latitude:
+            type: number
+            format: float
+          country:
+            type: string
+          city:
+            type: string
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: |
-        * Users access: "Authorization: Bearer <user_token>"
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: apikey
+security:
+  - ApiKeyAuth: []

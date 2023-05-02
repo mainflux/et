@@ -6,6 +6,7 @@ GOARCH ?= amd64
 VERSION ?= $(shell git describe --abbrev=0 --tags 2>/dev/null || echo "0.13.0")
 COMMIT ?= $(shell git rev-parse HEAD)
 TIME ?= $(shell date +%F_%T)
+DOMAIN ?= callhome.mainflux.com
 
 all: $(PROGRAM)
 
@@ -24,6 +25,13 @@ define make_docker
 		-f docker/Dockerfile .
 endef
 
+define make_dev_cert
+	sudo openssl req -x509 -out ./docker/certbot/conf/live/$(DOMAIN)/fullchain.pem \
+	-keyout ./docker/certbot/conf/live/$(DOMAIN)/privkey.pem \
+	-newkey rsa:2048 -nodes -sha256 \
+	-subj '/CN=localhost'
+endef
+
 $(PROGRAM): $(SOURCES)
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) GOARM=$(GOARM) \
 	go build -mod=vendor -ldflags "-s -w \
@@ -36,4 +44,8 @@ clean:
 	rm -rf $(PROGRAM)
 
 docker-image:
-	$(call make_docker,$(GOARCH))
+	$(call make_docker)
+dev-cert:
+	$(call make_dev_cert)
+run:
+	docker compose -f ./docker/docker-compose.yml up
