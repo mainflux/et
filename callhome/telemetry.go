@@ -15,7 +15,7 @@ type Telemetry struct {
 	LastSeen    time.Time `json:"last_seen" db:"time"`
 	Country     string    `json:"country,omitempty" db:"country"`
 	City        string    `json:"city,omitempty" db:"city"`
-	ServiceTime time.Time `json:"service_time" db:"service_last_seen"`
+	ServiceTime time.Time `json:"service_last_seen" db:"service_time"`
 }
 
 type PageMetadata struct {
