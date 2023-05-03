@@ -75,15 +75,15 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 	if err != nil {
 		return callhome.TelemetryPage{}, err
 	}
-	var telPage callhome.TelemetryPage
-	telPage.PageMetadata = pm
+	var records []callhome.Telemetry
 	for _, row := range resp.Values {
 		tel, err := fromRow(row)
 		if err != nil {
-			return telPage, err
+			return callhome.TelemetryPage{}, err
 		}
-		telPage.Telemetry = append(telPage.Telemetry, tel)
+		records = append(records, tel)
 	}
+	telPage := paginate(records, pm)
 	return telPage, nil
 }
 
@@ -191,4 +191,17 @@ func fromRow(row []interface{}) (callhome.Telemetry, error) {
 	}
 	t.Country = country
 	return t, nil
+}
+
+func paginate(records []callhome.Telemetry, pm callhome.PageMetadata) callhome.TelemetryPage {
+	var page callhome.TelemetryPage
+	page.PageMetadata = pm
+	records = records[pm.Offset:]
+	if len(records) <= int(pm.Limit) {
+		page.Telemetry = records
+	} else {
+		page.Telemetry = records[:pm.Limit]
+	}
+	page.Total = uint64(len(page.Telemetry))
+	return page
 }
