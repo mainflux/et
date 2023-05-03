@@ -13,15 +13,16 @@ func Migration() migrate.MemoryMigrationSource {
 				Id: "telemetry_1",
 				Up: []string{
 					`CREATE TABLE IF NOT EXISTS telemetry (
-						time		TIMESTAMPTZ,
-						ip_address	TEXT	NOT	NULL,
-					 	longitude 	FLOAT	NOT	NULL,
-						latitude	FLOAT	NOT NULL,
-						mf_version	TEXT,
-						service		TEXT,
-						country 	TEXT,
-						city 		TEXT,
-						PRIMARY KEY (time, ip_address)
+						time			TIMESTAMPTZ,
+						service_time	TIMESTAMPTZ,
+						ip_address		TEXT	NOT	NULL,
+					 	longitude 		FLOAT	NOT	NULL,
+						latitude		FLOAT	NOT NULL,
+						mf_version		TEXT,
+						service			TEXT,
+						country 		TEXT,
+						city 			TEXT,
+						PRIMARY KEY (time)
 					);
 					SELECT create_hypertable('telemetry', 'time', chunk_time_interval => INTERVAL '1 day');`,
 				},

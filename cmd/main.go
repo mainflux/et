@@ -62,7 +62,7 @@ func main() {
 	}
 	defer closer.Close()
 
-	svc, err := newService(logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId, timescaleDB)
+	svc, err := newService(ctx, logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId, timescaleDB)
 	if err != nil {
 		logger.Error(fmt.Sprintf("failed to initialize service: %s", err.Error()))
 		return
@@ -88,8 +88,8 @@ func main() {
 	}
 }
 
-func newService(logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int, timescaleDB *sqlx.DB) (callhome.Service, error) {
-	repo, err := sheets.New(credFile, spreadsheetID, sheetID)
+func newService(ctx context.Context, logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int, timescaleDB *sqlx.DB) (callhome.Service, error) {
+	repo, err := sheets.New(ctx, credFile, spreadsheetID, sheetID)
 	if err != nil {
 		return nil, err
 	}

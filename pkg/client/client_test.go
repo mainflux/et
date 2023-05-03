@@ -12,7 +12,7 @@ import (
 
 func TestGetIp(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		_, cancel := context.WithCancel(context.Background())
+		_, cancel := context.WithCancel(context.TODO())
 		hs := New("test_svc", "test.1", logger.NewMock(), cancel)
 		for _, endpoint := range ipEndpoints {
 			if _, err := hs.getIP(endpoint); err != nil {

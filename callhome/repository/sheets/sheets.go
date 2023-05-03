@@ -2,7 +2,6 @@ package sheets
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/mainflux/callhome/callhome"
 	"github.com/mainflux/callhome/callhome/repository"
+	"github.com/mainflux/mainflux/pkg/errors"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
@@ -36,7 +36,7 @@ type repo struct {
 }
 
 // New Creates a new telemetry repo using google sheets.
-func New(credFile, spreadsheetId string, sheetID int) (callhome.TelemetryRepo, error) {
+func New(ctx context.Context, credFile, spreadsheetId string, sheetID int) (callhome.TelemetryRepo, error) {
 	credBytes, err := os.ReadFile(credFile)
 	if err != nil {
 		return nil, err
@@ -45,8 +45,8 @@ func New(credFile, spreadsheetId string, sheetID int) (callhome.TelemetryRepo, e
 	if err != nil {
 		return nil, err
 	}
-	client := config.Client(context.Background())
-	srv, err := sheets.NewService(context.Background(), option.WithHTTPClient(client))
+	client := config.Client(ctx)
+	srv, err := sheets.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		return nil, err
 	}
@@ -155,12 +155,12 @@ func fromRow(row []interface{}) (callhome.Telemetry, error) {
 	t.IpAddress = ipAddress
 	lat, err := strconv.ParseFloat(row[1].(string), 64)
 	if err != nil {
-		return callhome.Telemetry{}, errors.Join(errFailedFloatConversion, err)
+		return callhome.Telemetry{}, errors.Wrap(errFailedFloatConversion, err)
 	}
 	t.Latitude = lat
 	long, err := strconv.ParseFloat(row[2].(string), 64)
 	if err != nil {
-		return callhome.Telemetry{}, errors.Join(errFailedFloatConversion, err)
+		return callhome.Telemetry{}, errors.Wrap(errFailedFloatConversion, err)
 	}
 	t.Longitude = long
 	services, ok := row[3].(string)
@@ -178,7 +178,7 @@ func fromRow(row []interface{}) (callhome.Telemetry, error) {
 		return callhome.Telemetry{}, errFailedStringConversion
 	}
 	if err = t.LastSeen.UnmarshalText([]byte(lastSeen)); err != nil {
-		return callhome.Telemetry{}, errors.Join(errFailedParsingLastSeen, err)
+		return callhome.Telemetry{}, errors.Wrap(errFailedParsingLastSeen, err)
 	}
 	city, ok := row[6].(string)
 	if !ok {

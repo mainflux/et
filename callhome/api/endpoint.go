@@ -14,10 +14,10 @@ func saveEndpoint(svc callhome.Service) endpoint.Endpoint {
 			return nil, err
 		}
 		tel := callhome.Telemetry{
-			Service:   req.Service,
-			IpAddress: req.IpAddress,
-			Version:   req.Version,
-			LastSeen:  req.LastSeen,
+			Service:     req.Service,
+			IpAddress:   req.IpAddress,
+			Version:     req.Version,
+			ServiceTime: req.LastSeen,
 		}
 		if err := svc.Save(ctx, tel); err != nil {
 			return nil, err

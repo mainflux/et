@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 	"reflect"
-
-	goerrors "errors"
+	"time"
 
 	"github.com/mainflux/callhome/callhome/repository"
 	"golang.org/x/exp/slices"
@@ -67,13 +66,14 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	t.Country = locRec.Country_long
 	t.Latitude = float64(locRec.Latitude)
 	t.Longitude = float64(locRec.Longitude)
+	t.LastSeen = time.Now()
 
 	if err := ts.timescaleRepo.Save(ctx, t); err != nil {
 		return err
 	}
 
 	telemetry, err := ts.repo.RetrieveByIP(ctx, t.IpAddress)
-	if err != nil && !goerrors.Is(err, repository.ErrRecordNotFound) {
+	if err != nil && !errors.Is(err, repository.ErrRecordNotFound) {
 		return err
 	}
 	if reflect.ValueOf(telemetry).IsZero() {
