@@ -26,6 +26,14 @@ var ipEndpoints = []string{
 	"https://api.ipify.org/",
 }
 
+type homingService struct {
+	serviceName string
+	version     string
+	logger      mflog.Logger
+	cancel      context.CancelFunc
+	httpClient  http.Client
+}
+
 func New(svc, version string, homingLogger mflog.Logger, cancel context.CancelFunc) *homingService {
 	return &homingService{
 		serviceName: svc,
@@ -34,14 +42,6 @@ func New(svc, version string, homingLogger mflog.Logger, cancel context.CancelFu
 		cancel:      cancel,
 		httpClient:  *http.DefaultClient,
 	}
-}
-
-type homingService struct {
-	serviceName string
-	version     string
-	logger      mflog.Logger
-	cancel      context.CancelFunc
-	httpClient  http.Client
 }
 
 func (hs *homingService) CallHome(ctx context.Context) {
