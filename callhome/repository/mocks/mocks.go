@@ -47,6 +47,11 @@ func (mr *mockRepo) Update(ctx context.Context, u callhome.Telemetry) error {
 	return r0
 }
 
+// RetrieveDistinctIPsCountries retrieve distinct
+func (mockRepo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.TelemetrySummary, error) {
+	return callhome.TelemetrySummary{}, nil
+}
+
 type mockConstructorTestingTNewTelemetryRepo interface {
 	mock.TestingT
 	Cleanup(func())

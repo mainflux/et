@@ -31,6 +31,11 @@ type TelemetryPage struct {
 	Telemetry []Telemetry
 }
 
+type TelemetrySummary struct {
+	Countries   []string "json:countries,omitempty"
+	IpAddresses []string "json:ip_addresses,omitempty"
+}
+
 // TelemetryRepository specifies an account persistence API.
 type TelemetryRepo interface {
 	// Save persists the telemetry event. A non-nil error is returned to indicate
@@ -39,4 +44,6 @@ type TelemetryRepo interface {
 
 	// RetrieveAll retrieves all telemetry events.
 	RetrieveAll(ctx context.Context, pm PageMetadata) (TelemetryPage, error)
+	// RetrieveDistinctIPsCOuntries gets distinct ip addresses and countries from database.
+	RetrieveDistinctIPsCountries(ctx context.Context) (TelemetrySummary, error)
 }

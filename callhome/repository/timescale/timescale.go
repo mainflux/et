@@ -126,3 +126,36 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 func (repo) Update(ctx context.Context, u callhome.Telemetry) error {
 	return nil
 }
+
+// RetrieveDistinctIPsCountries retrieve distinct
+func (r repo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.TelemetrySummary, error) {
+	q := `select distinct ip_address from telemetry;`
+	rows, err := r.db.NamedQuery(q, nil)
+	if err != nil {
+		return callhome.TelemetrySummary{}, err
+	}
+	defer rows.Close()
+	var summary callhome.TelemetrySummary
+	for rows.Next() {
+		var val string
+		if err := rows.Scan(&val); err != nil {
+			return summary, err
+		}
+		summary.IpAddresses = append(summary.IpAddresses, val)
+	}
+
+	q = `select distinct country from telemetry;`
+	rows, err = r.db.NamedQuery(q, nil)
+	if err != nil {
+		return summary, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var val string
+		if err := rows.Scan(&val); err != nil {
+			return summary, err
+		}
+		summary.Countries = append(summary.Countries, val)
+	}
+	return summary, nil
+}
