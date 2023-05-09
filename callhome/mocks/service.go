@@ -47,6 +47,10 @@ func (s *Service) Save(ctx context.Context, t callhome.Telemetry) error {
 	return r0
 }
 
+func (*Service) RetrieveSummary(ctx context.Context) (callhome.TelemetrySummary, error) {
+	return callhome.TelemetrySummary{}, nil
+}
+
 type mockConstructorTestingTNewService interface {
 	mock.TestingT
 	Cleanup(func())

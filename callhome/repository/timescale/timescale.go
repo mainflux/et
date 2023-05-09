@@ -80,12 +80,6 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 	return results, nil
 }
 
-// RetrieveByIP get record given an ip address.
-// Not used in timescale repository.
-func (repo) RetrieveByIP(ctx context.Context, ip string) (callhome.Telemetry, error) {
-	return callhome.Telemetry{}, repository.ErrRecordNotFound
-}
-
 // Save creates record in repo.
 func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 	q := `INSERT INTO telemetry (ip_address, longitude, latitude,
@@ -120,11 +114,6 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 	}
 	return nil
 
-}
-
-// Update updates record to repo.
-func (repo) Update(ctx context.Context, u callhome.Telemetry) error {
-	return nil
 }
 
 // RetrieveDistinctIPsCountries retrieve distinct

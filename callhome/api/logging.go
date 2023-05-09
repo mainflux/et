@@ -50,3 +50,17 @@ func (lm *loggingMiddleware) Save(ctx context.Context, t callhome.Telemetry) (er
 
 	return lm.svc.Save(ctx, t)
 }
+
+func (lm *loggingMiddleware) RetrieveSummary(ctx context.Context) (summary callhome.TelemetrySummary, err error) {
+	defer func(begin time.Time) {
+		message := fmt.Sprintf("Method retrieve summary event took %s to complete", time.Since(begin))
+		if err != nil {
+			lm.hommingLogger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
+			return
+		}
+		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
+
+	}(time.Now())
+
+	return lm.svc.RetrieveSummary(ctx)
+}

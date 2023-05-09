@@ -51,6 +51,13 @@ func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.
 		encodeResponse,
 		opts...,
 	))
+
+	mux.Get("/telemetry/summary", kithttp.NewServer(
+		kitot.TraceServer(tracer, "retrieve-summary")(retrieveSummaryEndpoint(svc)),
+		nil,
+		encodeResponse,
+		opts...,
+	))
 	mux.GetFunc("/health", mainflux.Health("telemetry"))
 	mux.Handle("/metrics", promhttp.Handler())
 

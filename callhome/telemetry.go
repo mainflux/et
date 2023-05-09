@@ -32,8 +32,8 @@ type TelemetryPage struct {
 }
 
 type TelemetrySummary struct {
-	Countries   []string "json:countries,omitempty"
-	IpAddresses []string "json:ip_addresses,omitempty"
+	Countries   []string `json:"countries,omitempty"`
+	IpAddresses []string `json:"ip_addresses,omitempty"`
 }
 
 // TelemetryRepository specifies an account persistence API.

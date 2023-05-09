@@ -44,3 +44,12 @@ func (mm *metricsMiddleware) Save(ctx context.Context, t callhome.Telemetry) err
 
 	return mm.svc.Save(ctx, t)
 }
+
+// RetrieveSummary adds metrics middleware to retrieve summary service.
+func (mm *metricsMiddleware) RetrieveSummary(ctx context.Context) (callhome.TelemetrySummary, error) {
+	defer func(begin time.Time) {
+		mm.counter.With("method", "retrieve-summary").Add(1)
+		mm.latency.With("method", "retrieve-summary").Observe(time.Since(begin).Seconds())
+	}(time.Now())
+	return mm.svc.RetrieveSummary(ctx)
+}

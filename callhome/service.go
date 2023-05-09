@@ -5,17 +5,14 @@ import (
 	"time"
 )
 
-const (
-	usersObjectKey    = "users"
-	memberRelationKey = "member"
-)
-
 // Service Service to receive homing telemetry data, persist and retrieve it.
 type Service interface {
 	// Save saves the homing telemetry data and its location information.
 	Save(ctx context.Context, t Telemetry) error
 	// Retrieve retrieves homing telemetry data from the specified repository.
 	Retrieve(ctx context.Context, pm PageMetadata) (TelemetryPage, error)
+	// RetrieveSummary gets distinct countries and ip addresses
+	RetrieveSummary(ctx context.Context) (TelemetrySummary, error)
 }
 
 var _ Service = (*telemetryService)(nil)
@@ -50,4 +47,8 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	t.Longitude = float64(locRec.Longitude)
 	t.LastSeen = time.Now()
 	return ts.repo.Save(ctx, t)
+}
+
+func (ts *telemetryService) RetrieveSummary(ctx context.Context) (TelemetrySummary, error) {
+	return ts.repo.RetrieveDistinctIPsCountries(ctx)
 }

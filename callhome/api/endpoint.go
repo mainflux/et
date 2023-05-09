@@ -54,3 +54,13 @@ func retrieveEndpoint(svc callhome.Service) endpoint.Endpoint {
 		return res, nil
 	}
 }
+
+func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		summary, err := svc.RetrieveSummary(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return summary, nil
+	}
+}
