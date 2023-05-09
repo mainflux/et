@@ -20,8 +20,7 @@ type ErrorRes struct {
 func LoggingErrorEncoder(logger logger.Logger, enc kithttp.ErrorEncoder) kithttp.ErrorEncoder {
 	return func(ctx context.Context, err error, w http.ResponseWriter) {
 		switch err {
-		case ErrBearerToken,
-			ErrLimitSize,
+		case ErrLimitSize,
 			ErrOffsetSize:
 			logger.Error(err.Error())
 		}

@@ -22,7 +22,7 @@ func LoggingMiddleware(svc callhome.Service, logger logger.Logger) callhome.Serv
 }
 
 // Retrieve adds logging middleware to retrieve service.
-func (lm *loggingMiddleware) Retrieve(ctx context.Context, repo string, pm callhome.PageMetadata) (telemetryPage callhome.TelemetryPage, err error) {
+func (lm *loggingMiddleware) Retrieve(ctx context.Context, pm callhome.PageMetadata) (telemetryPage callhome.TelemetryPage, err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method retrieve with took %s to complete", time.Since(begin))
 		if err != nil {
@@ -33,7 +33,7 @@ func (lm *loggingMiddleware) Retrieve(ctx context.Context, repo string, pm callh
 
 	}(time.Now())
 
-	return lm.svc.Retrieve(ctx, repo, pm)
+	return lm.svc.Retrieve(ctx, pm)
 }
 
 // Save adds logging middleware to save service.

@@ -6,12 +6,12 @@ require (
 	github.com/caarlos0/env/v7 v7.1.0
 	github.com/go-kit/kit v0.12.0
 	github.com/go-zoo/bone v1.3.0
-	github.com/google/uuid v1.3.0
 	github.com/ip2location/ip2location-go/v9 v9.5.0
 	github.com/jackc/pgconn v1.14.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.3.1
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/lib/pq v1.10.7
 	github.com/mainflux/mainflux v0.0.0-20230417142557-ffd67ae154c0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.14.0
@@ -27,6 +27,7 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -68,5 +69,5 @@ require (
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
-	google.golang.org/protobuf v1.29.1
+	google.golang.org/protobuf v1.29.1 // indirect
 )

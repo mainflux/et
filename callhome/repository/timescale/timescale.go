@@ -8,7 +8,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/mainflux/callhome/callhome"
 	"github.com/mainflux/callhome/callhome/repository"
-	"github.com/mainflux/mainflux/readers"
 	"github.com/pkg/errors"
 )
 
@@ -25,7 +24,21 @@ func New(db *sqlx.DB) callhome.TelemetryRepo {
 
 // RetrieveAll gets all records from repo.
 func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
-	q := `SELECT * FROM telemetry LIMIT :limit OFFSET :offset;`
+	q := `
+	WITH aggregated_data AS (
+		SELECT ip_address, ARRAY_AGG(service) AS services
+		FROM telemetry
+		GROUP BY ip_address
+	  )
+	  SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
+	  FROM aggregated_data ad
+	  INNER JOIN (
+		  SELECT DISTINCT ON (ip_address) *
+		  FROM telemetry
+		  ORDER BY ip_address, time DESC
+		  LIMIT :limit OFFSET :offset
+	  ) t ON ad.ip_address = t.ip_address;	  
+	`
 
 	params := map[string]interface{}{
 		"limit":  pm.Limit,
@@ -34,7 +47,7 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 
 	rows, err := r.db.NamedQuery(q, params)
 	if err != nil {
-		return callhome.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
+		return callhome.TelemetryPage{}, err
 	}
 	defer rows.Close()
 
@@ -43,7 +56,7 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 	for rows.Next() {
 		var result callhome.Telemetry
 		if err := rows.StructScan(&result); err != nil {
-			return callhome.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
+			return callhome.TelemetryPage{}, err
 		}
 
 		results.Telemetry = append(results.Telemetry, result)
@@ -52,7 +65,7 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 	q = `SELECT COUNT(*) FROM telemetry;`
 	rows, err = r.db.NamedQuery(q, params)
 	if err != nil {
-		return callhome.TelemetryPage{}, errors.Wrap(readers.ErrReadMessages, err.Error())
+		return callhome.TelemetryPage{}, err
 	}
 	defer rows.Close()
 

@@ -114,6 +114,11 @@ github.com/jackc/pgx/v5/stdlib
 ## explicit; go 1.10
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
+# github.com/lib/pq v1.10.7
+## explicit; go 1.13
+github.com/lib/pq
+github.com/lib/pq/oid
+github.com/lib/pq/scram
 # github.com/mainflux/mainflux v0.0.0-20230417142557-ffd67ae154c0
 ## explicit; go 1.19
 github.com/mainflux/mainflux
@@ -124,7 +129,6 @@ github.com/mainflux/mainflux/logger
 github.com/mainflux/mainflux/pkg/errors
 github.com/mainflux/mainflux/pkg/ulid
 github.com/mainflux/mainflux/pkg/uuid
-github.com/mainflux/mainflux/readers
 # github.com/matttproud/golang_protobuf_extensions v1.0.4
 ## explicit; go 1.9
 github.com/matttproud/golang_protobuf_extensions/pbutil

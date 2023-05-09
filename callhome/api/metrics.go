@@ -26,13 +26,13 @@ func MetricsMiddleware(svc callhome.Service, counter metrics.Counter, latency me
 }
 
 // Retrieve add metrics middleware to retrieve service.
-func (mm *metricsMiddleware) Retrieve(ctx context.Context, repo string, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
+func (mm *metricsMiddleware) Retrieve(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
 	defer func(begin time.Time) {
 		mm.counter.With("method", "retrieve").Add(1)
 		mm.latency.With("method", "retrieve").Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	return mm.svc.Retrieve(ctx, repo, pm)
+	return mm.svc.Retrieve(ctx, pm)
 }
 
 // Save adds metrics middleware to save service.

@@ -7,8 +7,6 @@ import (
 )
 
 var (
-	// ErrBearerToken indicates missing or invalid bearer user token.
-	ErrBearerToken = errors.New("missing or invalid bearer user token")
 	// ErrLimitSize indicates that an invalid limit.
 	ErrLimitSize = errors.New("invalid limit size")
 	// ErrOffsetSize indicates an invalid offset.
@@ -42,7 +40,6 @@ func (req saveTelemetryReq) validate() error {
 type listTelemetryReq struct {
 	offset    uint64
 	limit     uint64
-	repo      string
 	IpAddress string `json:"ip_address"`
 }
 

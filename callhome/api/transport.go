@@ -45,7 +45,7 @@ func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.
 		opts...,
 	))
 
-	mux.Get("/telemetry/:repo", kithttp.NewServer(
+	mux.Get("/telemetry", kithttp.NewServer(
 		kitot.TraceServer(tracer, "retrieve")(retrieveEndpoint(svc)),
 		decodeRetrieve,
 		encodeResponse,
@@ -80,9 +80,6 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 		err == ErrLimitSize,
 		err == ErrOffsetSize:
 		w.WriteHeader(http.StatusBadRequest)
-	case errors.Contains(err, errors.ErrAuthentication),
-		err == ErrBearerToken:
-		w.WriteHeader(http.StatusUnauthorized)
 	case errors.Contains(err, errors.ErrAuthorization),
 		errors.Contains(err, repository.ErrInvalidEvent):
 		w.WriteHeader(http.StatusForbidden)
@@ -120,16 +117,10 @@ func decodeRetrieve(_ context.Context, r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 
-	repo := bone.GetValue(r, "repo")
-	if repo == "" {
-		repo = callhome.SheetsRepo
-	}
-
 	req := listTelemetryReq{
 		offset:    o,
 		limit:     l,
 		IpAddress: ip,
-		repo:      repo,
 	}
 	return req, nil
 }

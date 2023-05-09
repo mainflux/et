@@ -39,7 +39,7 @@ func retrieveEndpoint(svc callhome.Service) endpoint.Endpoint {
 			Offset: req.offset,
 			Limit:  req.limit,
 		}
-		tm, err := svc.Retrieve(ctx, req.repo, pm)
+		tm, err := svc.Retrieve(ctx, pm)
 		if err != nil {
 			return nil, err
 		}

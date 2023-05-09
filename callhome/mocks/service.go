@@ -13,21 +13,21 @@ type Service struct {
 	mock.Mock
 }
 
-func (s *Service) Retrieve(ctx context.Context, repo string, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
-	ret := s.Called(ctx, repo, pm)
+func (s *Service) Retrieve(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
+	ret := s.Called(ctx, pm)
 	var r0 callhome.TelemetryPage
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, callhome.PageMetadata) (callhome.TelemetryPage, error)); ok {
-		return rf(ctx, repo, pm)
+	if rf, ok := ret.Get(0).(func(context.Context, callhome.PageMetadata) (callhome.TelemetryPage, error)); ok {
+		return rf(ctx, pm)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, callhome.PageMetadata) callhome.TelemetryPage); ok {
-		r0 = rf(ctx, repo, pm)
+	if rf, ok := ret.Get(0).(func(context.Context, callhome.PageMetadata) callhome.TelemetryPage); ok {
+		r0 = rf(ctx, pm)
 	} else {
 		r0 = ret.Get(0).(callhome.TelemetryPage)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, callhome.PageMetadata) error); ok {
-		r1 = rf(ctx, repo, pm)
+	if rf, ok := ret.Get(1).(func(context.Context, callhome.PageMetadata) error); ok {
+		r1 = rf(ctx, pm)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -9,7 +9,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/mainflux/callhome/callhome"
 	"github.com/mainflux/callhome/callhome/api"
-	"github.com/mainflux/callhome/callhome/repository/sheets"
 	"github.com/mainflux/callhome/callhome/repository/timescale"
 	"github.com/mainflux/callhome/internal"
 	jaegerClient "github.com/mainflux/callhome/internal/clients/jaeger"
@@ -31,9 +30,6 @@ const (
 type config struct {
 	LogLevel       string `env:"MF_CALLHOME_LOG_LEVEL"       envDefault:"info"`
 	JaegerURL      string `env:"MF_JAEGER_URL"               envDefault:"localhost:6831"`
-	GCPCredFile    string `env:"MF_CALLHOME_GCP_CRED"`
-	SpreadsheetId  string `env:"MF_CALLHOME_SPREADSHEET_ID"`
-	SheetId        int    `env:"MF_CALLHOME_SHEET_ID"        envDefault:"0"`
 	IPDatabaseFile string `env:"MF_CALLHOME_IP_DB"           envDefault:"./IP2LOCATION-LITE-DB5.BIN"`
 }
 
@@ -62,7 +58,7 @@ func main() {
 	}
 	defer closer.Close()
 
-	svc, err := newService(ctx, logger, cfg.IPDatabaseFile, cfg.GCPCredFile, cfg.SpreadsheetId, cfg.SheetId, timescaleDB)
+	svc, err := newService(ctx, logger, cfg.IPDatabaseFile, timescaleDB)
 	if err != nil {
 		logger.Error(fmt.Sprintf("failed to initialize service: %s", err.Error()))
 		return
@@ -88,17 +84,13 @@ func main() {
 	}
 }
 
-func newService(ctx context.Context, logger mflog.Logger, ipDB, credFile, spreadsheetID string, sheetID int, timescaleDB *sqlx.DB) (callhome.Service, error) {
-	repo, err := sheets.New(ctx, credFile, spreadsheetID, sheetID)
-	if err != nil {
-		return nil, err
-	}
+func newService(ctx context.Context, logger mflog.Logger, ipDB string, timescaleDB *sqlx.DB) (callhome.Service, error) {
 	timescaleRepo := timescale.New(timescaleDB)
 	locSvc, err := callhome.NewLocationService(ipDB)
 	if err != nil {
 		return nil, err
 	}
-	svc := callhome.New(timescaleRepo, repo, locSvc)
+	svc := callhome.New(timescaleRepo, locSvc)
 	counter, latency := internal.MakeMetrics(svcName, "api")
 	svc = api.MetricsMiddleware(svc, counter, latency)
 	svc = api.LoggingMiddleware(svc, logger)

@@ -17,7 +17,7 @@ import (
 
 func TestEndpointsRetrieve(t *testing.T) {
 	svc := mocks.NewService(t)
-	svc.On("Retrieve", mock.Anything, callhome.SheetsRepo, mock.AnythingOfType("string"), callhome.PageMetadata{Limit: 10}).Return(callhome.TelemetryPage{}, nil)
+	svc.On("Retrieve", mock.Anything, mock.AnythingOfType("string"), callhome.PageMetadata{Limit: 10}).Return(callhome.TelemetryPage{}, nil)
 	h := MakeHandler(svc, opentracing.NoopTracer{}, logger.NewMock())
 	server := httptest.NewServer(h)
 	client := server.Client()
@@ -31,7 +31,7 @@ func TestEndpointsRetrieve(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.test, func(t *testing.T) {
-			req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/telemetry/%s", server.URL, callhome.SheetsRepo), nil)
+			req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/telemetry", server.URL), nil)
 			if testCase.token != "" {
 				req.Header.Set("Authorization", "Bearer "+testCase.token)
 			}
