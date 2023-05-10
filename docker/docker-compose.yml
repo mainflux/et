@@ -56,3 +56,15 @@ services:
      - ./certbot/conf:/etc/letsencrypt
      - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  angular-ui:
+    image: mainflux/callhome-ui
+    depends_on:
+      - "callhome-server"
+    ports:
+      - "4200:4200"
+    container_name: callhome-ui
+    networks:
+      - callhome-base-net
+    volumes:
+       - ../frontend:/usr/src/app/callhome-ui
+       - /usr/src/app/callhome-ui/node_modules

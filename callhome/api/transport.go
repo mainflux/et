@@ -54,7 +54,7 @@ func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.
 
 	mux.Get("/telemetry/summary", kithttp.NewServer(
 		kitot.TraceServer(tracer, "retrieve-summary")(retrieveSummaryEndpoint(svc)),
-		nil,
+		kithttp.NopRequestDecoder,
 		encodeResponse,
 		opts...,
 	))

@@ -78,7 +78,7 @@ export class MapComponent implements AfterViewInit {
 export class TelemetryService {
   constructor(private httpClient: HttpClient) {};
   async retrieveTelemetry(limit: number, offset: number): Promise<TelemetryPage> {
-    const getItems$: Observable<TelemetryPage> = this.httpClient.get<TelemetryPage>(`https://localhost/telemetry/sheets`, {
+    const getItems$: Observable<TelemetryPage> = this.httpClient.get<TelemetryPage>(`https://localhost/telemetry`, {
       headers: {'apikey':'77e04a7c-f207-40dd-8950-c344871fd516'},
       params: {"limit": limit, "offset": offset}
     }).pipe();

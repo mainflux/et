@@ -119,7 +119,7 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 // RetrieveDistinctIPsCountries retrieve distinct
 func (r repo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.TelemetrySummary, error) {
 	q := `select distinct ip_address from telemetry;`
-	rows, err := r.db.NamedQuery(q, nil)
+	rows, err := r.db.Query(q)
 	if err != nil {
 		return callhome.TelemetrySummary{}, err
 	}
@@ -134,7 +134,7 @@ func (r repo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.Teleme
 	}
 
 	q = `select distinct country from telemetry;`
-	rows, err = r.db.NamedQuery(q, nil)
+	rows, err = r.db.Query(q)
 	if err != nil {
 		return summary, err
 	}
