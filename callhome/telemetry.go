@@ -14,10 +14,10 @@ type Telemetry struct {
 	Latitude    float64        `json:"latitude,omitempty" db:"latitude"`
 	IpAddress   string         `json:"ip_address" db:"ip_address"`
 	Version     string         `json:"mainflux_version,omitempty" db:"mf_version"`
-	LastSeen    time.Time      `json:"last_seen" db:"time"`
+	LastSeen    time.Time      `json:"last_seen" db:"service_time"`
 	Country     string         `json:"country,omitempty" db:"country"`
 	City        string         `json:"city,omitempty" db:"city"`
-	ServiceTime time.Time      `json:"service_last_seen" db:"service_time"`
+	ServiceTime time.Time      `json:"timestamp" db:"time"`
 }
 
 type PageMetadata struct {
