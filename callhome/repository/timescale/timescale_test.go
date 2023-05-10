@@ -100,14 +100,15 @@ func TestSave(t *testing.T) {
 func TestRetrieveAll(t *testing.T) {
 	ctx := context.TODO()
 	mTel := callhome.Telemetry{
-		Service:   "mock service",
-		Longitude: 1.2,
-		Latitude:  30.2,
-		IpAddress: "192.168.0.1",
-		Version:   "0.13",
-		LastSeen:  time.Now(),
-		Country:   "someCountry",
-		City:      "someCity",
+		Service:     "mock service",
+		Longitude:   1.2,
+		Latitude:    30.2,
+		IpAddress:   "192.168.0.1",
+		Version:     "0.13",
+		LastSeen:    time.Now(),
+		Country:     "someCountry",
+		City:        "someCity",
+		ServiceTime: time.Now(),
 	}
 	t.Run("error performing select", func(t *testing.T) {
 		sqlDB, mock, err := sqlmock.New()
@@ -133,8 +134,8 @@ func TestRetrieveAll(t *testing.T) {
 		repo := New(sqlxDB)
 
 		rows := sqlmock.NewRows(
-			[]string{"id", "ip_address", "longitude", "latitude", "mf_version", "service", "last_seen", "country", "city"},
-		).AddRow(mTel.IpAddress, mTel.Longitude, mTel.Latitude, mTel.Version, mTel.Service, mTel.LastSeen, mTel.Country, mTel.City)
+			[]string{"ip_address", "longitude", "latitude", "mf_version", "service", "time", "country", "city", "service_time"},
+		).AddRow(mTel.IpAddress, mTel.Longitude, mTel.Latitude, mTel.Version, mTel.Service, mTel.LastSeen, mTel.Country, mTel.City, mTel.ServiceTime)
 
 		rows2 := sqlmock.NewRows(
 			[]string{"count"},

@@ -17,24 +17,20 @@ import (
 
 func TestEndpointsRetrieve(t *testing.T) {
 	svc := mocks.NewService(t)
-	svc.On("Retrieve", mock.Anything, mock.AnythingOfType("string"), callhome.PageMetadata{Limit: 10}).Return(callhome.TelemetryPage{}, nil)
+	svc.On("Retrieve", mock.Anything, callhome.PageMetadata{Limit: 10}).Return(callhome.TelemetryPage{}, nil)
 	h := MakeHandler(svc, opentracing.NoopTracer{}, logger.NewMock())
 	server := httptest.NewServer(h)
 	client := server.Client()
 	testCases := []struct {
-		test, token string
-		statuscode  int
+		test       string
+		statuscode int
 	}{
-		{"no token", "", http.StatusUnauthorized},
-		{"successful req", "some token", http.StatusOK},
+		{"successful req", http.StatusOK},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.test, func(t *testing.T) {
 			req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/telemetry", server.URL), nil)
-			if testCase.token != "" {
-				req.Header.Set("Authorization", "Bearer "+testCase.token)
-			}
 			assert.Nil(t, err)
 			res, err := client.Do(req)
 			assert.Nil(t, err)

@@ -16,36 +16,18 @@ import (
 
 func TestRetrieve(t *testing.T) {
 	ctx := context.TODO()
-
-	t.Run("failed to identify", func(t *testing.T) {
-		timescaleRepo := repoMocks.NewTelemetryRepo(t)
-		svc := callhome.New(timescaleRepo, nil)
-		experr := fmt.Errorf("failed to identify")
-		_, err := svc.Retrieve(ctx, callhome.PageMetadata{})
-		assert.NotNil(t, err)
-		assert.Equal(t, experr, err)
-	})
-	t.Run("failed authentication", func(t *testing.T) {
-		timescaleRepo := repoMocks.NewTelemetryRepo(t)
-		svc := callhome.New(timescaleRepo, nil)
-		_, err := svc.Retrieve(ctx, callhome.PageMetadata{})
-		assert.NotNil(t, err)
-
-	})
 	t.Run("failed repo save", func(t *testing.T) {
-		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		svc := callhome.New(timescaleRepo, nil)
-		sheetRepo.On("RetrieveAll", ctx, callhome.PageMetadata{}).Return(callhome.TelemetryPage{}, repository.ErrSaveEvent)
+		timescaleRepo.On("RetrieveAll", ctx, callhome.PageMetadata{}).Return(callhome.TelemetryPage{}, repository.ErrSaveEvent)
 		_, err := svc.Retrieve(ctx, callhome.PageMetadata{})
 		assert.NotNil(t, err)
 		assert.Equal(t, repository.ErrSaveEvent, err)
 	})
 	t.Run("success", func(t *testing.T) {
-		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		svc := callhome.New(timescaleRepo, nil)
-		sheetRepo.On("RetrieveAll", ctx, callhome.PageMetadata{}).Return(callhome.TelemetryPage{}, nil)
+		timescaleRepo.On("RetrieveAll", ctx, callhome.PageMetadata{}).Return(callhome.TelemetryPage{}, nil)
 		_, err := svc.Retrieve(ctx, callhome.PageMetadata{})
 		assert.Nil(t, err)
 	})
@@ -76,24 +58,7 @@ func TestSave(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, repository.ErrSaveEvent, err)
 	})
-	t.Run("error retrieve by ip", func(t *testing.T) {
-		sheetRepo := repoMocks.NewTelemetryRepo(t)
-		timescaleRepo := repoMocks.NewTelemetryRepo(t)
-		locMock := mocks.NewLocationService(t)
-		locMock.On("GetLocation", "").Return(ip2location.IP2Locationrecord{
-			Latitude:     1.2,
-			Longitude:    30,
-			Country_long: "SomeCountry",
-			City:         "someCity",
-		}, nil)
-		timescaleRepo.On("Save", ctx, mock.AnythingOfType("callhome.Telemetry")).Return(nil)
-		sheetRepo.On("RetrieveByIP", ctx, "").Return(callhome.Telemetry{}, fmt.Errorf("error getting record"))
-		svc := callhome.New(timescaleRepo, locMock)
-		err := svc.Save(ctx, callhome.Telemetry{})
-		assert.NotNil(t, err)
-	})
 	t.Run("successful save", func(t *testing.T) {
-		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		locMock := mocks.NewLocationService(t)
 		locMock.On("GetLocation", "").Return(ip2location.IP2Locationrecord{
@@ -103,14 +68,11 @@ func TestSave(t *testing.T) {
 			City:         "someCity",
 		}, nil)
 		timescaleRepo.On("Save", ctx, mock.AnythingOfType("callhome.Telemetry")).Return(nil)
-		sheetRepo.On("RetrieveByIP", ctx, "").Return(callhome.Telemetry{}, repository.ErrRecordNotFound)
-		sheetRepo.On("Save", ctx, mock.AnythingOfType("callhome.Telemetry")).Return(nil)
 		svc := callhome.New(timescaleRepo, locMock)
 		err := svc.Save(ctx, callhome.Telemetry{})
 		assert.Nil(t, err)
 	})
 	t.Run("successful update", func(t *testing.T) {
-		sheetRepo := repoMocks.NewTelemetryRepo(t)
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		locMock := mocks.NewLocationService(t)
 		locMock.On("GetLocation", "").Return(ip2location.IP2Locationrecord{
@@ -120,9 +82,6 @@ func TestSave(t *testing.T) {
 			City:         "someCity",
 		}, nil)
 		timescaleRepo.On("Save", ctx, mock.AnythingOfType("callhome.Telemetry")).Return(nil)
-		sheetRepo.On("RetrieveByIP", ctx, "").Return(callhome.Telemetry{}, nil)
-		sheetRepo.On("Save", ctx, mock.AnythingOfType("callhome.Telemetry")).Return(nil)
-		sheetRepo.On("Update", ctx, mock.AnythingOfType("callhome.Telemetry")).Return(nil)
 		svc := callhome.New(timescaleRepo, locMock)
 		err := svc.Save(ctx, callhome.Telemetry{})
 		assert.Nil(t, err)
