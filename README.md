@@ -2,6 +2,11 @@
 
 # E.T. Phone Home
 
+[![build][ci-badge]][ci-url]
+[![go report card][grc-badge]][grc-url]
+[![coverage][cov-badge]][cov-url]
+[![license][license]](LICENSE)
+
 Server to receive and store information regarding mainflux deployments. This information includes:
 
 - IP Address
@@ -13,13 +18,11 @@ Server to receive and store information regarding mainflux deployments. This inf
 To Run:
 
 ```bash
-go run ./cmd/homing-server/main.go
+make docker-image-server
+make docker-image-ui
+make run
 ```
 
 
 ### Requirements
 - [IP to Location database](https://lite.ip2location.com/)
-- [Google service account](https://developers.google.com/identity/protocols/oauth2/service-account) - Don't forget to share the google sheets document with service account email. This provides a .json file.
-
-Spreadsheet ID and sheet ID can be found on the google sheets url: 
-`https://docs.google.com/spreadsheets/d/<SPREADSHEETID>/edit#gid=<SHEETID>`
