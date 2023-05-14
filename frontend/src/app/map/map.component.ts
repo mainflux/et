@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, firstValueFrom } from 'rxjs';
 import { Injectable } from  '@angular/core';
 import { ɵafterNextNavigation } from '@angular/router';
+import { environment } from '../../environment/environment';
 
 export interface Telemetry {
   services: string[];
@@ -78,8 +79,8 @@ export class MapComponent implements AfterViewInit {
 export class TelemetryService {
   constructor(private httpClient: HttpClient) {};
   async retrieveTelemetry(limit: number, offset: number): Promise<TelemetryPage> {
-    const getItems$: Observable<TelemetryPage> = this.httpClient.get<TelemetryPage>(`https://localhost/telemetry`, {
-      headers: {'apikey':'77e04a7c-f207-40dd-8950-c344871fd516'},
+    const getItems$: Observable<TelemetryPage> = this.httpClient.get<TelemetryPage>(environment.callHomeBaseUrl+`/telemetry`, {
+      headers: {'apikey':environment.apikey},
       params: {"limit": limit, "offset": offset}
     }).pipe();
     return firstValueFrom(getItems$)

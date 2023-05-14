@@ -2,6 +2,7 @@ import { Component, AfterViewInit } from '@angular/core';
 import { Injectable } from  '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Observable, firstValueFrom } from 'rxjs';
+import { environment } from '../../environment/environment';
 
 export interface TelemetrySummary {
   countries: string[];
@@ -37,8 +38,8 @@ export class SidebarComponent implements AfterViewInit{
 export class TelemetryService {
   constructor(private httpClient: HttpClient) {};
   async retrieveTelemetry(): Promise<TelemetrySummary> {
-    const getItems$: Observable<TelemetrySummary> = this.httpClient.get<TelemetrySummary>(`https://localhost/telemetry/summary`, {
-      headers: {'apikey':'77e04a7c-f207-40dd-8950-c344871fd516'},
+    const getItems$: Observable<TelemetrySummary> = this.httpClient.get<TelemetrySummary>(environment.callHomeBaseUrl+`/telemetry/summary`, {
+      headers: {'apikey':environment.apikey},
     }).pipe();
     return firstValueFrom(getItems$)
   }
