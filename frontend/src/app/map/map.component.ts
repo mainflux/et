@@ -4,7 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, firstValueFrom } from 'rxjs';
 import { Injectable } from  '@angular/core';
 import { ɵafterNextNavigation } from '@angular/router';
-import { environment } from '../../environment/environment';
+import { environment } from '../../environments/environment';
 
 export interface Telemetry {
   services: string[];
@@ -80,7 +80,7 @@ export class TelemetryService {
   constructor(private httpClient: HttpClient) {};
   async retrieveTelemetry(limit: number, offset: number): Promise<TelemetryPage> {
     const getItems$: Observable<TelemetryPage> = this.httpClient.get<TelemetryPage>(environment.callHomeBaseUrl+`/telemetry`, {
-      headers: {'apikey':environment.apikey},
+      headers: {'apikey':environment.apiKey},
       params: {"limit": limit, "offset": offset}
     }).pipe();
     return firstValueFrom(getItems$)

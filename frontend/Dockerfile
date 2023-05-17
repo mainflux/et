@@ -1,13 +1,10 @@
-FROM node:20.1.0
+FROM node:20.1.0-alpine AS build
+WORKDIR /app
 
-WORKDIR /usr/src/app/callhome-ui
-
-COPY package*.json ./
-
-RUN ls
-
-RUN npm install -g @angular/cli @angular-devkit/build-angular && npm install
-
-EXPOSE 4200
-
-CMD ["ng", "serve", "--host", "0.0.0.0"]
+COPY . .
+RUN npm install
+RUN npm run build
+# Serve Application using Nginx Server
+FROM nginx:alpine
+COPY --from=build /app/dist/callhome-frontend/ /usr/share/nginx/html
+EXPOSE 80

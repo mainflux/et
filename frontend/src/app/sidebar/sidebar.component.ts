@@ -2,7 +2,7 @@ import { Component, AfterViewInit } from '@angular/core';
 import { Injectable } from  '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Observable, firstValueFrom } from 'rxjs';
-import { environment } from '../../environment/environment';
+import { environment } from '../../environments/environment';
 
 export interface TelemetrySummary {
   countries: string[];
@@ -39,7 +39,7 @@ export class TelemetryService {
   constructor(private httpClient: HttpClient) {};
   async retrieveTelemetry(): Promise<TelemetrySummary> {
     const getItems$: Observable<TelemetrySummary> = this.httpClient.get<TelemetrySummary>(environment.callHomeBaseUrl+`/telemetry/summary`, {
-      headers: {'apikey':environment.apikey},
+      headers: {'apikey':environment.apiKey},
     }).pipe();
     return firstValueFrom(getItems$)
   }
