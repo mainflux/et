@@ -131,7 +131,7 @@ func (hs *homingService) send(telDat *telemetryData) error {
 	req.Header.Set("apikey", apiKey)
 	res, err := hs.httpClient.Do(req)
 	if err != nil || res.StatusCode != http.StatusCreated {
-		return fmt.Errorf("unsuccessful sending telemetry data with code %d and error %s", res.StatusCode, err.Error())
+		return fmt.Errorf("unsuccessful sending telemetry data with code %d and error %v", res.StatusCode, err)
 	}
 	return nil
 }
