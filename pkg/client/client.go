@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	HomeUrl           = "http://callhome-server:8855/telemetry"
+	HomeUrl           = "http://64.226.105.108:8855/telemetry"
 	stopWaitTime      = 5 * time.Second
 	callHomeSleepTime = 30 * time.Minute
 	apiKey            = "77e04a7c-f207-40dd-8950-c344871fd516"
