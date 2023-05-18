@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,7 +16,7 @@ import (
 )
 
 const (
-	HomeUrl           = "http://64.226.105.108:8855/telemetry"
+	HomeUrl           = "http://64.226.105.108/telemetry"
 	stopWaitTime      = 5 * time.Second
 	callHomeSleepTime = 30 * time.Minute
 	backOff           = 10 * time.Second
@@ -123,6 +124,7 @@ func (hs *homingService) send(telDat *telemetryData) error {
 	if err != nil {
 		return err
 	}
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest(http.MethodPost, HomeUrl, bytes.NewReader(b))
 	if err != nil {
 		return err
@@ -131,7 +133,10 @@ func (hs *homingService) send(telDat *telemetryData) error {
 	req.Header.Set("apikey", apiKey)
 	res, err := hs.httpClient.Do(req)
 	if err != nil || res.StatusCode != http.StatusCreated {
-		return fmt.Errorf("unsuccessful sending telemetry data with code %d and error %v", res.StatusCode, err)
+		if res != nil {
+			return fmt.Errorf("unsuccessful sending telemetry data with code %d and error: %v", res.StatusCode, err)
+		}
+		return err
 	}
 	return nil
 }
