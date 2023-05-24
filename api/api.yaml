@@ -39,7 +39,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Repository to fetch data from sheets or timescale
+          description: Repository to fetch data from timescale db
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Offset"
       tags:
