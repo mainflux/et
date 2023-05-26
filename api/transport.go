@@ -87,8 +87,7 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 		err == ErrLimitSize,
 		err == ErrOffsetSize:
 		w.WriteHeader(http.StatusBadRequest)
-	case errors.Contains(err, errors.ErrAuthorization),
-		errors.Contains(err, timescale.ErrInvalidEvent):
+	case errors.Contains(err, timescale.ErrInvalidEvent):
 		w.WriteHeader(http.StatusForbidden)
 	case errors.Contains(err, errors.ErrUnsupportedContentType):
 		w.WriteHeader(http.StatusUnsupportedMediaType)
@@ -119,15 +118,10 @@ func decodeRetrieve(_ context.Context, r *http.Request) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	ip, err := ReadStringQuery(r, ipAddressKey, "")
-	if err != nil {
-		return nil, err
-	}
 
 	req := listTelemetryReq{
-		offset:    o,
-		limit:     l,
-		IpAddress: ip,
+		offset: o,
+		limit:  l,
 	}
 	return req, nil
 }

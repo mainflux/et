@@ -23,14 +23,18 @@ func TestEndpointsRetrieve(t *testing.T) {
 	client := server.Client()
 	testCases := []struct {
 		test       string
+		limit      int
+		offset     int
 		statuscode int
 	}{
-		{"successful req", http.StatusOK},
+		{"successful req", 10, 0, http.StatusOK},
+		{"large-limit-size", maxLimitSize + 1, 0, http.StatusBadRequest},
+		{"negative-limit-size", -1, 0, http.StatusBadRequest},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.test, func(t *testing.T) {
-			req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/telemetry", server.URL), nil)
+			req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/telemetry?limit=%d&offset=%d", server.URL, testCase.limit, testCase.offset), nil)
 			assert.Nil(t, err)
 			res, err := client.Do(req)
 			assert.Nil(t, err)
@@ -56,6 +60,8 @@ func TestEndpointSave(t *testing.T) {
 		statuscode             int
 	}{
 		{"success", body, "application/json", http.StatusCreated},
+		{"malformed-request", "{}", "application/json", http.StatusBadRequest},
+		{"wrong-content-type", "{}", "application/text", http.StatusUnsupportedMediaType},
 	}
 
 	for _, testCase := range testCases {

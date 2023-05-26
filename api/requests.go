@@ -38,9 +38,8 @@ func (req saveTelemetryReq) validate() error {
 }
 
 type listTelemetryReq struct {
-	offset    uint64
-	limit     uint64
-	IpAddress string `json:"ip_address"`
+	offset uint64
+	limit  uint64
 }
 
 func (req listTelemetryReq) validate() error {

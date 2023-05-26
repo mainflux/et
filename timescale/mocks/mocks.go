@@ -18,11 +18,6 @@ func (mr *mockRepo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (
 	return ret.Get(0).(callhome.TelemetryPage), ret.Error(1)
 }
 
-func (mr *mockRepo) RetrieveByIP(ctx context.Context, email string) (callhome.Telemetry, error) {
-	ret := mr.Called(ctx, email)
-	return ret.Get(0).(callhome.Telemetry), ret.Error(1)
-}
-
 func (mr *mockRepo) Save(ctx context.Context, t callhome.Telemetry) error {
 	ret := mr.Called(ctx, t)
 	var r0 error
