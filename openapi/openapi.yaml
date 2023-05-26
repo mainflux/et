@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  description: "Mainflux Homing Server"
+  description: "Mainflux Call Home Server"
   version: 0.0.1
-  title: ET
+  title: Call-Home
   termsOfService: ""
   contact:
     email: "infos@mainflux.com"
@@ -34,12 +34,6 @@ paths:
           description: Request is unauthorized
     get:
       parameters:
-        - in: path
-          name: repository
-          schema:
-            type: string
-          required: true
-          description: Repository to fetch data from timescale db
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Offset"
       tags:
@@ -137,3 +131,4 @@ components:
       name: apikey
 security:
   - ApiKeyAuth: []
+            type: string
