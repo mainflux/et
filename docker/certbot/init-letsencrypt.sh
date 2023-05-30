@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker compose)" ]; then
   exit 1
 fi
 
-domains=(callhome.mainflux.com www.callhome.mainflux.com)
+domains=(deployments.mainflux.io www.deployments.mainflux.io)
 rsa_key_size=4096
 data_path="./certbot"
 email="infos@mainflux.com"
