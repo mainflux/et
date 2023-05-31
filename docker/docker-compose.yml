@@ -1,0 +1,71 @@
+version: "3.8"
+
+networks:
+  callhome-base-net:
+    driver: bridge
+
+volumes:
+  callhome-timescaledb-data:
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: callhome-timescaledb
+    restart: on-failure
+    env_file:
+      - .env
+    volumes:
+      - callhome-timescaledb-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${MF_CALLHOME_TIMESCALE_PASSWORD}
+      POSTGRES_USER: ${MF_CALLHOME_TIMESCALE_USER}
+      POSTGRES_DB: ${MF_CALLHOME_TIMESCALE_DB_NAME}
+    networks:
+      - callhome-base-net
+  callhome-server:
+    image: mainflux/callhome:${MF_CALLHOME_RELEASE_TAG}
+    container_name: callhome-server
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    depends_on:
+      - timescaledb
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - callhome-base-net
+    volumes:
+      - ./IP2LOCATION-LITE-DB5.IPV6.BIN:/IP2LOCATION-LITE-DB5.IPV6.BIN
+  certbot:
+    image: certbot/certbot
+    volumes:
+     - ./certbot/conf:/etc/letsencrypt
+     - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  callhome-ui:
+    image: mainflux/callhome-ui
+    depends_on:
+      - "callhome-server"
+    container_name: callhome-ui
+    ports:
+      - "8080:80"
+    networks:
+      - callhome-base-net
+    volumes:
+       - ../frontend:/usr/src/app/callhome-ui
+       - /usr/src/app/callhome-ui/node_modules
+  nginx:
+    image: nginx
+    container_name: callhome-nginx
+    depends_on:
+      - "callhome-server"  
+      - "callhome-ui"      
+    ports:
+      - "80:80"
+      - "443:443"
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    networks:
+      - callhome-base-net
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
