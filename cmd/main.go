@@ -7,15 +7,15 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/mainflux/callhome/callhome"
-	"github.com/mainflux/callhome/callhome/api"
-	"github.com/mainflux/callhome/callhome/repository/timescale"
+	"github.com/mainflux/callhome"
+	"github.com/mainflux/callhome/api"
 	"github.com/mainflux/callhome/internal"
 	jaegerClient "github.com/mainflux/callhome/internal/clients/jaeger"
 	"github.com/mainflux/callhome/internal/clients/postgres"
 	"github.com/mainflux/callhome/internal/env"
 	"github.com/mainflux/callhome/internal/server"
 	httpserver "github.com/mainflux/callhome/internal/server/http"
+	"github.com/mainflux/callhome/timescale"
 	mflog "github.com/mainflux/mainflux/logger"
 	"golang.org/x/sync/errgroup"
 )
