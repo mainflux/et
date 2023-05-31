@@ -58,7 +58,6 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 		if err := rows.StructScan(&result); err != nil {
 			return callhome.TelemetryPage{}, err
 		}
-
 		results.Telemetry = append(results.Telemetry, result)
 	}
 

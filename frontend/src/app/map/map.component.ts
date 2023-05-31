@@ -66,6 +66,7 @@ export class MapComponent implements AfterViewInit {
   }
   constructor(private telemetryService: TelemetryService) { }
   ngAfterViewInit(): void {
+    L.Icon.Default.imagePath = "https://unpkg.com/leaflet@1.7.1/dist/images/"
     this.initMap();
     this.getPage();
     

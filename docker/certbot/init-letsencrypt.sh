@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker compose)" ]; then
   exit 1
 fi
 
-domains=(deployments.mainflux.io www.deployments.mainflux.io)
+domains=(deployments.mainflux.io)
 rsa_key_size=4096
 data_path="./certbot"
 email="infos@mainflux.com"
@@ -34,7 +34,7 @@ docker compose run --rm --entrypoint "\
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
-    -subj '/CN=localhost'" certbot
+    -subj '/CN=$domain'" certbot
 echo
 
 
