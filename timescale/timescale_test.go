@@ -99,16 +99,17 @@ func TestSave(t *testing.T) {
 
 func TestRetrieveAll(t *testing.T) {
 	ctx := context.TODO()
+	now := time.Now()
 	mTel := callhome.Telemetry{
 		Service:     "mock service",
 		Longitude:   1.2,
 		Latitude:    30.2,
 		IpAddress:   "192.168.0.1",
 		Version:     "0.13",
-		LastSeen:    time.Now(),
+		LastSeen:    now,
 		Country:     "someCountry",
 		City:        "someCity",
-		ServiceTime: time.Now(),
+		ServiceTime: now,
 	}
 	t.Run("error performing select", func(t *testing.T) {
 		sqlDB, mock, err := sqlmock.New()
