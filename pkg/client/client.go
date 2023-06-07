@@ -3,7 +3,6 @@ package client
 import (
 	"bytes"
 	"context"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -124,7 +123,6 @@ func (hs *homingService) send(telDat *telemetryData) error {
 	if err != nil {
 		return err
 	}
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest(http.MethodPost, HomeUrl, bytes.NewReader(b))
 	if err != nil {
 		return err
