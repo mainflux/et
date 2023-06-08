@@ -20,14 +20,11 @@ import (
 )
 
 const (
-	contentType  = "application/json"
-	offsetKey    = "offset"
-	limitKey     = "limit"
-	ipAddressKey = "ip"
-	metadataKey  = "metadata"
-	statusKey    = "status"
-	defOffset    = 0
-	defLimit     = 10
+	contentType = "application/json"
+	offsetKey   = "offset"
+	limitKey    = "limit"
+	defOffset   = 0
+	defLimit    = 10
 )
 
 // MakeHandler returns a HTTP handler for API endpoints.

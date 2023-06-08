@@ -6,7 +6,6 @@ package jaeger
 import (
 	"errors"
 	"io"
-	"io/ioutil"
 
 	"github.com/opentracing/opentracing-go"
 	jconfig "github.com/uber/jaeger-client-go/config"
@@ -20,11 +19,11 @@ var (
 // NewTracer initializes Jaeger
 func NewTracer(svcName, url string) (opentracing.Tracer, io.Closer, error) {
 	if url == "" {
-		return opentracing.NoopTracer{}, ioutil.NopCloser(nil), errNoUrl
+		return opentracing.NoopTracer{}, io.NopCloser(nil), errNoUrl
 	}
 
 	if svcName == "" {
-		return opentracing.NoopTracer{}, ioutil.NopCloser(nil), errNoSvcName
+		return opentracing.NoopTracer{}, io.NopCloser(nil), errNoSvcName
 	}
 
 	return jconfig.Configuration{
