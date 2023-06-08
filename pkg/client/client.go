@@ -60,21 +60,21 @@ func (hs *homingService) CallHome(ctx context.Context) {
 			for _, endpoint := range ipEndpoints {
 				ip, err := hs.getIP(endpoint)
 				if err != nil {
-					hs.logger.Debug(fmt.Sprintf("failed to obtain service public IP address for sending Mainflux usage telemetry with error: %v", err))
+					hs.logger.Warn(fmt.Sprintf("failed to obtain service public IP address for sending Mainflux usage telemetry with error: %v", err))
 					continue
 				}
 				ip = strings.ReplaceAll(ip, "\n", "")
 				ip = strings.ReplaceAll(ip, "\\", "")
 				parsedIP, err := netip.ParseAddr(ip)
 				if err != nil {
-					hs.logger.Debug(fmt.Sprintf("failed to parse ip address with error: %v", err))
+					hs.logger.Warn(fmt.Sprintf("failed to parse ip address with error: %v", err))
 					continue
 				}
 				data.IpAddress = parsedIP.String()
 				break
 			}
 			if err := hs.send(&data); err != nil && data.IpAddress != "" {
-				hs.logger.Debug(fmt.Sprintf("failed to send Mainflux telemetry data with error: %v", err))
+				hs.logger.Warn(fmt.Sprintf("failed to send Mainflux telemetry data with error: %v", err))
 				time.Sleep(backOff)
 				continue
 			}
