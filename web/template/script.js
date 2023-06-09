@@ -3,7 +3,7 @@ var map = L.map('map').setView([20, 0], 2);
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
 
 function logJSONData() {
-    var mapData = {{.mapData}};
+    var mapData = {{.MapData}};
     console.log(data.telemetry);
     data.telemetry.forEach(tel => {
         L.marker([tel.latitude, tel.longitude]).bindPopup(
