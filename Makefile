@@ -25,12 +25,6 @@ define make_docker
 		-f docker/Dockerfile .
 endef
 
-define make_docker_ui
-	docker build \
-	--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(PROGRAM)-ui \
-	-f frontend/Dockerfile ./frontend
-endef
-
 define make_dev_cert
 	sudo openssl req -x509 -out ./docker/certbot/conf/live/$(DOMAIN)/fullchain.pem \
 	-keyout ./docker/certbot/conf/live/$(DOMAIN)/privkey.pem \
@@ -49,10 +43,8 @@ $(PROGRAM): $(SOURCES)
 clean:
 	rm -rf $(PROGRAM)
 
-docker-image-server:
+docker:
 	$(call make_docker)
-docker-image-ui:
-	$(call make_docker_ui)
 dev-cert:
 	$(call make_dev_cert)
 
