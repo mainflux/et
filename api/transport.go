@@ -55,10 +55,41 @@ func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.
 		encodeResponse,
 		opts...,
 	))
+
+	mux.Get("/", kithttp.NewServer(
+		kitot.TraceServer(tracer, "serve-ui")(serveUI(svc)),
+		kithttp.NopRequestDecoder,
+		encodeStaticResponse,
+		opts...,
+	))
+
 	mux.GetFunc("/health", mainflux.Health("telemetry"))
 	mux.Handle("/metrics", promhttp.Handler())
 
 	return mux
+}
+
+func encodeStaticResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
+	w.Header().Set("Content-Type", "text/html")
+	ar, ok := response.(uiRes)
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return nil
+	}
+
+	for k, v := range ar.Headers() {
+		w.Header().Set(k, v)
+	}
+	w.WriteHeader(ar.Code())
+
+	if ar.Empty() {
+		return nil
+	}
+	_, err := w.Write(ar.html)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func encodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {

@@ -1,7 +1,10 @@
 package callhome
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"text/template"
 	"time"
 )
 
@@ -13,6 +16,8 @@ type Service interface {
 	Retrieve(ctx context.Context, pm PageMetadata) (TelemetryPage, error)
 	// RetrieveSummary gets distinct countries and ip addresses
 	RetrieveSummary(ctx context.Context) (TelemetrySummary, error)
+	// ServeUI gets the callhome index html page
+	ServeUI(ctx context.Context) ([]byte, error)
 }
 
 var _ Service = (*telemetryService)(nil)
@@ -51,4 +56,39 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 
 func (ts *telemetryService) RetrieveSummary(ctx context.Context) (TelemetrySummary, error) {
 	return ts.repo.RetrieveDistinctIPsCountries(ctx)
+}
+
+// ServeUI gets the callhome index html page
+func (ts *telemetryService) ServeUI(ctx context.Context) ([]byte, error) {
+	tmpl := template.Must(template.ParseFiles("./web/template/index.html"))
+
+	summary, err := ts.repo.RetrieveDistinctIPsCountries(ctx)
+	if err != nil {
+		return nil, err
+	}
+	telPage, err := ts.repo.RetrieveAll(ctx, PageMetadata{Limit: 10})
+	if err != nil {
+		return nil, err
+	}
+	pg, err := json.Marshal(telPage)
+	if err != nil {
+		return nil, err
+	}
+	data := struct {
+		Countries     []string
+		NoDeployments int
+		NoCountries   int
+		MapData       string
+	}{
+		Countries:     summary.Countries,
+		NoDeployments: len(summary.IpAddresses),
+		NoCountries:   len(summary.Countries),
+		MapData:       string(pg),
+	}
+
+	var res bytes.Buffer
+	if err = tmpl.Execute(&res, data); err != nil {
+		return nil, err
+	}
+	return res.Bytes(), nil
 }

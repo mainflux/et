@@ -4,7 +4,10 @@ import (
 	"net/http"
 
 	"github.com/mainflux/callhome"
+	"github.com/mainflux/mainflux"
 )
+
+var _ mainflux.Response = (*uiRes)(nil)
 
 type saveTelemetryRes struct {
 	created bool
@@ -51,4 +54,32 @@ func (res telemetryPageRes) Headers() map[string]string {
 
 func (res telemetryPageRes) Empty() bool {
 	return false
+}
+
+type uiRes struct {
+	code    int
+	headers map[string]string
+	html    []byte
+}
+
+// Code implements mainflux.Response
+func (res uiRes) Code() int {
+	if res.code == 0 {
+		return http.StatusCreated
+	}
+
+	return res.code
+}
+
+// Empty implements mainflux.Response
+func (res uiRes) Empty() bool {
+	return res.html == nil
+}
+
+// Headers implements mainflux.Response
+func (res uiRes) Headers() map[string]string {
+	if res.headers == nil {
+		return map[string]string{}
+	}
+	return res.headers
 }

@@ -43,7 +43,7 @@ $(PROGRAM): $(SOURCES)
 clean:
 	rm -rf $(PROGRAM)
 
-docker:
+docker-image:
 	$(call make_docker)
 dev-cert:
 	$(call make_dev_cert)

@@ -34,6 +34,7 @@ services:
     networks:
       - callhome-base-net
     volumes:
+      - ../web:/web
       - ./IP2LOCATION-LITE-DB5.IPV6.BIN:/IP2LOCATION-LITE-DB5.IPV6.BIN
   certbot:
     image: certbot/certbot
@@ -45,8 +46,7 @@ services:
     image: nginx
     container_name: callhome-nginx
     depends_on:
-      - "callhome-server"  
-      - "callhome-ui"      
+      - "callhome-server"
     ports:
       - "80:80"
       - "443:443"
