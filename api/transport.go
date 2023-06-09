@@ -25,6 +25,7 @@ const (
 	limitKey    = "limit"
 	defOffset   = 0
 	defLimit    = 10
+	staticDir   = "./web/static"
 )
 
 // MakeHandler returns a HTTP handler for API endpoints.
@@ -65,6 +66,10 @@ func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.
 
 	mux.GetFunc("/health", mainflux.Health("telemetry"))
 	mux.Handle("/metrics", promhttp.Handler())
+
+	// Static file handler
+	fs := http.FileServer(http.Dir(staticDir))
+	mux.Handle("/*", fs)
 
 	return mux
 }

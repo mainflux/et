@@ -25,7 +25,6 @@ services:
   callhome-server:
     image: mainflux/callhome:${MF_CALLHOME_RELEASE_TAG}
     container_name: callhome-server
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
       - timescaledb
     restart: on-failure
@@ -45,12 +44,12 @@ services:
   nginx:
     image: nginx
     container_name: callhome-nginx
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
       - "callhome-server"
     ports:
       - "80:80"
       - "443:443"
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     networks:
       - callhome-base-net
     volumes:
