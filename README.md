@@ -2,10 +2,9 @@
 
 # E.T. Phone Home
 
-[![build][ci-badge]][ci-url]
-[![go report card][grc-badge]][grc-url]
-[![coverage][cov-badge]][cov-url]
-[![license][license]](LICENSE)
+![build][build]
+![Go Report Card][grc]
+[![License][LIC-BADGE]][LIC]
 
 Server to receive and store information regarding mainflux deployments. This information includes:
 
@@ -26,3 +25,9 @@ make run
 
 ### Requirements
 - [IP to Location database](https://lite.ip2location.com/)
+
+
+[grc]: https://goreportcard.com/badge/github.com/mainflux/callhome
+[build]: https://github.com/mainflux/callhome/actions/workflows/ci.yml/badge.svg
+[LIC]: LICENCE
+[LIC-BADGE]: https://img.shields.io/badge/License-Apache_2.0-blue.svg
