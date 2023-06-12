@@ -60,7 +60,9 @@ export class MapComponent implements AfterViewInit {
         if (tel.total==0) {
           break
         }
-        this.markPins(tel.telemetry);
+        if (tel.telemetry.length > 0) {
+          this.markPins(tel.telemetry);
+        }
       }
     }
   }
