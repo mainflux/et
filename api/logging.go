@@ -64,3 +64,18 @@ func (lm *loggingMiddleware) RetrieveSummary(ctx context.Context) (summary callh
 
 	return lm.svc.RetrieveSummary(ctx)
 }
+
+// ServeUI implements callhome.Service
+func (lm *loggingMiddleware) ServeUI(ctx context.Context) (res []byte, err error) {
+	defer func(begin time.Time) {
+		message := fmt.Sprintf("Method serve ui event took %s to complete", time.Since(begin))
+		if err != nil {
+			lm.hommingLogger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
+			return
+		}
+		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
+
+	}(time.Now())
+
+	return lm.svc.ServeUI(ctx)
+}

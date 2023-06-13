@@ -53,3 +53,12 @@ func (mm *metricsMiddleware) RetrieveSummary(ctx context.Context) (callhome.Tele
 	}(time.Now())
 	return mm.svc.RetrieveSummary(ctx)
 }
+
+// ServeUI implements callhome.Service
+func (mm *metricsMiddleware) ServeUI(ctx context.Context) ([]byte, error) {
+	defer func(begin time.Time) {
+		mm.counter.With("method", "serve-ui").Add(1)
+		mm.latency.With("method", "serve-ui").Observe(time.Since(begin).Seconds())
+	}(time.Now())
+	return mm.svc.ServeUI(ctx)
+}

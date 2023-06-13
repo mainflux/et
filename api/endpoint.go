@@ -64,3 +64,12 @@ func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
 		return summary, nil
 	}
 }
+
+func serveUI(svc callhome.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		res, err := svc.ServeUI(ctx)
+		return uiRes{
+			html: res,
+		}, err
+	}
+}

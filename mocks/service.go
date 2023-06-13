@@ -13,6 +13,11 @@ type Service struct {
 	mock.Mock
 }
 
+// ServeUI implements callhome.Service
+func (*Service) ServeUI(ctx context.Context) ([]byte, error) {
+	return nil, nil
+}
+
 func (s *Service) Retrieve(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
 	ret := s.Called(ctx, pm)
 	var r0 callhome.TelemetryPage
