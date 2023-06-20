@@ -32,7 +32,7 @@ const (
 
 type config struct {
 	LogLevel       string `env:"MF_CALLHOME_LOG_LEVEL"       envDefault:"info"`
-	JaegerURL      string `env:"MF_JAEGER_URL"               envDefault:"localhost:6831"`
+	JaegerURL      string `env:"MF_JAEGER_URL"               envDefault:"http://jaeger:14268/api/traces"`
 	IPDatabaseFile string `env:"MF_CALLHOME_IP_DB"           envDefault:"./IP2LOCATION-LITE-DB5.BIN"`
 }
 
