@@ -10,15 +10,15 @@ import (
 	"github.com/mainflux/callhome"
 	"github.com/mainflux/callhome/mocks"
 	"github.com/mainflux/mainflux/logger"
-	"github.com/opentracing/opentracing-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func TestEndpointsRetrieve(t *testing.T) {
 	svc := mocks.NewService(t)
 	svc.On("Retrieve", mock.Anything, callhome.PageMetadata{Limit: 10}).Return(callhome.TelemetryPage{}, nil)
-	h := MakeHandler(svc, opentracing.NoopTracer{}, logger.NewMock())
+	h := MakeHandler(svc, trace.NewNoopTracerProvider(), logger.NewMock())
 	server := httptest.NewServer(h)
 	client := server.Client()
 	testCases := []struct {
@@ -52,7 +52,7 @@ func TestEndpointSave(t *testing.T) {
 		}`
 	svc := mocks.NewService(t)
 	svc.On("Save", mock.Anything, mock.AnythingOfType("callhome.Telemetry")).Return(nil)
-	h := MakeHandler(svc, opentracing.NoopTracer{}, logger.NewMock())
+	h := MakeHandler(svc, trace.NewNoopTracerProvider(), logger.NewMock())
 	server := httptest.NewServer(h)
 	client := server.Client()
 	testCases := []struct {

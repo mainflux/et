@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	kitot "github.com/go-kit/kit/tracing/opentracing"
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/go-zoo/bone"
 	"github.com/mainflux/callhome"
@@ -15,8 +14,9 @@ import (
 	"github.com/mainflux/mainflux/logger"
 	"github.com/mainflux/mainflux/pkg/errors"
 	"github.com/mainflux/mainflux/pkg/uuid"
-	"github.com/opentracing/opentracing-go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/go-kit/kit/otelkit"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const (
@@ -29,7 +29,7 @@ const (
 )
 
 // MakeHandler returns a HTTP handler for API endpoints.
-func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.Logger) http.Handler {
+func MakeHandler(svc callhome.Service, tp trace.TracerProvider, logger logger.Logger) http.Handler {
 	opts := []kithttp.ServerOption{
 		kithttp.ServerErrorEncoder(LoggingErrorEncoder(logger, encodeError)),
 	}
@@ -37,28 +37,28 @@ func MakeHandler(svc callhome.Service, tracer opentracing.Tracer, logger logger.
 	mux := bone.New()
 
 	mux.Post("/telemetry", kithttp.NewServer(
-		kitot.TraceServer(tracer, "save")(saveEndpoint(svc)),
+		otelkit.EndpointMiddleware(otelkit.WithOperation("save"), otelkit.WithTracerProvider(tp))(saveEndpoint(svc)),
 		decodeSaveTelemetryReq,
 		encodeResponse,
 		opts...,
 	))
 
 	mux.Get("/telemetry", kithttp.NewServer(
-		kitot.TraceServer(tracer, "retrieve")(retrieveEndpoint(svc)),
+		otelkit.EndpointMiddleware(otelkit.WithOperation("retrieve"), otelkit.WithTracerProvider(tp))(retrieveEndpoint(svc)),
 		decodeRetrieve,
 		encodeResponse,
 		opts...,
 	))
 
 	mux.Get("/telemetry/summary", kithttp.NewServer(
-		kitot.TraceServer(tracer, "retrieve-summary")(retrieveSummaryEndpoint(svc)),
+		otelkit.EndpointMiddleware(otelkit.WithOperation("retrieve-summary"), otelkit.WithTracerProvider(tp))(retrieveSummaryEndpoint(svc)),
 		kithttp.NopRequestDecoder,
 		encodeResponse,
 		opts...,
 	))
 
 	mux.Get("/", kithttp.NewServer(
-		kitot.TraceServer(tracer, "serve-ui")(serveUI(svc)),
+		otelkit.EndpointMiddleware(otelkit.WithOperation("serve-ui"), otelkit.WithTracerProvider(tp))(serveUI(svc)),
 		kithttp.NopRequestDecoder,
 		encodeStaticResponse,
 		opts...,

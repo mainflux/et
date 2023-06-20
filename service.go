@@ -42,7 +42,7 @@ func (ts *telemetryService) Retrieve(ctx context.Context, pm PageMetadata) (Tele
 
 // Save saves the homing telemetry data and its location information.
 func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
-	locRec, err := ts.locSvc.GetLocation(t.IpAddress)
+	locRec, err := ts.locSvc.GetLocation(ctx, t.IpAddress)
 	if err != nil {
 		return err
 	}
