@@ -1,6 +1,8 @@
 package mocks
 
 import (
+	"context"
+
 	ip2location "github.com/ip2location/ip2location-go/v9"
 	"github.com/mainflux/callhome"
 	mock "github.com/stretchr/testify/mock"
@@ -12,7 +14,7 @@ type LocationService struct {
 	mock.Mock
 }
 
-func (_m *LocationService) GetLocation(ip string) (ip2location.IP2Locationrecord, error) {
+func (_m *LocationService) GetLocation(ctx context.Context, ip string) (ip2location.IP2Locationrecord, error) {
 	ret := _m.Called(ip)
 
 	return ret.Get(0).(ip2location.IP2Locationrecord), ret.Error(1)
