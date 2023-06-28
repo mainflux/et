@@ -11,15 +11,13 @@ import (
 )
 
 func TestGetIp(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		_, cancel := context.WithCancel(context.TODO())
-		hs := New("test_svc", "test.1", logger.NewMock(), cancel)
-		for _, endpoint := range ipEndpoints {
-			if _, err := hs.getIP(endpoint); err != nil {
-				t.Errorf("endpoint ip request unsuccessful with err : %v", err)
-			}
+	_, cancel := context.WithCancel(context.TODO())
+	hs := New("test_svc", "test.1", logger.NewMock(), cancel)
+	for _, endpoint := range ipEndpoints {
+		if _, err := hs.getIP(endpoint); err != nil {
+			t.Errorf("endpoint %s ip request unsuccessful with err : %v", endpoint, err)
 		}
-	})
+	}
 }
 
 type RoundTripFunc func(req *http.Request) *http.Response
