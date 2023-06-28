@@ -66,7 +66,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	telPage, err := ts.repo.RetrieveAll(ctx, PageMetadata{Limit: 10})
+	telPage, err := ts.repo.RetrieveAll(ctx, PageMetadata{})
 	if err != nil {
 		return nil, err
 	}
