@@ -25,18 +25,18 @@ func New(db *sqlx.DB) callhome.TelemetryRepo {
 func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
 	q := `
 	WITH aggregated_data AS (
-		SELECT ip_address, ARRAY_AGG(service) AS services
+		SELECT ip_address, ARRAY_AGG(DISTINCT service) AS services
 		FROM telemetry
 		GROUP BY ip_address
-	  )
-	  SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
-	  FROM aggregated_data ad
-	  INNER JOIN (
-		  SELECT DISTINCT ON (ip_address) *
-		  FROM telemetry
-		  ORDER BY ip_address, time DESC
-		  LIMIT :limit OFFSET :offset
-	  ) t ON ad.ip_address = t.ip_address;	  
+	)
+	SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
+	FROM aggregated_data ad
+	INNER JOIN (
+		SELECT DISTINCT ON (ip_address) *
+		FROM telemetry
+		ORDER BY ip_address, time DESC
+	) t ON ad.ip_address = t.ip_address
+	OFFSET :offset LIMIT :limit;
 	`
 
 	params := map[string]interface{}{
@@ -60,7 +60,15 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 		results.Telemetry = append(results.Telemetry, result)
 	}
 
-	q = `SELECT COUNT(*) FROM telemetry;`
+	q = `
+	SELECT COUNT(*)
+	FROM (
+		SELECT ip_address, ARRAY_AGG(DISTINCT service) AS services
+		FROM telemetry
+		GROUP BY ip_address
+		LIMIT :limit OFFSET :offset
+	) AS subquery;
+	`
 	rows, err = r.db.NamedQuery(q, params)
 	if err != nil {
 		return callhome.TelemetryPage{}, err
