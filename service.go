@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	pageLimit = 100
+	pageLimit = 1000
 )
 
 // Service Service to receive homing telemetry data, persist and retrieve it.
