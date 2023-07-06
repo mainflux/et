@@ -1,6 +1,5 @@
-<img src="https://wtop.com/wp-content/uploads/2019/07/AP_100073447735.jpg" width="600" height="400" />
-
-# E.T. Phone Home
+# Mainflux Callhome Service
+[![website][preview]][website]
 
 ![build][build]
 ![Go Report Card][grc]
@@ -12,6 +11,8 @@ Server to receive and store information regarding mainflux deployments. This inf
 - Mainflux Version
 - Last Seen
 - Mainflux Service
+
+The summary is located on our [Website][website].
 
 ## Usage
 To Run:
@@ -31,3 +32,5 @@ make run
 [build]: https://github.com/mainflux/callhome/actions/workflows/ci.yml/badge.svg
 [LIC]: LICENCE
 [LIC-BADGE]: https://img.shields.io/badge/License-Apache_2.0-blue.svg
+[website]: https://deployments.mainflux.io
+[preview]: /assets/images/website.png
