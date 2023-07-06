@@ -2,7 +2,6 @@ package timescale
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
@@ -29,23 +28,16 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 		SELECT ip_address, ARRAY_AGG(DISTINCT service) AS services
 		FROM telemetry
 		GROUP BY ip_address
-	  )
-	  SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
-	  FROM aggregated_data ad
-	  INNER JOIN (
-		  SELECT DISTINCT ON (ip_address) *
-		  FROM telemetry
-		  ORDER BY ip_address, time DESC
-		  %s OFFSET :offset
-	  ) t ON ad.ip_address = t.ip_address;	  
+	)
+	SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
+	FROM aggregated_data ad
+	INNER JOIN (
+		SELECT DISTINCT ON (ip_address) *
+		FROM telemetry
+		ORDER BY ip_address, time DESC
+	) t ON ad.ip_address = t.ip_address
+	OFFSET :offset LIMIT :limit;
 	`
-
-	switch pm.Limit {
-	case 0:
-		q = fmt.Sprintf(q, "")
-	default:
-		q = fmt.Sprintf(q, "LIMIT :limit")
-	}
 
 	params := map[string]interface{}{
 		"limit":  pm.Limit,
@@ -68,7 +60,15 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 		results.Telemetry = append(results.Telemetry, result)
 	}
 
-	q = `SELECT COUNT(*) FROM telemetry;`
+	q = `
+	SELECT COUNT(*)
+	FROM (
+		SELECT ip_address, ARRAY_AGG(DISTINCT service) AS services
+		FROM telemetry
+		GROUP BY ip_address
+		LIMIT :limit OFFSET :offset
+	) AS subquery;
+	`
 	rows, err = r.db.NamedQuery(q, params)
 	if err != nil {
 		return callhome.TelemetryPage{}, err
