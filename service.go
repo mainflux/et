@@ -8,9 +8,7 @@ import (
 	"time"
 )
 
-const (
-	pageLimit = 1000
-)
+const pageLimit = 1000
 
 // Service Service to receive homing telemetry data, persist and retrieve it.
 type Service interface {
@@ -70,18 +68,9 @@ func (ts *telemetryService) ServeUI(ctx context.Context) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var telPage TelemetryPage
-	var offset uint64 = 0
-	for {
-		currentPage, err := ts.repo.RetrieveAll(ctx, PageMetadata{Offset: offset, Limit: pageLimit})
-		if err != nil {
-			return nil, err
-		}
-		telPage.Telemetry = append(telPage.Telemetry, currentPage.Telemetry...)
-		if currentPage.Total < pageLimit {
-			break
-		}
-		offset += pageLimit
+	telPage, err := ts.repo.RetrieveAll(ctx, PageMetadata{Limit: pageLimit})
+	if err != nil {
+		return nil, err
 	}
 
 	pg, err := json.Marshal(telPage)
