@@ -12,7 +12,7 @@ type Telemetry struct {
 	Service     string         `json:"service,omitempty" db:"service"`
 	Longitude   float64        `json:"longitude,omitempty" db:"longitude"`
 	Latitude    float64        `json:"latitude,omitempty" db:"latitude"`
-	IpAddress   string         `json:"ip_address" db:"ip_address"`
+	IpAddress   string         `json:"-" db:"ip_address"`
 	Version     string         `json:"mainflux_version,omitempty" db:"mf_version"`
 	LastSeen    time.Time      `json:"last_seen" db:"service_time"`
 	Country     string         `json:"country,omitempty" db:"country"`

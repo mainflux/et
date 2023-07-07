@@ -9,16 +9,24 @@
         <title>Mainflux Deployments</title>
     </head>
     <body>
+        <div class="sidebar">
+            <h2>Mainflux Deployment Summary</h2>
+            <p>Mainflux currently has {{.NoDeployments}} deployments in {{.NoCountries}} countries.</p>
+            <p>List of countries:</p>
+            <ul>
+                {{range .Countries}}
+                    <li>{{.}}</li>
+                {{end}}
+            </ul>
+        </div>
         <div class="container">
-            <div class="sidebar">
-                <h2>Mainflux Deployment Summary</h2>
-                <p>Mainflux currently has {{.NoDeployments}} deployments in {{.NoCountries}} countries.</p>
-                <p>List of countries:</p>
-                <ul>
-                    {{range .Countries}}
-                        <li>{{.}}</li>
-                    {{end}}
-                </ul>
+            <div id="filter-container">
+                <form id="filter-form">
+                    <label for="from-date">From:</label>
+                    <input type="date" id="from-date" name="from-date">
+                    <label for="to-date">To:</label>
+                    <input type="date" id="to-date" name="to-date">
+                </form>
             </div>
             <div class="main-content">
                 <div id="map"></div>
@@ -28,23 +36,49 @@
             //create map object and set default positions and zoom level
             var map = L.map('map').setView([20, 0], 2);
             L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
-            function logJSONData() {
+            
+            function logJSONData(fromDate, toDate) {
                 var mapData = `{{.MapData}}`;
-                const obj = JSON.parse(mapData)
-                console.log(obj.Telemetry);
+                const obj = JSON.parse(mapData);
                 obj.Telemetry.forEach(tel => {
-                    L.marker([tel.latitude, tel.longitude]).bindPopup(
-                        `<h3>Deployment details</h3>
-                        <p>IP Address:\t${tel.ip_address}</p>
-                        <p>version:\t${tel.mainflux_version}</p>
-                        <p>last seen:\t${tel.last_seen}</p>
-                        <p>country:\t${tel.country}</p>
-                        <p>city:\t${tel.city}</p>
-                        <p>Services:\t${tel.services.join(', ')}</p>`
-                    ).addTo(map);
+                    const last_seen = new Date(tel.last_seen);
+                    if (!fromDate || !toDate || (last_seen >= new Date(fromDate) && last_seen <= new Date(toDate))) {
+                        L.marker([tel.latitude, tel.longitude]).bindPopup(
+                            `<h3>Deployment details</h3>
+                            <p>version:\t${tel.mainflux_version}</p>
+                            <p>last seen:\t${last_seen}</p>
+                            <p>country:\t${tel.country}</p>
+                            <p>city:\t${tel.city}</p>
+                            <p>Services:\t${tel.services.join(', ')}</p>`
+                        ).addTo(map);
+                    }
                 });
             }
-            logJSONData();
+            
+            logJSONData(null, null); // Initial data without filtering
+            
+            // Handle input changes
+            document.getElementById('from-date').addEventListener('change', function() {
+                var fromDate = document.getElementById('from-date').value;
+                var toDate = document.getElementById('to-date').value;
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
+                logJSONData(fromDate, toDate);
+            });
+
+            document.getElementById('to-date').addEventListener('change', function() {
+                var fromDate = document.getElementById('from-date').value;
+                var toDate = document.getElementById('to-date').value;
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
+                logJSONData(fromDate, toDate);
+            });
         </script>
     </body>
 </html>
