@@ -31,9 +31,14 @@ type TelemetryPage struct {
 	Telemetry []Telemetry
 }
 
+type CountrySummary struct {
+	Country       string `json:"country" db:"country"`
+	NoDeployments int    `json:"number_of_deployments" db:"count"`
+}
+
 type TelemetrySummary struct {
-	Countries   []string `json:"countries,omitempty"`
-	IpAddresses []string `json:"ip_addresses,omitempty"`
+	Countries        []CountrySummary `json:"countries,omitempty"`
+	TotalDeployments int              `json:"total_deployments,omitempty"`
 }
 
 // TelemetryRepository specifies an account persistence API.

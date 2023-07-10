@@ -78,13 +78,13 @@ func (ts *telemetryService) ServeUI(ctx context.Context) ([]byte, error) {
 		return nil, err
 	}
 	data := struct {
-		Countries     []string
+		Countries     []CountrySummary
 		NoDeployments int
 		NoCountries   int
 		MapData       string
 	}{
 		Countries:     summary.Countries,
-		NoDeployments: len(summary.IpAddresses),
+		NoDeployments: summary.TotalDeployments,
 		NoCountries:   len(summary.Countries),
 		MapData:       string(pg),
 	}
