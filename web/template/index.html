@@ -57,7 +57,7 @@
                     points.forEach(tel => {
                         const last_seen = new Date(tel.last_seen);
                         if (!fromDate || !toDate || (last_seen >= new Date(fromDate) && last_seen <= new Date(toDate))) {
-                            const marker = L.circle([tel.latitude, tel.longitude], {radius: 100000}).bindPopup(
+                            const marker = L.circle([tel.latitude, tel.longitude], {radius: 1000}).bindPopup(
                                 `<h3>Deployment details</h3>
                                 <p>version:\t${tel.mainflux_version}</p>
                                 <p>last seen:\t${last_seen}</p>
