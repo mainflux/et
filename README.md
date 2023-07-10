@@ -5,7 +5,7 @@
 ![Go Report Card][grc]
 [![License][LIC-BADGE]][LIC]
 
-This is a server to receive and store information regarding mainflux deployments. 
+This is a server to receive and store information regarding Mainflux deployments. 
 
 The summary is located on our [Website][website].
 
