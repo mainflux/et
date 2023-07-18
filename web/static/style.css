@@ -48,3 +48,7 @@ body {
     border-radius: 4px;
     padding: 4px;
 }
+.scrollable-list {
+    height: 400px;
+    overflow-y: auto;
+}

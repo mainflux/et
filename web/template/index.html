@@ -17,11 +17,13 @@
             <h2>Mainflux Deployment Summary</h2>
             <p>Mainflux currently has {{.NoDeployments}} deployments in {{.NoCountries}} countries.</p>
             <p>List of countries:</p>
-            <ul class="list-group">
-                {{range .Countries}}
-                    <li class="list-group-item">{{.Country}} <span class="badge">{{.NoDeployments}}</span></li>
-                {{end}}
-            </ul>
+            <div class="scrollable-list">
+                <ul class="list-group">
+                    {{range .Countries}}
+                        <li class="list-group-item">{{.Country}} <span class="badge">{{.NoDeployments}}</span></li>
+                    {{end}}
+                </ul>
+            </div>
         </div>
         <div class="container">
             <div id="filter-container">
@@ -59,11 +61,11 @@
                         if (!fromDate || !toDate || (last_seen >= new Date(fromDate) && last_seen <= new Date(toDate))) {
                             const marker = L.circle([tel.latitude, tel.longitude], {radius: 1000}).bindPopup(
                                 `<h3>Deployment details</h3>
-                                <p>version:\t${tel.mainflux_version}</p>
-                                <p>last seen:\t${last_seen}</p>
-                                <p>country:\t${tel.country}</p>
-                                <p>city:\t${tel.city}</p>
-                                <p>Services:\t${tel.services.join(', ')}</p>`
+                                <p style="font-size: 12px;">Version:\t${tel.mainflux_version}</p>
+                                <p style="font-size: 12px;">Last seen:\t${last_seen}</p>
+                                <p style="font-size: 12px;">Country:\t${tel.country}</p>
+                                <p style="font-size: 12px;">City:\t${tel.city}</p>
+                                <p style="font-size: 12px;">Services:\t${tel.services.join(', ')}</p>`
                                 );
                                 countryMarkers.addLayer(marker);
                             }
