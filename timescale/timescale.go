@@ -29,7 +29,7 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata, filters
 	WITH aggregated_data AS (
 		SELECT ip_address, ARRAY_AGG(DISTINCT service) AS services
 		FROM telemetry
-		WHERE %s
+		%s
 		GROUP BY ip_address
 	)
 	SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
@@ -41,13 +41,12 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata, filters
 	) t ON ad.ip_address = t.ip_address
 	OFFSET :offset LIMIT :limit;
 	`
+	filterQuery, params := generateQuery(filters)
 
-	q = fmt.Sprintf(q, generateQuery(filters))
+	q = fmt.Sprintf(q, filterQuery)
 
-	params := map[string]interface{}{
-		"limit":  pm.Limit,
-		"offset": pm.Offset,
-	}
+	params["limit"] = pm.Limit
+	params["offset"] = pm.Offset
 
 	rows, err := r.db.NamedQuery(q, params)
 	if err != nil {
@@ -129,8 +128,9 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 
 // RetrieveDistinctIPsCountries retrieve distinct
 func (r repo) RetrieveDistinctIPsCountries(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
-	q := fmt.Sprintf(`select count(distinct ip_address), country from telemetry WHERE %s group by country;`, generateQuery(filters))
-	rows, err := r.db.Queryx(q)
+	filterQuery, params := generateQuery(filters)
+	q := fmt.Sprintf(`select count(distinct ip_address), country from telemetry %s group by country;`, filterQuery)
+	rows, err := r.db.NamedQuery(q, params)
 	if err != nil {
 		return callhome.TelemetrySummary{}, err
 	}
@@ -149,15 +149,23 @@ func (r repo) RetrieveDistinctIPsCountries(ctx context.Context, filters callhome
 	return summary, nil
 }
 
-func generateQuery(filters callhome.TelemetryFilters) string {
+func generateQuery(filters callhome.TelemetryFilters) (string, map[string]interface{}) {
 	var queries []string
+	params := make(map[string]interface{})
 
 	switch {
 	case !filters.From.IsZero():
-		queries = append(queries, fmt.Sprintf("time >= %s", filters.From.String()))
+		queries = append(queries, "time >= :from")
+		params["from"] = filters.From
 	case !filters.To.IsZero():
-		queries = append(queries, fmt.Sprintf("time <= %s", filters.To.String()))
+		queries = append(queries, "time <= :to")
+		params["to"] = filters.To
 	}
 
-	return strings.Join(queries, " AND ")
+	switch len(queries) {
+	case 0:
+		return "", params
+	default:
+		return fmt.Sprintf("WHERE %s", strings.Join(queries, " AND ")), params
+	}
 }
