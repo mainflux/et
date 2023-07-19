@@ -77,13 +77,17 @@ func (ts *telemetryService) ServeUI(ctx context.Context) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	countries, err := json.Marshal(summary.Countries)
+	if err != nil {
+		return nil, err
+	}
 	data := struct {
-		Countries     []CountrySummary
+		Countries     string
 		NoDeployments int
 		NoCountries   int
 		MapData       string
 	}{
-		Countries:     summary.Countries,
+		Countries:     string(countries),
 		NoDeployments: summary.TotalDeployments,
 		NoCountries:   len(summary.Countries),
 		MapData:       string(pg),
