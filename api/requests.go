@@ -40,6 +40,8 @@ func (req saveTelemetryReq) validate() error {
 type listTelemetryReq struct {
 	offset uint64
 	limit  uint64
+	from   time.Time
+	to     time.Time
 }
 
 func (req listTelemetryReq) validate() error {

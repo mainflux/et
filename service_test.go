@@ -20,7 +20,7 @@ func TestRetrieve(t *testing.T) {
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		svc := callhome.New(timescaleRepo, nil)
 		timescaleRepo.On("RetrieveAll", ctx, callhome.PageMetadata{}).Return(callhome.TelemetryPage{}, timescale.ErrSaveEvent)
-		_, err := svc.Retrieve(ctx, callhome.PageMetadata{})
+		_, err := svc.Retrieve(ctx, callhome.PageMetadata{}, callhome.TelemetryFilters{})
 		assert.NotNil(t, err)
 		assert.Equal(t, timescale.ErrSaveEvent, err)
 	})
@@ -28,7 +28,7 @@ func TestRetrieve(t *testing.T) {
 		timescaleRepo := repoMocks.NewTelemetryRepo(t)
 		svc := callhome.New(timescaleRepo, nil)
 		timescaleRepo.On("RetrieveAll", ctx, callhome.PageMetadata{}).Return(callhome.TelemetryPage{}, nil)
-		_, err := svc.Retrieve(ctx, callhome.PageMetadata{})
+		_, err := svc.Retrieve(ctx, callhome.PageMetadata{}, callhome.TelemetryFilters{})
 		assert.Nil(t, err)
 	})
 }

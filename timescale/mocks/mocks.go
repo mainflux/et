@@ -13,7 +13,7 @@ type mockRepo struct {
 	mock.Mock
 }
 
-func (mr *mockRepo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
+func (mr *mockRepo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata, filter callhome.TelemetryFilters) (callhome.TelemetryPage, error) {
 	ret := mr.Called(ctx, pm)
 	return ret.Get(0).(callhome.TelemetryPage), ret.Error(1)
 }
@@ -31,7 +31,7 @@ func (mr *mockRepo) Save(ctx context.Context, t callhome.Telemetry) error {
 }
 
 // RetrieveDistinctIPsCountries retrieve distinct
-func (*mockRepo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.TelemetrySummary, error) {
+func (*mockRepo) RetrieveDistinctIPsCountries(ctx context.Context, filter callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	return callhome.TelemetrySummary{}, nil
 }
 

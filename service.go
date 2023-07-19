@@ -15,11 +15,11 @@ type Service interface {
 	// Save saves the homing telemetry data and its location information.
 	Save(ctx context.Context, t Telemetry) error
 	// Retrieve retrieves homing telemetry data from the specified repository.
-	Retrieve(ctx context.Context, pm PageMetadata) (TelemetryPage, error)
+	Retrieve(ctx context.Context, pm PageMetadata, filters TelemetryFilters) (TelemetryPage, error)
 	// RetrieveSummary gets distinct countries and ip addresses
-	RetrieveSummary(ctx context.Context) (TelemetrySummary, error)
+	RetrieveSummary(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error)
 	// ServeUI gets the callhome index html page
-	ServeUI(ctx context.Context) ([]byte, error)
+	ServeUI(ctx context.Context, filters TelemetryFilters) ([]byte, error)
 }
 
 var _ Service = (*telemetryService)(nil)
@@ -38,8 +38,8 @@ func New(repo TelemetryRepo, locSvc LocationService) Service {
 }
 
 // Retrieve retrieves homing telemetry data from the specified repository.
-func (ts *telemetryService) Retrieve(ctx context.Context, pm PageMetadata) (TelemetryPage, error) {
-	return ts.repo.RetrieveAll(ctx, pm)
+func (ts *telemetryService) Retrieve(ctx context.Context, pm PageMetadata, filters TelemetryFilters) (TelemetryPage, error) {
+	return ts.repo.RetrieveAll(ctx, pm, filters)
 }
 
 // Save saves the homing telemetry data and its location information.
@@ -56,19 +56,19 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 	return ts.repo.Save(ctx, t)
 }
 
-func (ts *telemetryService) RetrieveSummary(ctx context.Context) (TelemetrySummary, error) {
-	return ts.repo.RetrieveDistinctIPsCountries(ctx)
+func (ts *telemetryService) RetrieveSummary(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error) {
+	return ts.repo.RetrieveDistinctIPsCountries(ctx, filters)
 }
 
 // ServeUI gets the callhome index html page
-func (ts *telemetryService) ServeUI(ctx context.Context) ([]byte, error) {
+func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilters) ([]byte, error) {
 	tmpl := template.Must(template.ParseFiles("./web/template/index.html"))
 
-	summary, err := ts.repo.RetrieveDistinctIPsCountries(ctx)
+	summary, err := ts.repo.RetrieveDistinctIPsCountries(ctx, filters)
 	if err != nil {
 		return nil, err
 	}
-	telPage, err := ts.repo.RetrieveAll(ctx, PageMetadata{Limit: pageLimit})
+	telPage, err := ts.repo.RetrieveAll(ctx, PageMetadata{Limit: pageLimit}, filters)
 	if err != nil {
 		return nil, err
 	}

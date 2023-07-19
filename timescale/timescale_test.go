@@ -122,7 +122,7 @@ func TestRetrieveAll(t *testing.T) {
 
 		mock.ExpectQuery("SELECT(.*)").WillReturnError(fmt.Errorf("any error"))
 
-		_, err = repo.RetrieveAll(ctx, callhome.PageMetadata{Limit: 10, Offset: 0})
+		_, err = repo.RetrieveAll(ctx, callhome.PageMetadata{Limit: 10, Offset: 0}, callhome.TelemetryFilters{})
 		assert.NotNil(t, err)
 	})
 	t.Run("successful", func(t *testing.T) {
@@ -145,7 +145,7 @@ func TestRetrieveAll(t *testing.T) {
 		mock.ExpectQuery("SELECT(.*)").WillReturnRows(rows)
 		mock.ExpectQuery("SELECT COUNT(.*) FROM telemetry").WillReturnRows(rows2)
 
-		tp, err := repo.RetrieveAll(ctx, callhome.PageMetadata{Limit: 10, Offset: 0})
+		tp, err := repo.RetrieveAll(ctx, callhome.PageMetadata{Limit: 10, Offset: 0}, callhome.TelemetryFilters{})
 		assert.Nil(t, err)
 		assert.Equal(t, mTel, tp.Telemetry[0])
 	})

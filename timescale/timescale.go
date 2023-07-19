@@ -2,6 +2,8 @@ package timescale
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
@@ -22,11 +24,12 @@ func New(db *sqlx.DB) callhome.TelemetryRepo {
 }
 
 // RetrieveAll gets all records from repo.
-func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
+func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata, filters callhome.TelemetryFilters) (callhome.TelemetryPage, error) {
 	q := `
 	WITH aggregated_data AS (
 		SELECT ip_address, ARRAY_AGG(DISTINCT service) AS services
 		FROM telemetry
+		WHERE %s
 		GROUP BY ip_address
 	)
 	SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
@@ -38,6 +41,8 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 	) t ON ad.ip_address = t.ip_address
 	OFFSET :offset LIMIT :limit;
 	`
+
+	q = fmt.Sprintf(q, generateQuery(filters))
 
 	params := map[string]interface{}{
 		"limit":  pm.Limit,
@@ -123,8 +128,8 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 }
 
 // RetrieveDistinctIPsCountries retrieve distinct
-func (r repo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.TelemetrySummary, error) {
-	q := `select count(distinct ip_address), country from telemetry group by country;`
+func (r repo) RetrieveDistinctIPsCountries(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
+	q := fmt.Sprintf(`select count(distinct ip_address), country from telemetry WHERE %s group by country;`, generateQuery(filters))
 	rows, err := r.db.Queryx(q)
 	if err != nil {
 		return callhome.TelemetrySummary{}, err
@@ -142,4 +147,17 @@ func (r repo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.Teleme
 		summary.TotalDeployments += country.NoDeployments
 	}
 	return summary, nil
+}
+
+func generateQuery(filters callhome.TelemetryFilters) string {
+	var queries []string
+
+	switch {
+	case !filters.From.IsZero():
+		queries = append(queries, fmt.Sprintf("time >= %s", filters.From.String()))
+	case !filters.To.IsZero():
+		queries = append(queries, fmt.Sprintf("time <= %s", filters.To.String()))
+	}
+
+	return strings.Join(queries, " AND ")
 }

@@ -39,7 +39,11 @@ func retrieveEndpoint(svc callhome.Service) endpoint.Endpoint {
 			Offset: req.offset,
 			Limit:  req.limit,
 		}
-		tm, err := svc.Retrieve(ctx, pm)
+		filter := callhome.TelemetryFilters{
+			From: req.from,
+			To:   req.to,
+		}
+		tm, err := svc.Retrieve(ctx, pm, filter)
 		if err != nil {
 			return nil, err
 		}
@@ -57,7 +61,15 @@ func retrieveEndpoint(svc callhome.Service) endpoint.Endpoint {
 
 func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		summary, err := svc.RetrieveSummary(ctx)
+		req := request.(listTelemetryReq)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		filter := callhome.TelemetryFilters{
+			From: req.from,
+			To:   req.to,
+		}
+		summary, err := svc.RetrieveSummary(ctx, filter)
 		if err != nil {
 			return nil, err
 		}
@@ -67,7 +79,15 @@ func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
 
 func serveUI(svc callhome.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		res, err := svc.ServeUI(ctx)
+		req := request.(listTelemetryReq)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		filter := callhome.TelemetryFilters{
+			From: req.from,
+			To:   req.to,
+		}
+		res, err := svc.ServeUI(ctx, filter)
 		return uiRes{
 			html: res,
 		}, err

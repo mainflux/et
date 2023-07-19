@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/go-zoo/bone"
@@ -23,6 +24,8 @@ const (
 	contentType = "application/json"
 	offsetKey   = "offset"
 	limitKey    = "limit"
+	fromKey     = "from"
+	toKey       = "to"
 	defOffset   = 0
 	defLimit    = 10
 	staticDir   = "./web/static"
@@ -52,14 +55,14 @@ func MakeHandler(svc callhome.Service, tp trace.TracerProvider, logger logger.Lo
 
 	mux.Get("/telemetry/summary", kithttp.NewServer(
 		otelkit.EndpointMiddleware(otelkit.WithOperation("retrieve-summary"), otelkit.WithTracerProvider(tp))(retrieveSummaryEndpoint(svc)),
-		kithttp.NopRequestDecoder,
+		decodeRetrieve,
 		encodeResponse,
 		opts...,
 	))
 
 	mux.Get("/", kithttp.NewServer(
 		otelkit.EndpointMiddleware(otelkit.WithOperation("serve-ui"), otelkit.WithTracerProvider(tp))(serveUI(svc)),
-		kithttp.NopRequestDecoder,
+		decodeRetrieve,
 		encodeStaticResponse,
 		opts...,
 	))
@@ -152,9 +155,35 @@ func decodeRetrieve(_ context.Context, r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 
+	fromString, err := ReadStringQuery(r, fromKey, "")
+	if err != nil {
+		return nil, err
+	}
+
+	toString, err := ReadStringQuery(r, toKey, "")
+	if err != nil {
+		return nil, err
+	}
+
+	var from, to time.Time
+	if fromString != "" {
+		from, err = time.Parse(time.RFC3339, fromString)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if toString != "" {
+		to, err = time.Parse(time.RFC3339, toString)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	req := listTelemetryReq{
 		offset: o,
 		limit:  l,
+		from:   from,
+		to:     to,
 	}
 	return req, nil
 }

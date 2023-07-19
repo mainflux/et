@@ -20,6 +20,11 @@ type Telemetry struct {
 	ServiceTime time.Time      `json:"timestamp" db:"time"`
 }
 
+type TelemetryFilters struct {
+	From time.Time
+	To   time.Time
+}
+
 type PageMetadata struct {
 	Total  uint64
 	Offset uint64
@@ -48,7 +53,7 @@ type TelemetryRepo interface {
 	Save(ctx context.Context, t Telemetry) error
 
 	// RetrieveAll retrieves all telemetry events.
-	RetrieveAll(ctx context.Context, pm PageMetadata) (TelemetryPage, error)
+	RetrieveAll(ctx context.Context, pm PageMetadata, filters TelemetryFilters) (TelemetryPage, error)
 	// RetrieveDistinctIPsCOuntries gets distinct ip addresses and countries from database.
-	RetrieveDistinctIPsCountries(ctx context.Context) (TelemetrySummary, error)
+	RetrieveDistinctIPsCountries(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error)
 }

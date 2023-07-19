@@ -29,17 +29,17 @@ func New(tracer trace.Tracer, repo callhome.TelemetryRepo) callhome.TelemetryRep
 }
 
 // RetrieveAll adds tracing middleware to retrieve all method.
-func (rt *repoTracer) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
+func (rt *repoTracer) RetrieveAll(ctx context.Context, pm callhome.PageMetadata, filter callhome.TelemetryFilters) (callhome.TelemetryPage, error) {
 	ctx, span := rt.tracer.Start(ctx, retrieveAllOp)
 	defer span.End()
-	return rt.repo.RetrieveAll(ctx, pm)
+	return rt.repo.RetrieveAll(ctx, pm, filter)
 }
 
 // RetrieveDistinctIPsCountries adds tracing middleware to retrieve distinct ips countries method.
-func (rt *repoTracer) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.TelemetrySummary, error) {
+func (rt *repoTracer) RetrieveDistinctIPsCountries(ctx context.Context, filter callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	ctx, span := rt.tracer.Start(ctx, retrieveDistinctIPsCountriesOp)
 	defer span.End()
-	return rt.repo.RetrieveDistinctIPsCountries(ctx)
+	return rt.repo.RetrieveDistinctIPsCountries(ctx, filter)
 }
 
 // Save adds tracing middleware to save method.
