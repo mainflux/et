@@ -86,11 +86,15 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		NoDeployments int
 		NoCountries   int
 		MapData       string
+		From          string
+		To            string
 	}{
 		Countries:     string(countries),
 		NoDeployments: summary.TotalDeployments,
 		NoCountries:   len(summary.Countries),
 		MapData:       string(pg),
+		From:          filters.From.Format(time.DateOnly),
+		To:            filters.To.Format(time.DateOnly),
 	}
 
 	var res bytes.Buffer

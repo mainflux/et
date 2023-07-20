@@ -27,9 +27,9 @@
             <div id="filter-container">
                 <form id="filter-form" onsubmit="applyFilter(event)">
                     <label for="from-date">From:</label>
-                    <input type="date" id="from-date" name="from-date">
+                    <input type="date" id="from-date" name="from-date" value="{{.from}}">
                     <label for="to-date">To:</label>
-                    <input type="date" id="to-date" name="to-date">
+                    <input type="date" id="to-date" name="to-date" value="{{.to}}">
                     <input class="btn btn-primary" type="submit" value="Apply">
                 </form>
             </div>

@@ -73,7 +73,10 @@ func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
 		if err != nil {
 			return nil, err
 		}
-		return summary, nil
+		return telemetrySummaryRes{
+			Countries:        summary.Countries,
+			TotalDeployments: summary.TotalDeployments,
+		}, nil
 	}
 }
 

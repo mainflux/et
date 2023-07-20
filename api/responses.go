@@ -8,6 +8,9 @@ import (
 )
 
 var _ mainflux.Response = (*uiRes)(nil)
+var _ mainflux.Response = (*saveTelemetryRes)(nil)
+var _ mainflux.Response = (*telemetryPageRes)(nil)
+var _ mainflux.Response = (*telemetrySummaryRes)(nil)
 
 type saveTelemetryRes struct {
 	created bool
@@ -82,4 +85,24 @@ func (res uiRes) Headers() map[string]string {
 		return map[string]string{}
 	}
 	return res.headers
+}
+
+type telemetrySummaryRes struct {
+	Countries        []callhome.CountrySummary `json:"countries,omitempty"`
+	TotalDeployments int                       `json:"total_deployments,omitempty"`
+}
+
+// Code implements mainflux.Response
+func (*telemetrySummaryRes) Code() int {
+	return http.StatusOK
+}
+
+// Empty implements mainflux.Response
+func (*telemetrySummaryRes) Empty() bool {
+	return false
+}
+
+// Headers implements mainflux.Response
+func (res *telemetrySummaryRes) Headers() map[string]string {
+	return map[string]string{}
 }
