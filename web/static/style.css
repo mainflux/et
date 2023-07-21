@@ -55,4 +55,7 @@ body {
 .error-message {
     color: red;
     display: block;
+    padding-bottom: 4px;
+    display: flex;
+    justify-content: center;
 }
