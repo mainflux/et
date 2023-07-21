@@ -11,6 +11,8 @@ var (
 	ErrLimitSize = errors.New("invalid limit size")
 	// ErrOffsetSize indicates an invalid offset.
 	ErrOffsetSize = errors.New("invalid offset size")
+	// ErrInvalidDateRange indicates date from and to are invalid.
+	ErrInvalidDateRange = errors.New("invalid date range")
 )
 
 const maxLimitSize = 100
@@ -47,6 +49,10 @@ type listTelemetryReq struct {
 func (req listTelemetryReq) validate() error {
 	if req.limit > maxLimitSize || req.limit < 1 {
 		return ErrLimitSize
+	}
+
+	if req.to.Before(req.from) {
+		return ErrInvalidDateRange
 	}
 
 	return nil
