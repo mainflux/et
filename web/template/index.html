@@ -33,6 +33,7 @@
                     <input class="btn btn-primary" type="submit" value="Apply">
                 </form>
             </div>
+            <div id="error-message" class="error-message"></div>
             <div class="main-content">
                 <div id="map"></div>
             </div>
@@ -44,8 +45,22 @@
 
             function applyFilter(event) {
                 event.preventDefault();
+                const errorMessage = document.getElementById("error-message");
                 var fromDateInput = document.getElementById('from-date').value;
                 var toDateInput = document.getElementById('to-date').value;
+
+                var fromDate = fromDateInput ? new Date(fromDateInput) : null;
+                var toDate = toDateInput ? new Date(toDateInput) : null;
+
+                if (fromDate && toDate && fromDate > toDate) {
+                    errorMessage.textContent = 'Date range is not valid!';
+                    return;
+                } else {
+                    errorMessage.textContent = ''; // Clear error message if the dates are valid
+                }
+
+                var fromDateString = fromDate ? fromDate.toISOString() : '';
+                var toDateString = toDate ? toDate.toISOString() : '';
 
                 var fromDate = fromDateInput ? new Date(fromDateInput).toISOString() : '';
                 var toDate = toDateInput ? new Date(toDateInput).toISOString() : '';
