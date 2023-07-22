@@ -68,6 +68,49 @@
                 var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
                 window.location.href = url;
             }
+
+            // List of countries
+            var countries = JSON.parse('{{.Countries}}');
+
+            // Populate the sidebar with the country list and retrieve coordinates
+            var countryList = document.getElementById('country-list');
+            countries.forEach(function (country) {
+              var listItem = document.createElement('li');
+              listItem.className = 'list-group-item';
+              listItem.textContent = country.country;
+              var listItemContent = document.createElement('span');
+              listItemContent.className = 'badge';
+              listItemContent.textContent = country.number_of_deployments;
+              listItem.appendChild(listItemContent);
+              listItem.addEventListener('click', function () {
+                getCountryCoordinates(country.country, function (lat, lng) {
+                  map.setView([lat, lng], 6); // Zoom in to the clicked country
+                });
+              });
+              countryList.appendChild(listItem);
+            });
+
+            // Function to retrieve coordinates for a given country using Nominatim API
+            function getCountryCoordinates(country, callback) {
+              var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(country);
+
+              fetch(url)
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (data) {
+                if (data.length > 0) {
+                  var lat = parseFloat(data[0].lat);
+                  var lng = parseFloat(data[0].lon);
+                  callback(lat, lng);
+                } else {
+                  console.log('Coordinates not found for country: ' + country);
+                }
+              })
+              .catch(function (error) {
+                console.log('Error retrieving coordinates:', error);
+              });
+            }
             
             function logJSONData() {
                 var mapData = `{{.MapData}}`;
