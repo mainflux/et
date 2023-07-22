@@ -2,6 +2,8 @@ package timescale
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
@@ -22,11 +24,12 @@ func New(db *sqlx.DB) callhome.TelemetryRepo {
 }
 
 // RetrieveAll gets all records from repo.
-func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
+func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata, filters callhome.TelemetryFilters) (callhome.TelemetryPage, error) {
 	q := `
 	WITH aggregated_data AS (
 		SELECT ip_address, ARRAY_AGG(DISTINCT service) AS services
 		FROM telemetry
+		%s
 		GROUP BY ip_address
 	)
 	SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
@@ -38,11 +41,12 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata) (callho
 	) t ON ad.ip_address = t.ip_address
 	OFFSET :offset LIMIT :limit;
 	`
+	filterQuery, params := generateQuery(filters)
 
-	params := map[string]interface{}{
-		"limit":  pm.Limit,
-		"offset": pm.Offset,
-	}
+	q = fmt.Sprintf(q, filterQuery)
+
+	params["limit"] = pm.Limit
+	params["offset"] = pm.Offset
 
 	rows, err := r.db.NamedQuery(q, params)
 	if err != nil {
@@ -123,9 +127,10 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 }
 
 // RetrieveDistinctIPsCountries retrieve distinct
-func (r repo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.TelemetrySummary, error) {
-	q := `select count(distinct ip_address), country from telemetry group by country;`
-	rows, err := r.db.Queryx(q)
+func (r repo) RetrieveDistinctIPsCountries(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
+	filterQuery, params := generateQuery(filters)
+	q := fmt.Sprintf(`select count(distinct ip_address), country from telemetry %s group by country;`, filterQuery)
+	rows, err := r.db.NamedQuery(q, params)
 	if err != nil {
 		return callhome.TelemetrySummary{}, err
 	}
@@ -142,4 +147,25 @@ func (r repo) RetrieveDistinctIPsCountries(ctx context.Context) (callhome.Teleme
 		summary.TotalDeployments += country.NoDeployments
 	}
 	return summary, nil
+}
+
+func generateQuery(filters callhome.TelemetryFilters) (string, map[string]interface{}) {
+	var queries []string
+	params := make(map[string]interface{})
+
+	switch {
+	case !filters.From.IsZero():
+		queries = append(queries, "time >= :from")
+		params["from"] = filters.From
+	case !filters.To.IsZero():
+		queries = append(queries, "time <= :to")
+		params["to"] = filters.To
+	}
+
+	switch len(queries) {
+	case 0:
+		return "", params
+	default:
+		return fmt.Sprintf("WHERE %s", strings.Join(queries, " AND ")), params
+	}
 }

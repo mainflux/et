@@ -14,11 +14,11 @@ type Service struct {
 }
 
 // ServeUI implements callhome.Service
-func (*Service) ServeUI(ctx context.Context) ([]byte, error) {
+func (*Service) ServeUI(ctx context.Context, filters callhome.TelemetryFilters) ([]byte, error) {
 	return nil, nil
 }
 
-func (s *Service) Retrieve(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
+func (s *Service) Retrieve(ctx context.Context, pm callhome.PageMetadata, filters callhome.TelemetryFilters) (callhome.TelemetryPage, error) {
 	ret := s.Called(ctx, pm)
 	var r0 callhome.TelemetryPage
 	var r1 error
@@ -52,7 +52,7 @@ func (s *Service) Save(ctx context.Context, t callhome.Telemetry) error {
 	return r0
 }
 
-func (*Service) RetrieveSummary(ctx context.Context) (callhome.TelemetrySummary, error) {
+func (*Service) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	return callhome.TelemetrySummary{}, nil
 }
 

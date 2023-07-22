@@ -31,17 +31,17 @@ func NewService(tracer trace.Tracer, svc callhome.Service) callhome.Service {
 }
 
 // Retrieve adds tracing middleware to retrieve method.
-func (tst *telemetryServiceTracer) Retrieve(ctx context.Context, pm callhome.PageMetadata) (callhome.TelemetryPage, error) {
+func (tst *telemetryServiceTracer) Retrieve(ctx context.Context, pm callhome.PageMetadata, filters callhome.TelemetryFilters) (callhome.TelemetryPage, error) {
 	ctx, span := tst.tracer.Start(ctx, retrieveOp)
 	defer span.End()
-	return tst.svc.Retrieve(ctx, pm)
+	return tst.svc.Retrieve(ctx, pm, filters)
 }
 
 // RetrieveSummary adds tracing middleware to RetrieveSummary.
-func (tst *telemetryServiceTracer) RetrieveSummary(ctx context.Context) (callhome.TelemetrySummary, error) {
+func (tst *telemetryServiceTracer) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	ctx, span := tst.tracer.Start(ctx, retrieveSummaryOp)
 	defer span.End()
-	return tst.svc.RetrieveSummary(ctx)
+	return tst.svc.RetrieveSummary(ctx, filters)
 }
 
 // Save adds tracing middleware to Save.
@@ -52,8 +52,8 @@ func (tst *telemetryServiceTracer) Save(ctx context.Context, t callhome.Telemetr
 }
 
 // ServeUI adds tracing middleware to ServeUI.
-func (tst *telemetryServiceTracer) ServeUI(ctx context.Context) ([]byte, error) {
+func (tst *telemetryServiceTracer) ServeUI(ctx context.Context, filters callhome.TelemetryFilters) ([]byte, error) {
 	ctx, span := tst.tracer.Start(ctx, serveUIOp)
 	defer span.End()
-	return tst.svc.ServeUI(ctx)
+	return tst.svc.ServeUI(ctx, filters)
 }

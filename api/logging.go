@@ -22,7 +22,7 @@ func LoggingMiddleware(svc callhome.Service, logger logger.Logger) callhome.Serv
 }
 
 // Retrieve adds logging middleware to retrieve service.
-func (lm *loggingMiddleware) Retrieve(ctx context.Context, pm callhome.PageMetadata) (telemetryPage callhome.TelemetryPage, err error) {
+func (lm *loggingMiddleware) Retrieve(ctx context.Context, pm callhome.PageMetadata, filters callhome.TelemetryFilters) (telemetryPage callhome.TelemetryPage, err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method retrieve with took %s to complete", time.Since(begin))
 		if err != nil {
@@ -33,7 +33,7 @@ func (lm *loggingMiddleware) Retrieve(ctx context.Context, pm callhome.PageMetad
 
 	}(time.Now())
 
-	return lm.svc.Retrieve(ctx, pm)
+	return lm.svc.Retrieve(ctx, pm, filters)
 }
 
 // Save adds logging middleware to save service.
@@ -51,7 +51,7 @@ func (lm *loggingMiddleware) Save(ctx context.Context, t callhome.Telemetry) (er
 	return lm.svc.Save(ctx, t)
 }
 
-func (lm *loggingMiddleware) RetrieveSummary(ctx context.Context) (summary callhome.TelemetrySummary, err error) {
+func (lm *loggingMiddleware) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFilters) (summary callhome.TelemetrySummary, err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method retrieve summary event took %s to complete", time.Since(begin))
 		if err != nil {
@@ -62,11 +62,11 @@ func (lm *loggingMiddleware) RetrieveSummary(ctx context.Context) (summary callh
 
 	}(time.Now())
 
-	return lm.svc.RetrieveSummary(ctx)
+	return lm.svc.RetrieveSummary(ctx, filters)
 }
 
 // ServeUI implements callhome.Service
-func (lm *loggingMiddleware) ServeUI(ctx context.Context) (res []byte, err error) {
+func (lm *loggingMiddleware) ServeUI(ctx context.Context, filters callhome.TelemetryFilters) (res []byte, err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method serve ui event took %s to complete", time.Since(begin))
 		if err != nil {
@@ -77,5 +77,5 @@ func (lm *loggingMiddleware) ServeUI(ctx context.Context) (res []byte, err error
 
 	}(time.Now())
 
-	return lm.svc.ServeUI(ctx)
+	return lm.svc.ServeUI(ctx, filters)
 }
