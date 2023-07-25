@@ -16,6 +16,46 @@ tags:
       description: Find out more
       url: https://github.com/mainflux/et
 paths:
+  /:
+    get:
+      tags:
+        - ui
+      summary: serve ui
+      operationId: serve ui
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/From"
+        - $ref: "#/components/parameters/To"
+      responses:
+        "200":
+          description: found
+          content:
+            text/html:
+              schema:
+                type: string
+  /telemetry/summary:
+    get:
+      tags:
+        - telemetry summary
+      summary: get telemetry summary
+      operationId: retrieve-summary
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/From"
+        - $ref: "#/components/parameters/To"
+      responses:
+        "200":
+          description: found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/TelemetrySummaryRes"
+        "429":
+          description: Too many requests
+        "401":
+          description: Request is unauthorized
   /telemetry:
     post:
       tags:
@@ -36,6 +76,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/From"
+        - $ref: "#/components/parameters/To"
       tags:
         - telemetry
       summary: Retrieve telemetry events
@@ -78,6 +120,22 @@ components:
         type: integer
         default: 0
         minimum: 0
+      required: false
+    From:
+      name: from
+      description: From date filter.
+      in: query
+      schema:
+        type: string
+        default: ""
+      required: false
+    To:
+      name: to
+      description: From date filter.
+      in: query
+      schema:
+        type: string
+        default: ""
       required: false
   requestBodies:
     TelemetryReq:
@@ -124,11 +182,23 @@ components:
             type: string
           timestamp:
             type: string
+    TelemetrySummaryRes:
+        type: object
+        properties:
+          total_deployments:
+            type: integer
+          countries:
+            type: object
+            properties:
+              country:
+                type: string
+              number_of_deployments:
+                type: integer
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       in: header
       name: apikey
+
 security:
   - ApiKeyAuth: []
-            type: string

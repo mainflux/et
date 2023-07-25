@@ -13,8 +13,7 @@ The summary is located on our [Website][website].
 To Run:
 
 ```bash
-make docker-image-server
-make docker-image-ui
+make docker-image
 make run
 ```
 
