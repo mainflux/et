@@ -40,8 +40,9 @@ func retrieveEndpoint(svc callhome.Service) endpoint.Endpoint {
 			Limit:  req.limit,
 		}
 		filter := callhome.TelemetryFilters{
-			From: req.from,
-			To:   req.to,
+			From:    req.from,
+			To:      req.to,
+			Country: req.country,
 		}
 		tm, err := svc.Retrieve(ctx, pm, filter)
 		if err != nil {
@@ -66,8 +67,9 @@ func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
 			return nil, err
 		}
 		filter := callhome.TelemetryFilters{
-			From: req.from,
-			To:   req.to,
+			From:    req.from,
+			To:      req.to,
+			Country: req.country,
 		}
 		summary, err := svc.RetrieveSummary(ctx, filter)
 		if err != nil {
@@ -87,8 +89,9 @@ func serveUI(svc callhome.Service) endpoint.Endpoint {
 			return nil, err
 		}
 		filter := callhome.TelemetryFilters{
-			From: req.from,
-			To:   req.to,
+			From:    req.from,
+			To:      req.to,
+			Country: req.country,
 		}
 		res, err := svc.ServeUI(ctx, filter)
 		return uiRes{

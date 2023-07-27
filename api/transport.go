@@ -26,6 +26,7 @@ const (
 	limitKey    = "limit"
 	fromKey     = "from"
 	toKey       = "to"
+	countryKey  = "country"
 	defOffset   = 0
 	defLimit    = 10
 	staticDir   = "./web/static"
@@ -179,11 +180,17 @@ func decodeRetrieve(_ context.Context, r *http.Request) (interface{}, error) {
 		}
 	}
 
+	co, err := ReadStringQuery(r, countryKey, "")
+	if err != nil {
+		return nil, err
+	}
+
 	req := listTelemetryReq{
-		offset: o,
-		limit:  l,
-		from:   from,
-		to:     to,
+		offset:  o,
+		limit:   l,
+		from:    from,
+		to:      to,
+		country: co,
 	}
 	return req, nil
 }

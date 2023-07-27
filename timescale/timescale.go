@@ -160,6 +160,9 @@ func generateQuery(filters callhome.TelemetryFilters) (string, map[string]interf
 	case !filters.To.IsZero():
 		queries = append(queries, "time <= :to")
 		params["to"] = filters.To
+	case filters.Country != "":
+		queries = append(queries, "country = :country")
+		params["country"] = filters.Country
 	}
 
 	switch len(queries) {

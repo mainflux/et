@@ -21,8 +21,9 @@ type Telemetry struct {
 }
 
 type TelemetryFilters struct {
-	From time.Time
-	To   time.Time
+	From    time.Time
+	To      time.Time
+	Country string
 }
 
 type PageMetadata struct {
