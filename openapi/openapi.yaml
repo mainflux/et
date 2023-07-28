@@ -27,6 +27,7 @@ paths:
         - $ref: "#/components/parameters/Offset"
         - $ref: "#/components/parameters/From"
         - $ref: "#/components/parameters/To"
+        - $ref: "#/components/parameters/Country"
       responses:
         "200":
           description: found
@@ -45,6 +46,7 @@ paths:
         - $ref: "#/components/parameters/Offset"
         - $ref: "#/components/parameters/From"
         - $ref: "#/components/parameters/To"
+        - $ref: "#/components/parameters/Country"
       responses:
         "200":
           description: found
@@ -78,6 +80,7 @@ paths:
         - $ref: "#/components/parameters/Offset"
         - $ref: "#/components/parameters/From"
         - $ref: "#/components/parameters/To"
+        - $ref: "#/components/parameters/Country"
       tags:
         - telemetry
       summary: Retrieve telemetry events
@@ -132,6 +135,14 @@ components:
     To:
       name: to
       description: From date filter.
+      in: query
+      schema:
+        type: string
+        default: ""
+      required: false
+    Country:
+      name: country
+      description: From country filter.
       in: query
       schema:
         type: string
