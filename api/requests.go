@@ -45,6 +45,7 @@ type listTelemetryReq struct {
 	from    time.Time
 	to      time.Time
 	country string
+	city    string
 }
 
 func (req listTelemetryReq) validate() error {

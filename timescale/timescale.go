@@ -167,6 +167,11 @@ func generateQuery(filters callhome.TelemetryFilters) (string, map[string]interf
 		params["country"] = filters.Country
 	}
 
+	if filters.City != "" {
+		queries = append(queries, "city = :city")
+		params["city"] = filters.City
+	}
+
 	switch len(queries) {
 	case 0:
 		return "", params
