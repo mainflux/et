@@ -25,6 +25,7 @@ type TelemetryFilters struct {
 	To      time.Time
 	Country string
 	City    string
+	Version string
 }
 
 type PageMetadata struct {
