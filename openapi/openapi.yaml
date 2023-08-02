@@ -143,6 +143,14 @@ components:
         type: string
         default: ""
       required: false
+    Country:
+      name: country
+      description: From country filter.
+      in: query
+      schema:
+        type: string
+        default: ""
+      required: false
     City:
       name: city
       description: From city filter.
