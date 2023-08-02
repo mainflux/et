@@ -81,6 +81,8 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 	if err != nil {
 		return nil, err
 	}
+
+	filterCountries := summary.Countries
 	var from, to string
 	if !filters.From.IsZero() {
 		from = filters.From.Format(time.DateOnly)
@@ -89,19 +91,21 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		to = filters.To.Format(time.DateOnly)
 	}
 	data := struct {
-		Countries     string
-		NoDeployments int
-		NoCountries   int
-		MapData       string
-		From          string
-		To            string
+		Countries       string
+		FilterCountries []CountrySummary
+		NoDeployments   int
+		NoCountries     int
+		MapData         string
+		From            string
+		To              string
 	}{
-		Countries:     string(countries),
-		NoDeployments: summary.TotalDeployments,
-		NoCountries:   len(summary.Countries),
-		MapData:       string(pg),
-		From:          from,
-		To:            to,
+		Countries:       string(countries),
+		FilterCountries: filterCountries,
+		NoDeployments:   summary.TotalDeployments,
+		NoCountries:     len(summary.Countries),
+		MapData:         string(pg),
+		From:            from,
+		To:              to,
 	}
 
 	var res bytes.Buffer
