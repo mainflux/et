@@ -95,8 +95,7 @@
                 var fromDate = fromDateInput ? new Date(fromDateInput).toISOString() : '';
                 var toDate = toDateInput ? new Date(toDateInput).toISOString() : '';
 
-                var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
-                 var url = `/?country=${encodeURIComponent(selectedCountry)}`;
+                var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}&country=${encodeURIComponent(selectedCountry)}`;
                 window.location.href = url;
             }
 
