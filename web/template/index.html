@@ -47,7 +47,7 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="country-filter" class="form-label">Country</label>
-                                <form id="country-filter-form" onsubmit="return applyCountryFilter()">
+                                <form id="country-filter-form" onsubmit="applyFilter(event)">
                                  <select id="country-filter" class="form-select">
                                     <option value="">Select a country</option>
                                     {{range $i, $country := .FilterCountries}}
@@ -79,10 +79,9 @@
                 const errorMessage = document.getElementById("error-message");
                 var fromDateInput = document.getElementById('from-date').value;
                 var toDateInput = document.getElementById('to-date').value;
-                
+                var selectedCountry = document.getElementById('country-filter').value;
                 var fromDate = fromDateInput ? new Date(fromDateInput) : null;
-                var toDate = toDateInput ? new Date(toDateInput) : null;
-               
+                var toDate = toDateInput ? new Date(toDateInput) : null;               
                 if (fromDate && toDate && fromDate > toDate) {
                     errorMessage.textContent = 'Date range is not valid!';
                     return;
@@ -97,18 +96,8 @@
                 var toDate = toDateInput ? new Date(toDateInput).toISOString() : '';
 
                 var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
-                
+                 var url = `/?country=${encodeURIComponent(selectedCountry)}`;
                 window.location.href = url;
-            }
-
-            function applyCountryFilter() {
-                var selectedCountry = document.getElementById('country-filter').value;
-
-                var url = `/?country=${encodeURIComponent(selectedCountry)}`;
-                window.location.href = url;
-
-                // Prevent form submission (page reload)
-                return false;
             }
 
             // List of countries
@@ -131,7 +120,6 @@
               });
               countryList.appendChild(listItem);
             });
-            
             // Function to retrieve coordinates for a given country using Nominatim API
             function getCountryCoordinates(country, callback) {
               var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(country);
