@@ -53,7 +53,7 @@ func (req listTelemetryReq) validate() error {
 		return ErrLimitSize
 	}
 
-	if req.to.Before(req.from) {
+	if !req.from.IsZero() && req.to.Before(req.from) {
 		return ErrInvalidDateRange
 	}
 
