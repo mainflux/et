@@ -176,6 +176,11 @@ func generateQuery(filters callhome.TelemetryFilters) (string, map[string]interf
 		params["version"] = filters.Version
 	}
 
+	if filters.Service != "" {
+		queries = append(queries, "service = :service")
+		params["service"] = filters.Service
+	}
+
 	switch len(queries) {
 	case 0:
 		return "", params

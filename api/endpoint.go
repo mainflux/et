@@ -45,6 +45,7 @@ func retrieveEndpoint(svc callhome.Service) endpoint.Endpoint {
 			Country: req.country,
 			City:    req.city,
 			Version: req.version,
+			Service: req.service,
 		}
 		tm, err := svc.Retrieve(ctx, pm, filter)
 		if err != nil {
@@ -74,6 +75,7 @@ func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
 			Country: req.country,
 			City:    req.city,
 			Version: req.version,
+			Service: req.service,
 		}
 		summary, err := svc.RetrieveSummary(ctx, filter)
 		if err != nil {
@@ -98,6 +100,7 @@ func serveUI(svc callhome.Service) endpoint.Endpoint {
 			Country: req.country,
 			City:    req.city,
 			Version: req.version,
+			Service: req.service,
 		}
 		res, err := svc.ServeUI(ctx, filter)
 		return uiRes{
