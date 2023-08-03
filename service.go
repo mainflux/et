@@ -59,22 +59,22 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 }
 
 func (ts *telemetryService) RetrieveSummary(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error) {
-	return ts.repo.RetrieveDistinctIPsCountries(ctx, filters)
+	return ts.repo.RetrieveDistinctIPs(ctx, filters)
 }
 
 // ServeUI gets the callhome index html page
 func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilters) ([]byte, error) {
 	tmpl := template.Must(template.ParseFiles("./web/template/index.html"))
 
-	summary, err := ts.repo.RetrieveDistinctIPsCountries(ctx, filters)
+	summary, err := ts.repo.RetrieveDistinctIPs(ctx, filters)
 	if err != nil {
 		return nil, err
 	}
-	allCountries, err := ts.repo.RetrieveDistinctIPsCountries(ctx, TelemetryFilters{})
+	allCountries, err := ts.repo.RetrieveDistinctIPs(ctx, TelemetryFilters{})
 	if err != nil {
 		return nil, err
 	}
-	allCities, err := ts.repo.RetrieveDistinctIPsCountries(ctx, filters)
+	allCities, err := ts.repo.RetrieveDistinctIPs(ctx, filters)
 	if err != nil {
 		return nil, err
 	}
@@ -92,6 +92,11 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		return nil, err
 	}
 
+	cities, err := json.Marshal(summary.Cities)
+	if err != nil {
+		return nil, err
+	}
+
 	filterCountries := allCountries.Countries
 	filterCities := allCities.Cities
 
@@ -104,6 +109,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 	}
 	data := struct {
 		Countries       string
+		Cities          string
 		FilterCountries []CountrySummary
 		FilterCities    []CitySummary
 		NoDeployments   int
@@ -113,6 +119,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		To              string
 	}{
 		Countries:       string(countries),
+		Cities:          string(cities),
 		FilterCountries: filterCountries,
 		FilterCities:    filterCities,
 		NoDeployments:   summary.TotalDeployments,

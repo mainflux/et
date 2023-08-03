@@ -51,10 +51,9 @@ type CitySummary struct {
 }
 
 type TelemetrySummary struct {
-	Countries            []CountrySummary `json:"countries,omitempty"`
-	TotalDeployments     int              `json:"total_deployments,omitempty"`
-	Cities               []CitySummary    `json:"cities,omitempty"`
-	TotalCityDeployments int              `json:"total_city_deployments,omitempty"`
+	Countries        []CountrySummary `json:"countries,omitempty"`
+	Cities           []CitySummary    `json:"cities,omitempty"`
+	TotalDeployments int              `json:"total_deployments,omitempty"`
 }
 
 // TelemetryRepository specifies an account persistence API.
@@ -65,6 +64,6 @@ type TelemetryRepo interface {
 
 	// RetrieveAll retrieves all telemetry events.
 	RetrieveAll(ctx context.Context, pm PageMetadata, filters TelemetryFilters) (TelemetryPage, error)
-	// RetrieveDistinctIPsCOuntries gets distinct ip addresses and countries from database.
-	RetrieveDistinctIPsCountries(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error)
+	// RetrieveDistinctIPs gets distinct ip addresses and countries from database.
+	RetrieveDistinctIPs(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error)
 }

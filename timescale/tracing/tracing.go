@@ -35,11 +35,11 @@ func (rt *repoTracer) RetrieveAll(ctx context.Context, pm callhome.PageMetadata,
 	return rt.repo.RetrieveAll(ctx, pm, filter)
 }
 
-// RetrieveDistinctIPsCountries adds tracing middleware to retrieve distinct ips countries method.
-func (rt *repoTracer) RetrieveDistinctIPsCountries(ctx context.Context, filter callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
+// RetrieveDistinctIPs adds tracing middleware to retrieve distinct ips countries method.
+func (rt *repoTracer) RetrieveDistinctIPs(ctx context.Context, filter callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	ctx, span := rt.tracer.Start(ctx, retrieveDistinctIPsCountriesOp)
 	defer span.End()
-	return rt.repo.RetrieveDistinctIPsCountries(ctx, filter)
+	return rt.repo.RetrieveDistinctIPs(ctx, filter)
 }
 
 // Save adds tracing middleware to save method.
