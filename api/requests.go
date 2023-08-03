@@ -47,6 +47,7 @@ type listTelemetryReq struct {
 	country string
 	city    string
 	version string
+	service string
 }
 
 func (req listTelemetryReq) validate() error {

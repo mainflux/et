@@ -29,6 +29,7 @@ const (
 	countryKey  = "country"
 	cityKey     = "city"
 	versionKey  = "version"
+	serviceKey  = "service"
 	defOffset   = 0
 	defLimit    = 10
 	staticDir   = "./web/static"
@@ -197,6 +198,11 @@ func decodeRetrieve(_ context.Context, r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 
+	se, err := ReadStringQuery(r, serviceKey, "")
+	if err != nil {
+		return nil, err
+	}
+
 	req := listTelemetryReq{
 		offset:  o,
 		limit:   l,
@@ -205,6 +211,7 @@ func decodeRetrieve(_ context.Context, r *http.Request) (interface{}, error) {
 		country: co,
 		city:    ci,
 		version: ve,
+		service: se,
 	}
 	return req, nil
 }
