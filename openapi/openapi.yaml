@@ -29,6 +29,7 @@ paths:
         - $ref: "#/components/parameters/To"
         - $ref: "#/components/parameters/Country"
         - $ref: "#/components/parameters/City"
+        - $ref: "#/components/parameters/Version"
       responses:
         "200":
           description: found
@@ -49,6 +50,7 @@ paths:
         - $ref: "#/components/parameters/To"
         - $ref: "#/components/parameters/Country"
         - $ref: "#/components/parameters/City"
+        - $ref: "#/components/parameters/Version"
       responses:
         "200":
           description: found
@@ -84,6 +86,7 @@ paths:
         - $ref: "#/components/parameters/To"
         - $ref: "#/components/parameters/Country"
         - $ref: "#/components/parameters/City"
+        - $ref: "#/components/parameters/Version"
       tags:
         - telemetry
       summary: Retrieve telemetry events
@@ -154,6 +157,14 @@ components:
     City:
       name: city
       description: From city filter.
+      in: query
+      schema:
+        type: string
+        default: ""
+      required: false
+    Version:
+      name: version
+      description: From version filter.
       in: query
       schema:
         type: string

@@ -171,6 +171,11 @@ func generateQuery(filters callhome.TelemetryFilters) (string, map[string]interf
 		params["city"] = filters.City
 	}
 
+	if filters.Version != "" {
+		queries = append(queries, "mf_version = :version")
+		params["version"] = filters.Version
+	}
+
 	switch len(queries) {
 	case 0:
 		return "", params
