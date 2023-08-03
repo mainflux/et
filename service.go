@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+
+	//"math/rand"
 	"text/template"
 	"time"
 )
@@ -68,6 +70,14 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 	if err != nil {
 		return nil, err
 	}
+	allCountries, err := ts.repo.RetrieveDistinctIPsCountries(ctx, TelemetryFilters{})
+	if err != nil {
+		return nil, err
+	}
+	allCities, err := ts.repo.RetrieveDistinctIPsCountries(ctx, filters)
+	if err != nil {
+		return nil, err
+	}
 	telPage, err := ts.repo.RetrieveAll(ctx, PageMetadata{Limit: pageLimit}, filters)
 	if err != nil {
 		return nil, err
@@ -82,7 +92,9 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		return nil, err
 	}
 
-	filterCountries := summary.Countries
+	filterCountries := allCountries.Countries
+	filterCities := allCities.Cities
+
 	var from, to string
 	if !filters.From.IsZero() {
 		from = filters.From.Format(time.DateOnly)
@@ -93,6 +105,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 	data := struct {
 		Countries       string
 		FilterCountries []CountrySummary
+		FilterCities    []CitySummary
 		NoDeployments   int
 		NoCountries     int
 		MapData         string
@@ -101,6 +114,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 	}{
 		Countries:       string(countries),
 		FilterCountries: filterCountries,
+		FilterCities:    filterCities,
 		NoDeployments:   summary.TotalDeployments,
 		NoCountries:     len(summary.Countries),
 		MapData:         string(pg),

@@ -45,9 +45,16 @@ type CountrySummary struct {
 	NoDeployments int    `json:"number_of_deployments" db:"count"`
 }
 
+type CitySummary struct {
+	City          string `json:"city" db:"city"`
+	NoDeployments int    `json:"number_of_deployments" db:"count"`
+}
+
 type TelemetrySummary struct {
-	Countries        []CountrySummary `json:"countries,omitempty"`
-	TotalDeployments int              `json:"total_deployments,omitempty"`
+	Countries            []CountrySummary `json:"countries,omitempty"`
+	TotalDeployments     int              `json:"total_deployments,omitempty"`
+	Cities               []CitySummary    `json:"cities,omitempty"`
+	TotalCityDeployments int              `json:"total_city_deployments,omitempty"`
 }
 
 // TelemetryRepository specifies an account persistence API.

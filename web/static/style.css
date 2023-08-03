@@ -26,6 +26,10 @@ body {
 .btn {
     margin-left: 20px;
     margin-right: 20px;
+    padding: 5px 20px;
+    text-align: center;
+    line-height: 10px;
+    
 }
 
 #map {
@@ -48,7 +52,7 @@ body {
 
 #from-date,
 #to-date {
-    width: 200px;
+    width: 150px;
     height: 30px;
     border: 1px solid #ccc;
     border-radius: 4px;
