@@ -172,7 +172,7 @@ func generateQuery(filters callhome.TelemetryFilters) (string, map[string]interf
 	}
 
 	if filters.Version != "" {
-		queries = append(queries, "version = :version")
+		queries = append(queries, "mf_version = :version")
 		params["version"] = filters.Version
 	}
 
