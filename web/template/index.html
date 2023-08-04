@@ -68,7 +68,6 @@
                     </div>
                     </div>
                 </div>
-        
             </div>
             <div id="error-message" class="error-message"></div>
             <div class="main-content">
@@ -103,8 +102,6 @@
                 var toDate = toDateInput ? new Date(toDateInput).toISOString() : '';
 
                 var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}&country=${encodeURIComponent(selectedCountry)}&city=${encodeURIComponent(selectedCity)}`;
-                
-        
                 window.location.href = url;
             }
 
