@@ -86,9 +86,6 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		return nil, err
 	}
 
-	filterCountries := unfilteredSummary.Countries
-	filterCities := unfilteredSummary.Cities
-
 	var from, to string
 	if !filters.From.IsZero() {
 		from = filters.From.Format(time.DateOnly)
@@ -108,8 +105,8 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		To              string
 	}{
 		Countries:       string(countries),
-		FilterCountries: filterCountries,
-		FilterCities:    filterCities,
+		FilterCountries: unfilteredSummary.Countries,
+		FilterCities:    unfilteredSummary.Cities,
 		NoDeployments:   summary.TotalDeployments,
 		NoCountries:     len(summary.Countries),
 		MapData:         string(pg),
