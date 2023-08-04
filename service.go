@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-
-	//"math/rand"
 	"text/template"
 	"time"
 )
@@ -59,22 +57,18 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 }
 
 func (ts *telemetryService) RetrieveSummary(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error) {
-	return ts.repo.RetrieveDistinctIPs(ctx, filters)
+	return ts.repo.RetrieveSummary(ctx, filters)
 }
 
 // ServeUI gets the callhome index html page
 func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilters) ([]byte, error) {
 	tmpl := template.Must(template.ParseFiles("./web/template/index.html"))
 
-	summary, err := ts.repo.RetrieveDistinctIPs(ctx, filters)
+	summary, err := ts.repo.RetrieveSummary(ctx, filters)
 	if err != nil {
 		return nil, err
 	}
-	allCountries, err := ts.repo.RetrieveDistinctIPs(ctx, TelemetryFilters{})
-	if err != nil {
-		return nil, err
-	}
-	allCities, err := ts.repo.RetrieveDistinctIPs(ctx, filters)
+	unfilteredSummary, err := ts.repo.RetrieveSummary(ctx, TelemetryFilters{})
 	if err != nil {
 		return nil, err
 	}
@@ -92,13 +86,8 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		return nil, err
 	}
 
-	cities, err := json.Marshal(summary.Cities)
-	if err != nil {
-		return nil, err
-	}
-
-	filterCountries := allCountries.Countries
-	filterCities := allCities.Cities
+	filterCountries := unfilteredSummary.Countries
+	filterCities := unfilteredSummary.Cities
 
 	var from, to string
 	if !filters.From.IsZero() {
@@ -111,7 +100,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		Countries       string
 		Cities          string
 		FilterCountries []CountrySummary
-		FilterCities    []CitySummary
+		FilterCities    []string
 		NoDeployments   int
 		NoCountries     int
 		MapData         string
@@ -119,7 +108,6 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		To              string
 	}{
 		Countries:       string(countries),
-		Cities:          string(cities),
 		FilterCountries: filterCountries,
 		FilterCities:    filterCities,
 		NoDeployments:   summary.TotalDeployments,

@@ -126,8 +126,8 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 
 }
 
-// RetrieveDistinctIPs retrieve distinct
-func (r repo) RetrieveDistinctIPs(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
+// RetrieveSummary retrieve distinct
+func (r repo) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	filterQuery, params := generateQuery(filters)
 	var summary callhome.TelemetrySummary
 	q := fmt.Sprintf(`select count(distinct ip_address), country from telemetry %s group by country;`, filterQuery)
@@ -147,15 +147,15 @@ func (r repo) RetrieveDistinctIPs(ctx context.Context, filters callhome.Telemetr
 		summary.TotalDeployments += country.NoDeployments
 	}
 
-	q1 := `select city from telemetry;`
+	q1 := fmt.Sprintf(`select distinct city from telemetry %s;`, filterQuery)
 	cityRows, err := r.db.NamedQuery(q1, params)
 	if err != nil {
 		return callhome.TelemetrySummary{}, err
 	}
 	defer cityRows.Close()
 	for cityRows.Next() {
-		var val callhome.CitySummary
-		if err := cityRows.StructScan(&val); err != nil {
+		var val string
+		if err := cityRows.Scan(&val); err != nil {
 			return callhome.TelemetrySummary{}, err
 		}
 		summary.Cities = append(summary.Cities, val)

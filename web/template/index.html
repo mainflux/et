@@ -26,8 +26,10 @@
         <div class="container">
             <div id="filter-container">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" id="btn" data-bs-toggle="modal" data-bs-target="#applyFilters">
-                    Filters
+                <button type="button" class="btn btn-primary" id="myButton" data-bs-toggle="modal" data-bs-target="#applyFilters">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
+                        <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                      </svg>
                 </button>
                         <!-- Modal -->
                 <div class="modal fade" id="applyFilters" tabindex="-1" aria-labelledby="applyFiltersLabel" aria-hidden="true">
@@ -56,7 +58,7 @@
                                     <select id="city-filter" class="form-select">
                                         <option value="">Select a city</option>
                                         {{range $i, $city := .FilterCities}}
-                                            <option value="{{$city.City}}">{{$city.City}}</option>
+                                            <option value="{{$city}}">{{$city}}</option>
                                         {{end}}
                                     </select>
                                     <button type="submit" class="btn btn-primary">Apply</button>

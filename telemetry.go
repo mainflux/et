@@ -45,14 +45,9 @@ type CountrySummary struct {
 	NoDeployments int    `json:"number_of_deployments" db:"count"`
 }
 
-type CitySummary struct {
-	City          string `json:"city" db:"city"`
-	NoDeployments int    `json:"number_of_deployments" db:"count"`
-}
-
 type TelemetrySummary struct {
 	Countries        []CountrySummary `json:"countries,omitempty"`
-	Cities           []CitySummary    `json:"cities,omitempty"`
+	Cities           []string         `json:"cities,omitempty"`
 	TotalDeployments int              `json:"total_deployments,omitempty"`
 }
 
@@ -64,6 +59,6 @@ type TelemetryRepo interface {
 
 	// RetrieveAll retrieves all telemetry events.
 	RetrieveAll(ctx context.Context, pm PageMetadata, filters TelemetryFilters) (TelemetryPage, error)
-	// RetrieveDistinctIPs gets distinct ip addresses and countries from database.
-	RetrieveDistinctIPs(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error)
+	// RetrieveSummary gets distinct countries and cities in a summarised form.
+	RetrieveSummary(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error)
 }
