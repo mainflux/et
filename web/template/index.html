@@ -23,16 +23,8 @@
                 </ul>
             </div>
         </div>
-        <div class="container">
-            <div id="filter-container">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" id="myButton" data-bs-toggle="modal" data-bs-target="#applyFilters">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
-                        <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
-                      </svg>
-                </button>
-                        <!-- Modal -->
-                <div class="modal fade" id="applyFilters" tabindex="-1" aria-labelledby="applyFiltersLabel" aria-hidden="true">
+         <!-- Modal -->
+        <div class="modal fade" id="applyFilters" tabindex="-1" aria-labelledby="applyFiltersLabel" aria-hidden="true">
                     <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -40,7 +32,7 @@
                         </div>
                         <div class="modal-body">
 	                        <div class="mb-3">
-                                <form id="country-filter-form" onsubmit="applyFilter(event)">
+                                <form id="filter-form" onsubmit="applyFilter(event)">
                                     <div>
                                     <label for="from-date">From:</label>
                                     <input type="date" id="from-date" name="from-date" value="{{.From}}">
@@ -61,21 +53,34 @@
                                             <option value="{{$city}}">{{$city}}</option>
                                         {{end}}
                                     </select>
+                                    <label for="version-filter" class="form-label">Version</label>
+                                    <select id="version-filter" class="form-select">
+                                        <option value="">Select a Version</option>
+                                        
+                                    </select>
+                                    <label for="service-filter" class="form-label">Service</label>
+                                    <select id="Service-filter" class="form-select">
+                                        <option value="">Select a Service</option>
+                                        
+                                    </select>
                                     <button type="submit" class="btn btn-primary">Apply</button>
-
                                 </form>
-                            
                             </div>                         
                         </div>
                     </div>
                     </div>
-                </div>
-            </div>
+        </div>
             <div id="error-message" class="error-message"></div>
             <div class="main-content">
-                <div id="map"></div>
+                <div id="map">
+                    <!-- Button trigger for modal -->
+                    <button type="button" class="btn btn-primary" id="myButton" data-bs-toggle="modal" data-bs-target="#applyFilters">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
+                            <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
         <script type="text/javascript">
             //create map object and set default positions and zoom level
             var map = L.map('map').setView([20, 0], 2);
