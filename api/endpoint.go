@@ -85,6 +85,7 @@ func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
 			Countries:        summary.Countries,
 			Cities:           summary.Cities,
 			Services:         summary.Services,
+			Mf_Versions:      summary.Mf_Versions,
 			TotalDeployments: summary.TotalDeployments,
 		}, nil
 	}

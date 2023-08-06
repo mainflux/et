@@ -56,7 +56,9 @@
                                     <label for="version-filter" class="form-label">Version</label>
                                     <select id="version-filter" class="form-select">
                                         <option value="">Select a Version</option>
-                                        
+                                        {{range $i, $mf_version := .FilterMf_Versions}}
+                                            <option value="{{$mf_version}}">{{$mf_version}}</option>
+                                        {{end}}
                                     </select>
                                     <label for="service-filter" class="form-label">Service</label>
                                     <select id="service-filter" class="form-select">
@@ -96,6 +98,7 @@
                 var selectedCountry = document.getElementById('country-filter').value;
                 var selectedCity = document.getElementById('city-filter').value;
                 var selectedService = document.getElementById('service-filter').value;
+                var selectedMf_Version = document.getElementById('version-filter').value;
 
                 var fromDate = fromDateInput ? new Date(fromDateInput) : null;
                 var toDate = toDateInput ? new Date(toDateInput) : null;               
@@ -112,7 +115,7 @@
                 var fromDate = fromDateInput ? new Date(fromDateInput).toISOString() : '';
                 var toDate = toDateInput ? new Date(toDateInput).toISOString() : '';
 
-                var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}&country=${encodeURIComponent(selectedCountry)}&city=${encodeURIComponent(selectedCity)}&service=${encodeURIComponent(selectedService)}`;
+                var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}&country=${encodeURIComponent(selectedCountry)}&city=${encodeURIComponent(selectedCity)}&service=${encodeURIComponent(selectedService)}&mf_version=${encodeURIComponent(selectedMf_Version)}`;
                 window.location.href = url;
             }
 

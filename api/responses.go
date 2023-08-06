@@ -91,6 +91,7 @@ type telemetrySummaryRes struct {
 	Countries        []callhome.CountrySummary `json:"countries,omitempty"`
 	Cities           []string                  `json:"cities,omitempty"`
 	Services         []string                  `json:"services,omitempty"`
+	Mf_Versions      []string                  `json:"mf_version,omitempty"`
 	TotalDeployments int                       `json:"total_deployments,omitempty"`
 }
 
