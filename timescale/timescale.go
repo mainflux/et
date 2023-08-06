@@ -160,6 +160,20 @@ func (r repo) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFil
 		}
 		summary.Cities = append(summary.Cities, val)
 	}
+
+	q2 := fmt.Sprintf(`select distinct service from telemetry %s;`, filterQuery)
+	serviceRows, err := r.db.NamedQuery(q2, params)
+	if err != nil {
+		return callhome.TelemetrySummary{}, err
+	}
+	defer serviceRows.Close()
+	for serviceRows.Next() {
+		var val string
+		if err := serviceRows.Scan(&val); err != nil {
+			return callhome.TelemetrySummary{}, err
+		}
+		summary.Services = append(summary.Services, val)
+	}
 	return summary, nil
 }
 

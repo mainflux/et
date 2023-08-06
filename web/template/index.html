@@ -59,9 +59,11 @@
                                         
                                     </select>
                                     <label for="service-filter" class="form-label">Service</label>
-                                    <select id="Service-filter" class="form-select">
+                                    <select id="service-filter" class="form-select">
                                         <option value="">Select a Service</option>
-                                        
+                                        {{range $i, $service := .FilterServices}}
+                                            <option value="{{$service}}">{{$service}}</option>
+                                        {{end}}
                                     </select>
                                     <button type="submit" class="btn btn-primary">Apply</button>
                                 </form>
@@ -92,7 +94,9 @@
                 var fromDateInput = document.getElementById('from-date').value;
                 var toDateInput = document.getElementById('to-date').value;
                 var selectedCountry = document.getElementById('country-filter').value;
-                var selectedCity = document.getElementById('city-filter').value
+                var selectedCity = document.getElementById('city-filter').value;
+                var selectedService = document.getElementById('service-filter').value;
+
                 var fromDate = fromDateInput ? new Date(fromDateInput) : null;
                 var toDate = toDateInput ? new Date(toDateInput) : null;               
                 if (fromDate && toDate && fromDate > toDate) {
@@ -108,7 +112,7 @@
                 var fromDate = fromDateInput ? new Date(fromDateInput).toISOString() : '';
                 var toDate = toDateInput ? new Date(toDateInput).toISOString() : '';
 
-                var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}&country=${encodeURIComponent(selectedCountry)}&city=${encodeURIComponent(selectedCity)}`;
+                var url = `/?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}&country=${encodeURIComponent(selectedCountry)}&city=${encodeURIComponent(selectedCity)}&service=${encodeURIComponent(selectedService)}`;
                 window.location.href = url;
             }
 

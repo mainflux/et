@@ -89,7 +89,8 @@ func (res uiRes) Headers() map[string]string {
 
 type telemetrySummaryRes struct {
 	Countries        []callhome.CountrySummary `json:"countries,omitempty"`
-	Cities           []string    `json:"cities,omitempty"`
+	Cities           []string                  `json:"cities,omitempty"`
+	Services         []string                  `json:"services,omitempty"`
 	TotalDeployments int                       `json:"total_deployments,omitempty"`
 }
 

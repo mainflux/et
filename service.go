@@ -98,6 +98,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		Cities          string
 		FilterCountries []CountrySummary
 		FilterCities    []string
+		FilterServices  []string
 		NoDeployments   int
 		NoCountries     int
 		MapData         string
@@ -107,6 +108,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		Countries:       string(countries),
 		FilterCountries: unfilteredSummary.Countries,
 		FilterCities:    unfilteredSummary.Cities,
+		FilterServices:  unfilteredSummary.Services,
 		NoDeployments:   summary.TotalDeployments,
 		NoCountries:     len(summary.Countries),
 		MapData:         string(pg),

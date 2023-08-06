@@ -84,6 +84,7 @@ func retrieveSummaryEndpoint(svc callhome.Service) endpoint.Endpoint {
 		return telemetrySummaryRes{
 			Countries:        summary.Countries,
 			Cities:           summary.Cities,
+			Services:         summary.Services,
 			TotalDeployments: summary.TotalDeployments,
 		}, nil
 	}

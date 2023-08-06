@@ -48,6 +48,7 @@ type CountrySummary struct {
 type TelemetrySummary struct {
 	Countries        []CountrySummary `json:"countries,omitempty"`
 	Cities           []string         `json:"cities,omitempty"`
+	Services         []string         `json:"services,omitempty"`
 	TotalDeployments int              `json:"total_deployments,omitempty"`
 }
 
