@@ -94,28 +94,28 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		to = filters.To.Format(time.DateOnly)
 	}
 	data := struct {
-		Countries         string
-		Cities            string
-		FilterCountries   []CountrySummary
-		FilterCities      []string
-		FilterServices    []string
-		FilterMf_Versions []string
-		NoDeployments     int
-		NoCountries       int
-		MapData           string
-		From              string
-		To                string
+		Countries       string
+		Cities          string
+		FilterCountries []CountrySummary
+		FilterCities    []string
+		FilterServices  []string
+		FilterVersions  []string
+		NoDeployments   int
+		NoCountries     int
+		MapData         string
+		From            string
+		To              string
 	}{
-		Countries:         string(countries),
-		FilterCountries:   unfilteredSummary.Countries,
-		FilterCities:      unfilteredSummary.Cities,
-		FilterServices:    unfilteredSummary.Services,
-		FilterMf_Versions: unfilteredSummary.Mf_Versions,
-		NoDeployments:     summary.TotalDeployments,
-		NoCountries:       len(summary.Countries),
-		MapData:           string(pg),
-		From:              from,
-		To:                to,
+		Countries:       string(countries),
+		FilterCountries: unfilteredSummary.Countries,
+		FilterCities:    unfilteredSummary.Cities,
+		FilterServices:  unfilteredSummary.Services,
+		FilterVersions:  unfilteredSummary.Versions,
+		NoDeployments:   summary.TotalDeployments,
+		NoCountries:     len(summary.Countries),
+		MapData:         string(pg),
+		From:            from,
+		To:              to,
 	}
 
 	var res bytes.Buffer

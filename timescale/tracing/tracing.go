@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	retrieveAllOp                  = "retrieve_all_op"
-	retrieveSummaryCountriesOp = "retrieve_distinct_IP_countries_op"
-	saveOp                         = "save_op"
+	retrieveAllOp     = "retrieve_all_op"
+	retrieveSummaryOp = "retrieve_summary_op"
+	saveOp            = "save_op"
 )
 
 var _ callhome.TelemetryRepo = (*repoTracer)(nil)
@@ -35,9 +35,9 @@ func (rt *repoTracer) RetrieveAll(ctx context.Context, pm callhome.PageMetadata,
 	return rt.repo.RetrieveAll(ctx, pm, filter)
 }
 
-// RetrieveSummary adds tracing middleware to retrieve distinct ips countries method.
+// RetrieveSummary adds tracing middleware to retrieve summary method.
 func (rt *repoTracer) RetrieveSummary(ctx context.Context, filter callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
-	ctx, span := rt.tracer.Start(ctx, retrieveSummaryCountriesOp)
+	ctx, span := rt.tracer.Start(ctx, retrieveSummaryOp)
 	defer span.End()
 	return rt.repo.RetrieveSummary(ctx, filter)
 }

@@ -176,17 +176,17 @@ func (r repo) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFil
 	}
 
 	q3 := fmt.Sprintf(`select distinct mf_version from telemetry %s;`, filterQuery)
-	mf_versionRows, err := r.db.NamedQuery(q3, params)
+	versionRows, err := r.db.NamedQuery(q3, params)
 	if err != nil {
 		return callhome.TelemetrySummary{}, err
 	}
-	defer mf_versionRows.Close()
-	for mf_versionRows.Next() {
+	defer versionRows.Close()
+	for versionRows.Next() {
 		var val string
-		if err := mf_versionRows.Scan(&val); err != nil {
+		if err := versionRows.Scan(&val); err != nil {
 			return callhome.TelemetrySummary{}, err
 		}
-		summary.Mf_Versions = append(summary.Mf_Versions, val)
+		summary.Versions = append(summary.Versions, val)
 	}
 	return summary, nil
 }
