@@ -35,12 +35,11 @@
                             <div id="error-message" class="error-message"></div>
 	                        <div class="mb-3">
                                 <form id="filter-form" onsubmit="applyFilter(event)">
-                                    <div>
                                     <label for="from-date">From:</label>
                                     <input type="date" id="from-date" name="from-date" value="{{.From}}">
                                     <label for="to-date">To:</label>
                                     <input type="date" id="to-date" name="to-date" value="{{.To}}">
-                                    </div>
+                                    <br>
                                     <label for="country-filter" class="form-label">Country</label>
                                     <select id="country-filter" class="form-select">
                                         <option value="">Select a country</option>
