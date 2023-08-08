@@ -30,8 +30,7 @@ func (mr *mockRepo) Save(ctx context.Context, t callhome.Telemetry) error {
 	return r0
 }
 
-// RetrieveDistinctIPsCountries retrieve distinct
-func (*mockRepo) RetrieveDistinctIPsCountries(ctx context.Context, filter callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
+func (*mockRepo) RetrieveSummary(ctx context.Context, filter callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	return callhome.TelemetrySummary{}, nil
 }
 

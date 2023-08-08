@@ -126,16 +126,16 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 
 }
 
-// RetrieveDistinctIPsCountries retrieve distinct
-func (r repo) RetrieveDistinctIPsCountries(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
+// RetrieveSummary retrieve distinct
+func (r repo) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	filterQuery, params := generateQuery(filters)
+	var summary callhome.TelemetrySummary
 	q := fmt.Sprintf(`select count(distinct ip_address), country from telemetry %s group by country;`, filterQuery)
 	rows, err := r.db.NamedQuery(q, params)
 	if err != nil {
 		return callhome.TelemetrySummary{}, err
 	}
 	defer rows.Close()
-	var summary callhome.TelemetrySummary
 	for rows.Next() {
 		var val callhome.CountrySummary
 		if err := rows.StructScan(&val); err != nil {
@@ -145,6 +145,48 @@ func (r repo) RetrieveDistinctIPsCountries(ctx context.Context, filters callhome
 	}
 	for _, country := range summary.Countries {
 		summary.TotalDeployments += country.NoDeployments
+	}
+
+	q1 := fmt.Sprintf(`select distinct city from telemetry %s;`, filterQuery)
+	cityRows, err := r.db.NamedQuery(q1, params)
+	if err != nil {
+		return callhome.TelemetrySummary{}, err
+	}
+	defer cityRows.Close()
+	for cityRows.Next() {
+		var val string
+		if err := cityRows.Scan(&val); err != nil {
+			return callhome.TelemetrySummary{}, err
+		}
+		summary.Cities = append(summary.Cities, val)
+	}
+
+	q2 := fmt.Sprintf(`select distinct service from telemetry %s;`, filterQuery)
+	serviceRows, err := r.db.NamedQuery(q2, params)
+	if err != nil {
+		return callhome.TelemetrySummary{}, err
+	}
+	defer serviceRows.Close()
+	for serviceRows.Next() {
+		var val string
+		if err := serviceRows.Scan(&val); err != nil {
+			return callhome.TelemetrySummary{}, err
+		}
+		summary.Services = append(summary.Services, val)
+	}
+
+	q3 := fmt.Sprintf(`select distinct mf_version from telemetry %s;`, filterQuery)
+	versionRows, err := r.db.NamedQuery(q3, params)
+	if err != nil {
+		return callhome.TelemetrySummary{}, err
+	}
+	defer versionRows.Close()
+	for versionRows.Next() {
+		var val string
+		if err := versionRows.Scan(&val); err != nil {
+			return callhome.TelemetrySummary{}, err
+		}
+		summary.Versions = append(summary.Versions, val)
 	}
 	return summary, nil
 }

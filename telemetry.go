@@ -47,6 +47,9 @@ type CountrySummary struct {
 
 type TelemetrySummary struct {
 	Countries        []CountrySummary `json:"countries,omitempty"`
+	Cities           []string         `json:"cities,omitempty"`
+	Services         []string         `json:"services,omitempty"`
+	Versions         []string         `json:"versions,omitempty"`
 	TotalDeployments int              `json:"total_deployments,omitempty"`
 }
 
@@ -58,6 +61,6 @@ type TelemetryRepo interface {
 
 	// RetrieveAll retrieves all telemetry events.
 	RetrieveAll(ctx context.Context, pm PageMetadata, filters TelemetryFilters) (TelemetryPage, error)
-	// RetrieveDistinctIPsCOuntries gets distinct ip addresses and countries from database.
-	RetrieveDistinctIPsCountries(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error)
+	// RetrieveSummary gets distinct countries, cities,services and versions in a summarised form.
+	RetrieveSummary(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error)
 }

@@ -57,14 +57,18 @@ func (ts *telemetryService) Save(ctx context.Context, t Telemetry) error {
 }
 
 func (ts *telemetryService) RetrieveSummary(ctx context.Context, filters TelemetryFilters) (TelemetrySummary, error) {
-	return ts.repo.RetrieveDistinctIPsCountries(ctx, filters)
+	return ts.repo.RetrieveSummary(ctx, filters)
 }
 
 // ServeUI gets the callhome index html page
 func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilters) ([]byte, error) {
 	tmpl := template.Must(template.ParseFiles("./web/template/index.html"))
 
-	summary, err := ts.repo.RetrieveDistinctIPsCountries(ctx, filters)
+	summary, err := ts.repo.RetrieveSummary(ctx, filters)
+	if err != nil {
+		return nil, err
+	}
+	unfilteredSummary, err := ts.repo.RetrieveSummary(ctx, TelemetryFilters{})
 	if err != nil {
 		return nil, err
 	}
@@ -81,6 +85,7 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 	if err != nil {
 		return nil, err
 	}
+
 	var from, to string
 	if !filters.From.IsZero() {
 		from = filters.From.Format(time.DateOnly)
@@ -89,19 +94,28 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 		to = filters.To.Format(time.DateOnly)
 	}
 	data := struct {
-		Countries     string
-		NoDeployments int
-		NoCountries   int
-		MapData       string
-		From          string
-		To            string
+		Countries       string
+		Cities          string
+		FilterCountries []CountrySummary
+		FilterCities    []string
+		FilterServices  []string
+		FilterVersions  []string
+		NoDeployments   int
+		NoCountries     int
+		MapData         string
+		From            string
+		To              string
 	}{
-		Countries:     string(countries),
-		NoDeployments: summary.TotalDeployments,
-		NoCountries:   len(summary.Countries),
-		MapData:       string(pg),
-		From:          from,
-		To:            to,
+		Countries:       string(countries),
+		FilterCountries: unfilteredSummary.Countries,
+		FilterCities:    unfilteredSummary.Cities,
+		FilterServices:  unfilteredSummary.Services,
+		FilterVersions:  unfilteredSummary.Versions,
+		NoDeployments:   summary.TotalDeployments,
+		NoCountries:     len(summary.Countries),
+		MapData:         string(pg),
+		From:            from,
+		To:              to,
 	}
 
 	var res bytes.Buffer
