@@ -21,7 +21,6 @@ body {
     height: 100%;
     width: 100%;
 }
-
 .btn {
     margin-left: 20px;
     margin-right: 20px;
@@ -30,21 +29,17 @@ body {
     line-height: 10px; 
     margin-top: 10px; 
 }
-
 .list-group-item{
     display: flex;
     justify-content: space-between;
 }
-
 .badge {
     max-height: 20px;
 }
-
 #map {
     height: 100%;
     width: 100%;
 }
-
 #filter-form {
     display: fixed;
     gap: 20px;
@@ -55,7 +50,6 @@ body {
     right: 20px;
     z-index: 1000;
 }
-
 #from-date,
 #to-date {
     width: 150px;
