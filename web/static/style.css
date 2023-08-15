@@ -32,6 +32,7 @@ body {
 .list-group-item{
     display: flex;
     justify-content: space-between;
+    cursor: pointer;
 }
 .badge {
     max-height: 20px;
