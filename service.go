@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"strings"
 	"text/template"
 	"time"
 )
@@ -64,6 +65,10 @@ func (ts *telemetryService) RetrieveSummary(ctx context.Context, filters Telemet
 func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilters) ([]byte, error) {
 	tmpl := template.Must(template.ParseFiles("./web/template/index.html"))
 
+	if filters.From.IsZero() && filters.To.IsZero() {
+		filters.From = time.Now().Add(-time.Hour)
+	}
+
 	summary, err := ts.repo.RetrieveSummary(ctx, filters)
 	if err != nil {
 		return nil, err
@@ -88,10 +93,12 @@ func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilter
 
 	var from, to string
 	if !filters.From.IsZero() {
-		from = filters.From.Format(time.DateOnly)
+		from = filters.From.Format(time.RFC3339)
+		from = strings.ReplaceAll(from, "Z", "")
 	}
 	if !filters.To.IsZero() {
-		to = filters.To.Format(time.DateOnly)
+		to = filters.To.Format(time.RFC3339)
+		to = strings.ReplaceAll(to, "Z", "")
 	}
 	data := struct {
 		Countries       string

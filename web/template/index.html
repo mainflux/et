@@ -36,9 +36,9 @@
 	                        <div class="mb-3">
                                 <form id="filter-form" onsubmit="applyFilter(event)">
                                     <label for="from-date">From:</label>
-                                    <input type="date" id="from-date" name="from-date" value="{{.From}}">
+                                    <input type="datetime-local" id="from-date" name="from-date" value="{{.From}}">
                                     <label for="to-date">To:</label>
-                                    <input type="date" id="to-date" name="to-date" value="{{.To}}">
+                                    <input type="datetime-local" id="to-date" name="to-date" value="{{.To}}">
                                     <br>
                                     <label for="country-filter" class="form-label">Country</label>
                                     <select id="country-filter" class="form-select">
