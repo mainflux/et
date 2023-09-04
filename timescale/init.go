@@ -28,6 +28,13 @@ func Migration() migrate.MemoryMigrationSource {
 				},
 				Down: []string{"DROP TABLE telemetry;"},
 			},
+			{
+				Id: "telemetry_2",
+				Up: []string{
+					`SELECT add_retention_policy('telemetry', INTERVAL '90 days');`,
+				},
+				Down: []string{`SELECT remove_retention_policy('telemetry');`},
+			},
 		},
 	}
 }
