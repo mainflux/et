@@ -65,7 +65,7 @@ func (ts *telemetryService) RetrieveSummary(ctx context.Context, filters Telemet
 func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilters) ([]byte, error) {
 	tmpl := template.Must(template.ParseFiles("./web/template/index.html"))
 
-	if filters.From.IsZero() && filters.To.IsZero() {
+	if filters.From.IsZero() && filters.To.IsZero() && filters.City == "" && filters.Country == "" && filters.Service == "" && filters.Version == "" {
 		filters.From = time.Now().Add(-time.Hour)
 	}
 
