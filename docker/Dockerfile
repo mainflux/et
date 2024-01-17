@@ -6,7 +6,7 @@ ARG VERSION
 ARG COMMIT
 ARG TIME
 
-WORKDIR /go/src/github.com/mainflux/callhome
+WORKDIR /go/src/github.com/absmach/callhome
 COPY . .
 RUN apk update \
     && apk add make\

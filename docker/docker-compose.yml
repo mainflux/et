@@ -23,7 +23,7 @@ services:
     networks:
       - callhome-base-net
   callhome-server:
-    image: mainflux/callhome:${MF_CALLHOME_RELEASE_TAG}
+    image: magistrala/callhome:${MG_CALLHOME_RELEASE_TAG}
     container_name: callhome-server
     depends_on:
       - timescaledb
@@ -58,7 +58,7 @@ services:
       - ./certbot/www:/var/www/certbot
   jaeger:
     image: jaegertracing/all-in-one:1.46.0
-    container_name: mainflux-jaeger
+    container_name: magistrala-jaeger
     ports:
       - ${MF_JAEGER_PORT}:${MF_JAEGER_PORT}/udp
       - ${MF_JAEGER_FRONTEND}:${MF_JAEGER_FRONTEND}

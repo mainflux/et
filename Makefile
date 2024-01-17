@@ -1,12 +1,14 @@
+# Copyright (c) Abstract Machines
+
 PROGRAM = callhome
-MF_DOCKER_IMAGE_NAME_PREFIX ?= mainflux
+MG_DOCKER_IMAGE_NAME_PREFIX ?= magistrala
 SOURCES = $(wildcard *.go) cmd/main.go
 CGO_ENABLED ?= 0
 GOARCH ?= amd64
 VERSION ?= $(shell git describe --abbrev=0 --tags 2>/dev/null || echo "0.13.0")
 COMMIT ?= $(shell git rev-parse HEAD)
 TIME ?= $(shell date +%F_%T)
-DOMAIN ?= callhome.mainflux.com
+DOMAIN ?= callhome.magistrala.com
 
 all: $(PROGRAM)
 
@@ -21,7 +23,7 @@ define make_docker
 		--build-arg VERSION=$(VERSION) \
 		--build-arg COMMIT=$(COMMIT) \
 		--build-arg TIME=$(TIME) \
-		--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(PROGRAM) \
+		--tag=$(MG_DOCKER_IMAGE_NAME_PREFIX)/$(PROGRAM) \
 		-f docker/Dockerfile .
 endef
 
@@ -34,10 +36,10 @@ endef
 
 $(PROGRAM): $(SOURCES)
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) GOARM=$(GOARM) \
-	go build -mod=vendor -ldflags "-s -w \
-	-X 'github.com/mainflux/mainflux.BuildTime=$(TIME)' \
-	-X 'github.com/mainflux/mainflux.Version=$(VERSION)' \
-	-X 'github.com/mainflux/mainflux.Commit=$(COMMIT)'" \
+	go build -ldflags "-s -w \
+	-X 'github.com/absmach/magistrala.BuildTime=$(TIME)' \
+	-X 'github.com/absmach/magistrala.Version=$(VERSION)' \
+	-X 'github.com/absmach/magistrala.Commit=$(COMMIT)'" \
 	-o ./build/$(PROGRAM)-$(PROGRAM) cmd/main.go
 
 clean:

@@ -3,8 +3,8 @@ package tracing
 import (
 	"context"
 
+	"github.com/absmach/callhome"
 	"github.com/ip2location/ip2location-go/v9"
-	"github.com/mainflux/callhome"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )

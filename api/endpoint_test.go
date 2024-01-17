@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mainflux/callhome"
-	"github.com/mainflux/callhome/mocks"
-	"github.com/mainflux/mainflux/logger"
+	"github.com/absmach/callhome"
+	"github.com/absmach/callhome/mocks"
+	"github.com/absmach/magistrala/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"go.opentelemetry.io/otel/trace"
@@ -46,7 +46,7 @@ func TestEndpointsRetrieve(t *testing.T) {
 func TestEndpointSave(t *testing.T) {
 	body := `{
 		"service": "ty",
-		"mainflux_version": "1.0",
+		"magistrala_version": "1.0",
 		"ip_address": "41.90.185.50",
 		"last_seen":"2023-03-27T17:40:50.356401087+03:00"
 		}`

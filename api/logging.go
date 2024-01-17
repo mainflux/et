@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mainflux/callhome"
-	"github.com/mainflux/mainflux/logger"
+	"github.com/absmach/callhome"
+	"github.com/absmach/magistrala/logger"
 )
 
 var _ callhome.Service = (*loggingMiddleware)(nil)
@@ -30,7 +30,6 @@ func (lm *loggingMiddleware) Retrieve(ctx context.Context, pm callhome.PageMetad
 			return
 		}
 		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
-
 	}(time.Now())
 
 	return lm.svc.Retrieve(ctx, pm, filters)
@@ -45,7 +44,6 @@ func (lm *loggingMiddleware) Save(ctx context.Context, t callhome.Telemetry) (er
 			return
 		}
 		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
-
 	}(time.Now())
 
 	return lm.svc.Save(ctx, t)
@@ -59,7 +57,6 @@ func (lm *loggingMiddleware) RetrieveSummary(ctx context.Context, filters callho
 			return
 		}
 		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
-
 	}(time.Now())
 
 	return lm.svc.RetrieveSummary(ctx, filters)
@@ -74,7 +71,6 @@ func (lm *loggingMiddleware) ServeUI(ctx context.Context, filters callhome.Telem
 			return
 		}
 		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
-
 	}(time.Now())
 
 	return lm.svc.ServeUI(ctx, filters)

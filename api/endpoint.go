@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
+	"github.com/absmach/callhome"
 	"github.com/go-kit/kit/endpoint"
-	"github.com/mainflux/callhome"
 )
 
 func saveEndpoint(svc callhome.Service) endpoint.Endpoint {

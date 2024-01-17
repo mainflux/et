@@ -7,14 +7,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/absmach/callhome"
+	"github.com/absmach/callhome/timescale"
+	"github.com/absmach/magistrala"
+	"github.com/absmach/magistrala/logger"
+	"github.com/absmach/magistrala/pkg/errors"
+	"github.com/absmach/magistrala/pkg/uuid"
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/go-zoo/bone"
-	"github.com/mainflux/callhome"
-	"github.com/mainflux/callhome/timescale"
-	"github.com/mainflux/mainflux"
-	"github.com/mainflux/mainflux/logger"
-	"github.com/mainflux/mainflux/pkg/errors"
-	"github.com/mainflux/mainflux/pkg/uuid"
+
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/go-kit/kit/otelkit"
 	"go.opentelemetry.io/otel/trace"
@@ -71,7 +72,7 @@ func MakeHandler(svc callhome.Service, tp trace.TracerProvider, logger logger.Lo
 		opts...,
 	))
 
-	mux.GetFunc("/health", mainflux.Health("telemetry"))
+	mux.GetFunc("/health", magistrala.Health("home", "telemetry"))
 	mux.Handle("/metrics", promhttp.Handler())
 
 	// Static file handler
@@ -105,7 +106,7 @@ func encodeStaticResponse(_ context.Context, w http.ResponseWriter, response int
 }
 
 func encodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
-	if ar, ok := response.(mainflux.Response); ok {
+	if ar, ok := response.(magistrala.Response); ok {
 		for k, v := range ar.Headers() {
 			w.Header().Set(k, v)
 		}
@@ -122,7 +123,8 @@ func encodeResponse(_ context.Context, w http.ResponseWriter, response interface
 
 func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	switch {
-	case errors.Contains(err, errors.ErrInvalidQueryParams),
+	case
+		errors.Contains(err, ErrInvalidQueryParams),
 		errors.Contains(err, errors.ErrMalformedEntity),
 		err == ErrLimitSize,
 		err == ErrOffsetSize:

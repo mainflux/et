@@ -1,8 +1,8 @@
 package env
 
 import (
+	"github.com/absmach/callhome/internal/server"
 	"github.com/caarlos0/env/v7"
-	"github.com/mainflux/callhome/internal/server"
 )
 
 type Options struct {

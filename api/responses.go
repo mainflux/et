@@ -3,14 +3,16 @@ package api
 import (
 	"net/http"
 
-	"github.com/mainflux/callhome"
-	"github.com/mainflux/mainflux"
+	"github.com/absmach/callhome"
+	"github.com/absmach/magistrala"
 )
 
-var _ mainflux.Response = (*uiRes)(nil)
-var _ mainflux.Response = (*saveTelemetryRes)(nil)
-var _ mainflux.Response = (*telemetryPageRes)(nil)
-var _ mainflux.Response = (*telemetrySummaryRes)(nil)
+var (
+	_ magistrala.Response = (*uiRes)(nil)
+	_ magistrala.Response = (*saveTelemetryRes)(nil)
+	_ magistrala.Response = (*telemetryPageRes)(nil)
+	_ magistrala.Response = (*telemetrySummaryRes)(nil)
+)
 
 type saveTelemetryRes struct {
 	created bool
@@ -65,7 +67,7 @@ type uiRes struct {
 	html    []byte
 }
 
-// Code implements mainflux.Response
+// Code implements magistrala.Response
 func (res uiRes) Code() int {
 	if res.code == 0 {
 		return http.StatusCreated
@@ -74,12 +76,12 @@ func (res uiRes) Code() int {
 	return res.code
 }
 
-// Empty implements mainflux.Response
+// Empty implements magistrala.Response
 func (res uiRes) Empty() bool {
 	return res.html == nil
 }
 
-// Headers implements mainflux.Response
+// Headers implements magistrala.Response
 func (res uiRes) Headers() map[string]string {
 	if res.headers == nil {
 		return map[string]string{}
@@ -95,17 +97,17 @@ type telemetrySummaryRes struct {
 	TotalDeployments int                       `json:"total_deployments,omitempty"`
 }
 
-// Code implements mainflux.Response
+// Code implements magistrala.Response
 func (*telemetrySummaryRes) Code() int {
 	return http.StatusOK
 }
 
-// Empty implements mainflux.Response
+// Empty implements magistrala.Response
 func (*telemetrySummaryRes) Empty() bool {
 	return false
 }
 
-// Headers implements mainflux.Response
+// Headers implements magistrala.Response
 func (res *telemetrySummaryRes) Headers() map[string]string {
 	return map[string]string{}
 }

@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/absmach/callhome"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
-	"github.com/mainflux/callhome"
 	"github.com/stretchr/testify/assert"
 )
 

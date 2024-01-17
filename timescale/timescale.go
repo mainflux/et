@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/absmach/callhome"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
-	"github.com/mainflux/callhome"
 	"github.com/pkg/errors"
 )
 
@@ -123,7 +123,6 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 		return errors.Wrap(ErrSaveEvent, err.Error())
 	}
 	return nil
-
 }
 
 // RetrieveSummary retrieve distinct

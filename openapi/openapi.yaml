@@ -1,20 +1,20 @@
 openapi: 3.0.0
 info:
-  description: "Mainflux Call Home Server"
+  description: "Magistrala Call Home Server"
   version: 0.0.1
   title: Call-Home
   termsOfService: ""
   contact:
-    email: "infos@mainflux.com"
+    email: "infos@abstractmachines.fr"
   license:
     name: Apache 2.0
-    url: https://github.com/mainflux/callhome/blob/master/LICENSE
+    url: https://github.com/absmach/callhome/blob/master/LICENSE
 tags:
   - name: telemetry
     description: Telemetry Service
     externalDocs:
       description: Find out more
-      url: https://github.com/mainflux/et
+      url: https://github.com/absmach/callhome
 paths:
   /:
     get:
@@ -197,7 +197,7 @@ components:
           type: string
         service:
           type: string
-        mainflux_version:
+        magistrala_version:
           type: string
         last_seen:
           type: string
@@ -206,7 +206,7 @@ components:
         properties:
           ip_address:
             type: string
-          mainflux_version:
+          magistrala_version:
             type: string
           last_seen:
             type: string

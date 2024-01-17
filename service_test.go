@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/absmach/callhome"
+	"github.com/absmach/callhome/mocks"
+	"github.com/absmach/callhome/timescale"
+	repoMocks "github.com/absmach/callhome/timescale/mocks"
 	"github.com/ip2location/ip2location-go/v9"
-	"github.com/mainflux/callhome"
-	"github.com/mainflux/callhome/mocks"
-	"github.com/mainflux/callhome/timescale"
-	repoMocks "github.com/mainflux/callhome/timescale/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

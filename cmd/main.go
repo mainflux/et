@@ -6,34 +6,34 @@ import (
 	"log"
 	"os"
 
+	"github.com/absmach/callhome"
+	"github.com/absmach/callhome/api"
+	"github.com/absmach/callhome/internal"
+	jaegerClient "github.com/absmach/callhome/internal/clients/jaeger"
+	"github.com/absmach/callhome/internal/clients/postgres"
+	"github.com/absmach/callhome/internal/env"
+	"github.com/absmach/callhome/internal/server"
+	httpserver "github.com/absmach/callhome/internal/server/http"
+	"github.com/absmach/callhome/timescale"
+	"github.com/absmach/callhome/timescale/tracing"
+	stracing "github.com/absmach/callhome/tracing"
+	mglog "github.com/absmach/magistrala/logger"
 	"github.com/jmoiron/sqlx"
-	"github.com/mainflux/callhome"
-	"github.com/mainflux/callhome/api"
-	"github.com/mainflux/callhome/internal"
-	jaegerClient "github.com/mainflux/callhome/internal/clients/jaeger"
-	"github.com/mainflux/callhome/internal/clients/postgres"
-	"github.com/mainflux/callhome/internal/env"
-	"github.com/mainflux/callhome/internal/server"
-	httpserver "github.com/mainflux/callhome/internal/server/http"
-	"github.com/mainflux/callhome/timescale"
-	"github.com/mainflux/callhome/timescale/tracing"
-	stracing "github.com/mainflux/callhome/tracing"
-	mflog "github.com/mainflux/mainflux/logger"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/sync/errgroup"
 )
 
 const (
 	svcName        = "callhome"
-	envPrefix      = "MF_CALLHOME_"
-	envPrefixHttp  = "MF_CALLHOME_"
+	envPrefix      = "MG_CALLHOME_"
+	envPrefixHttp  = "MG_CALLHOME_"
 	defSvcHttpPort = "8855"
 )
 
 type config struct {
-	LogLevel       string `env:"MF_CALLHOME_LOG_LEVEL"       envDefault:"info"`
-	JaegerURL      string `env:"MF_JAEGER_URL"               envDefault:"http://jaeger:14268/api/traces"`
-	IPDatabaseFile string `env:"MF_CALLHOME_IP_DB"           envDefault:"./IP2LOCATION-LITE-DB5.BIN"`
+	LogLevel       string `env:"MG_CALLHOME_LOG_LEVEL"       envDefault:"info"`
+	JaegerURL      string `env:"MG_JAEGER_URL"               envDefault:"http://jaeger:14268/api/traces"`
+	IPDatabaseFile string `env:"MG_CALLHOME_IP_DB"           envDefault:"./IP2LOCATION-LITE-DB5.BIN"`
 }
 
 func main() {
@@ -45,7 +45,7 @@ func main() {
 		log.Fatalf("failed to load %s configuration : %s", svcName, err)
 	}
 
-	logger, err := mflog.New(os.Stdout, cfg.LogLevel)
+	logger, err := mglog.New(os.Stdout, cfg.LogLevel)
 	if err != nil {
 		log.Fatalf(fmt.Sprintf("failed to init logger: %s", err.Error()))
 	}
@@ -92,7 +92,7 @@ func main() {
 	}
 }
 
-func newService(ctx context.Context, logger mflog.Logger, ipDB string, timescaleDB *sqlx.DB, tracer trace.Tracer) (callhome.Service, error) {
+func newService(ctx context.Context, logger mglog.Logger, ipDB string, timescaleDB *sqlx.DB, tracer trace.Tracer) (callhome.Service, error) {
 	timescaleRepo := timescale.New(timescaleDB)
 	timescaleRepo = tracing.New(tracer, timescaleRepo)
 	locSvc, err := callhome.NewLocationService(ipDB)

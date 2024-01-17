@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	mfserver "github.com/mainflux/callhome/internal/server"
-	"github.com/mainflux/mainflux/logger"
+	mfserver "github.com/absmach/callhome/internal/server"
+	"github.com/absmach/magistrala/logger"
 )
 
 const (

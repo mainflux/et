@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/absmach/callhome"
 	"github.com/go-kit/kit/metrics"
-	"github.com/mainflux/callhome"
 )
 
 var _ callhome.Service = (*metricsMiddleware)(nil)

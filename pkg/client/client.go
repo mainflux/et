@@ -11,11 +11,11 @@ import (
 	"strings"
 	"time"
 
-	mflog "github.com/mainflux/mainflux/logger"
+	mflog "github.com/absmach/magistrala/logger"
 )
 
 const (
-	HomeUrl           = "https://deployments.mainflux.io/telemetry"
+	HomeUrl           = "https://deployments.magistrala.io/telemetry"
 	stopWaitTime      = 5 * time.Second
 	callHomeSleepTime = 30 * time.Minute
 	backOff           = 10 * time.Second
@@ -60,7 +60,7 @@ func (hs *homingService) CallHome(ctx context.Context) {
 			for _, endpoint := range ipEndpoints {
 				ip, err := hs.getIP(endpoint)
 				if err != nil {
-					hs.logger.Warn(fmt.Sprintf("failed to obtain service public IP address for sending Mainflux usage telemetry with error: %v", err))
+					hs.logger.Warn(fmt.Sprintf("failed to obtain service public IP address for sending Magistrala usage telemetry with error: %v", err))
 					continue
 				}
 				ip = strings.ReplaceAll(ip, "\n", "")
@@ -74,7 +74,7 @@ func (hs *homingService) CallHome(ctx context.Context) {
 				break
 			}
 			if err := hs.send(&data); err != nil && data.IpAddress != "" {
-				hs.logger.Warn(fmt.Sprintf("failed to send Mainflux telemetry data with error: %v", err))
+				hs.logger.Warn(fmt.Sprintf("failed to send Magistrala telemetry data with error: %v", err))
 				time.Sleep(backOff)
 				continue
 			}
@@ -97,7 +97,7 @@ func (hs *homingService) Stop() {
 type telemetryData struct {
 	Service   string    `json:"service"`
 	IpAddress string    `json:"ip_address"`
-	Version   string    `json:"mainflux_version"`
+	Version   string    `json:"magistrala_version"`
 	LastSeen  time.Time `json:"last_seen"`
 }
 

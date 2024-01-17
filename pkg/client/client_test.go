@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/mainflux/mainflux/logger"
+	"github.com/absmach/magistrala/logger"
 )
 
 func TestGetIp(t *testing.T) {
@@ -67,5 +67,4 @@ func TestSend(t *testing.T) {
 			t.Error("expected non nil error")
 		}
 	})
-
 }

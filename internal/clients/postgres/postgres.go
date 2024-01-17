@@ -3,10 +3,10 @@ package postgres
 import (
 	"fmt"
 
+	"github.com/absmach/callhome/internal/env"
+	"github.com/absmach/magistrala/pkg/errors"
 	_ "github.com/jackc/pgx/v5/stdlib" // required for SQL access
 	"github.com/jmoiron/sqlx"
-	"github.com/mainflux/callhome/internal/env"
-	"github.com/mainflux/mainflux/pkg/errors"
 	migrate "github.com/rubenv/sql-migrate"
 )
 

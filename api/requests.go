@@ -3,7 +3,7 @@ package api
 import (
 	"time"
 
-	"github.com/mainflux/mainflux/pkg/errors"
+	"github.com/absmach/magistrala/pkg/errors"
 )
 
 var (
@@ -20,7 +20,7 @@ const maxLimitSize = 100
 type saveTelemetryReq struct {
 	Service   string    `json:"service"`
 	IpAddress string    `json:"ip_address"`
-	Version   string    `json:"mainflux_version"`
+	Version   string    `json:"magistrala_version"`
 	LastSeen  time.Time `json:"last_seen"`
 }
 

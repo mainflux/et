@@ -5,10 +5,10 @@ if ! [ -x "$(command -v docker compose)" ]; then
   exit 1
 fi
 
-domains=(deployments.mainflux.io)
+domains=(deployments.magistrala.io)
 rsa_key_size=4096
 data_path="./certbot"
-email="infos@mainflux.com"
+email="infos@abstractmachines.fr"
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if [ -d "$data_path" ]; then
