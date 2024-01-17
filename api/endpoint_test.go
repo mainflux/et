@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/absmach/callhome"
 	"github.com/absmach/callhome/mocks"
-	"github.com/absmach/magistrala/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"go.opentelemetry.io/otel/trace"
@@ -18,7 +18,7 @@ import (
 func TestEndpointsRetrieve(t *testing.T) {
 	svc := mocks.NewService(t)
 	svc.On("Retrieve", mock.Anything, callhome.PageMetadata{Limit: 10}).Return(callhome.TelemetryPage{}, nil)
-	h := MakeHandler(svc, trace.NewNoopTracerProvider(), logger.NewMock())
+	h := MakeHandler(svc, trace.NewNoopTracerProvider(), slog.Default())
 	server := httptest.NewServer(h)
 	client := server.Client()
 	testCases := []struct {
@@ -52,7 +52,7 @@ func TestEndpointSave(t *testing.T) {
 		}`
 	svc := mocks.NewService(t)
 	svc.On("Save", mock.Anything, mock.AnythingOfType("callhome.Telemetry")).Return(nil)
-	h := MakeHandler(svc, trace.NewNoopTracerProvider(), logger.NewMock())
+	h := MakeHandler(svc, trace.NewNoopTracerProvider(), slog.Default())
 	server := httptest.NewServer(h)
 	client := server.Client()
 	testCases := []struct {

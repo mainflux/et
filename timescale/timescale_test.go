@@ -135,7 +135,7 @@ func TestRetrieveAll(t *testing.T) {
 		repo := New(sqlxDB)
 
 		rows := sqlmock.NewRows(
-			[]string{"ip_address", "longitude", "latitude", "mf_version", "service", "time", "country", "city", "service_time"},
+			[]string{"ip_address", "longitude", "latitude", "mg_version", "service", "time", "country", "city", "service_time"},
 		).AddRow(mTel.IpAddress, mTel.Longitude, mTel.Latitude, mTel.Version, mTel.Service, mTel.LastSeen, mTel.Country, mTel.City, mTel.ServiceTime)
 
 		rows2 := sqlmock.NewRows(

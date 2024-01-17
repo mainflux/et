@@ -4,15 +4,14 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"log/slog"
 	"net/http"
 	"testing"
-
-	"github.com/absmach/magistrala/logger"
 )
 
 func TestGetIp(t *testing.T) {
 	_, cancel := context.WithCancel(context.TODO())
-	hs := New("test_svc", "test.1", logger.NewMock(), cancel)
+	hs := New("test_svc", "test.1", slog.Default(), cancel)
 	for _, endpoint := range ipEndpoints {
 		if _, err := hs.getIP(endpoint); err != nil {
 			t.Errorf("endpoint %s ip request unsuccessful with err : %v", endpoint, err)

@@ -6,12 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/netip"
 	"strings"
 	"time"
-
-	mflog "github.com/absmach/magistrala/logger"
 )
 
 const (
@@ -31,12 +30,12 @@ var ipEndpoints = []string{
 type homingService struct {
 	serviceName string
 	version     string
-	logger      mflog.Logger
+	logger      *slog.Logger
 	cancel      context.CancelFunc
 	httpClient  http.Client
 }
 
-func New(svc, version string, homingLogger mflog.Logger, cancel context.CancelFunc) *homingService {
+func New(svc, version string, homingLogger *slog.Logger, cancel context.CancelFunc) *homingService {
 	return &homingService{
 		serviceName: svc,
 		version:     version,

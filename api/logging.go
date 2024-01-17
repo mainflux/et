@@ -3,21 +3,21 @@ package api
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/absmach/callhome"
-	"github.com/absmach/magistrala/logger"
 )
 
 var _ callhome.Service = (*loggingMiddleware)(nil)
 
 type loggingMiddleware struct {
-	hommingLogger logger.Logger
-	svc           callhome.Service
+	logger *slog.Logger
+	svc    callhome.Service
 }
 
 // LoggingMiddleware is a middleware that adds logging facilities to the core homing service.
-func LoggingMiddleware(svc callhome.Service, logger logger.Logger) callhome.Service {
+func LoggingMiddleware(svc callhome.Service, logger *slog.Logger) callhome.Service {
 	return &loggingMiddleware{logger, svc}
 }
 
@@ -26,10 +26,10 @@ func (lm *loggingMiddleware) Retrieve(ctx context.Context, pm callhome.PageMetad
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method retrieve with took %s to complete", time.Since(begin))
 		if err != nil {
-			lm.hommingLogger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
+			lm.logger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
 			return
 		}
-		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
+		lm.logger.Info(fmt.Sprintf("%s without errors.", message))
 	}(time.Now())
 
 	return lm.svc.Retrieve(ctx, pm, filters)
@@ -40,10 +40,10 @@ func (lm *loggingMiddleware) Save(ctx context.Context, t callhome.Telemetry) (er
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method save telemetry event took %s to complete", time.Since(begin))
 		if err != nil {
-			lm.hommingLogger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
+			lm.logger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
 			return
 		}
-		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
+		lm.logger.Info(fmt.Sprintf("%s without errors.", message))
 	}(time.Now())
 
 	return lm.svc.Save(ctx, t)
@@ -53,10 +53,10 @@ func (lm *loggingMiddleware) RetrieveSummary(ctx context.Context, filters callho
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method retrieve summary event took %s to complete", time.Since(begin))
 		if err != nil {
-			lm.hommingLogger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
+			lm.logger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
 			return
 		}
-		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
+		lm.logger.Info(fmt.Sprintf("%s without errors.", message))
 	}(time.Now())
 
 	return lm.svc.RetrieveSummary(ctx, filters)
@@ -67,10 +67,10 @@ func (lm *loggingMiddleware) ServeUI(ctx context.Context, filters callhome.Telem
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method serve ui event took %s to complete", time.Since(begin))
 		if err != nil {
-			lm.hommingLogger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
+			lm.logger.Warn(fmt.Sprintf("%s with error: %s.", message, err))
 			return
 		}
-		lm.hommingLogger.Info(fmt.Sprintf("%s without errors.", message))
+		lm.logger.Info(fmt.Sprintf("%s without errors.", message))
 	}(time.Now())
 
 	return lm.svc.ServeUI(ctx, filters)

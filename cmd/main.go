@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
+	"log/slog"
 	"os"
+	"time"
 
 	"github.com/absmach/callhome"
 	"github.com/absmach/callhome/api"
@@ -17,7 +20,6 @@ import (
 	"github.com/absmach/callhome/timescale"
 	"github.com/absmach/callhome/timescale/tracing"
 	stracing "github.com/absmach/callhome/tracing"
-	mglog "github.com/absmach/magistrala/logger"
 	"github.com/jmoiron/sqlx"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/sync/errgroup"
@@ -45,30 +47,29 @@ func main() {
 		log.Fatalf("failed to load %s configuration : %s", svcName, err)
 	}
 
-	logger, err := mglog.New(os.Stdout, cfg.LogLevel)
+	logger, err := newLogger(os.Stdout, cfg.LogLevel)
 	if err != nil {
 		log.Fatalf(fmt.Sprintf("failed to init logger: %s", err.Error()))
 	}
-
 	timescaleDB, err := postgres.Setup(envPrefix, timescale.Migration())
 	if err != nil {
-		logger.Fatal(fmt.Sprintf("failed to setup timescale db : %s", err))
+		log.Fatalf("failed to setup timescale db : %s", err)
 	}
 
 	tp, err := jaegerClient.NewProvider(svcName, cfg.JaegerURL)
 	if err != nil {
-		logger.Error(fmt.Sprintf("Failed to init Jaeger: %s", err))
+		log.Fatalf("Failed to init Jaeger: %s", err)
 	}
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
-			logger.Error(fmt.Sprintf("Error shutting down tracer provider: %v", err))
+			log.Fatalf("Error shutting down tracer provider: %v", err)
 		}
 	}()
 	tracer := tp.Tracer(svcName)
 
 	svc, err := newService(ctx, logger, cfg.IPDatabaseFile, timescaleDB, tracer)
 	if err != nil {
-		logger.Error(fmt.Sprintf("failed to initialize service: %s", err.Error()))
+		log.Fatalf("failed to initialize service: %s", err)
 		return
 	}
 
@@ -92,7 +93,7 @@ func main() {
 	}
 }
 
-func newService(ctx context.Context, logger mglog.Logger, ipDB string, timescaleDB *sqlx.DB, tracer trace.Tracer) (callhome.Service, error) {
+func newService(ctx context.Context, logger *slog.Logger, ipDB string, timescaleDB *sqlx.DB, tracer trace.Tracer) (callhome.Service, error) {
 	timescaleRepo := timescale.New(timescaleDB)
 	timescaleRepo = tracing.New(tracer, timescaleRepo)
 	locSvc, err := callhome.NewLocationService(ipDB)
@@ -106,4 +107,18 @@ func newService(ctx context.Context, logger mglog.Logger, ipDB string, timescale
 	svc = api.MetricsMiddleware(svc, counter, latency)
 	svc = api.LoggingMiddleware(svc, logger)
 	return svc, nil
+}
+
+// New returns wrapped logger.
+func newLogger(w io.Writer, levelText string) (*slog.Logger, error) {
+	var level slog.Level
+	if err := level.UnmarshalText([]byte(levelText)); err != nil {
+		return &slog.Logger{}, fmt.Errorf(`{"level":"error","message":"%s: %s","ts":"%s"}`, err, levelText, time.RFC3339Nano)
+	}
+
+	logHandler := slog.NewJSONHandler(w, &slog.HandlerOptions{
+		Level: level,
+	})
+
+	return slog.New(logHandler), nil
 }

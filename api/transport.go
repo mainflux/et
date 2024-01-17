@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -10,7 +11,6 @@ import (
 	"github.com/absmach/callhome"
 	"github.com/absmach/callhome/timescale"
 	"github.com/absmach/magistrala"
-	"github.com/absmach/magistrala/logger"
 	"github.com/absmach/magistrala/pkg/errors"
 	"github.com/absmach/magistrala/pkg/uuid"
 	kithttp "github.com/go-kit/kit/transport/http"
@@ -37,7 +37,7 @@ const (
 )
 
 // MakeHandler returns a HTTP handler for API endpoints.
-func MakeHandler(svc callhome.Service, tp trace.TracerProvider, logger logger.Logger) http.Handler {
+func MakeHandler(svc callhome.Service, tp trace.TracerProvider, logger *slog.Logger) http.Handler {
 	opts := []kithttp.ServerOption{
 		kithttp.ServerErrorEncoder(LoggingErrorEncoder(logger, encodeError)),
 	}

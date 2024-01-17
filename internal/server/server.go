@@ -3,11 +3,10 @@ package server
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/absmach/magistrala/logger"
 )
 
 type Server interface {
@@ -28,7 +27,7 @@ type BaseServer struct {
 	Name     string
 	Address  string
 	Config   Config
-	Logger   logger.Logger
+	Logger   *slog.Logger
 	Protocol string
 }
 
@@ -47,7 +46,7 @@ func stopAllServer(servers ...Server) error {
 	return err
 }
 
-func StopSignalHandler(ctx context.Context, cancel context.CancelFunc, logger logger.Logger, svcName string, servers ...Server) error {
+func StopSignalHandler(ctx context.Context, cancel context.CancelFunc, logger *slog.Logger, svcName string, servers ...Server) error {
 	var err error
 	c := make(chan os.Signal, 2)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGABRT)

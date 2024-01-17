@@ -3,11 +3,11 @@ package http
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
 	mfserver "github.com/absmach/callhome/internal/server"
-	"github.com/absmach/magistrala/logger"
 )
 
 const (
@@ -23,7 +23,7 @@ type Server struct {
 
 var _ mfserver.Server = (*Server)(nil)
 
-func New(ctx context.Context, cancel context.CancelFunc, name string, config mfserver.Config, handler http.Handler, logger logger.Logger) mfserver.Server {
+func New(ctx context.Context, cancel context.CancelFunc, name string, config mfserver.Config, handler http.Handler, logger *slog.Logger) mfserver.Server {
 	listenFullAddress := fmt.Sprintf("%s:%s", config.Host, config.Port)
 	server := &http.Server{Addr: listenFullAddress, Handler: handler}
 	return &Server{

@@ -18,7 +18,7 @@ func Migration() migrate.MemoryMigrationSource {
 						ip_address		TEXT	NOT	NULL,
 					 	longitude 		FLOAT	NOT	NULL,
 						latitude		FLOAT	NOT NULL,
-						mf_version		TEXT,
+						mg_version		TEXT,
 						service			TEXT,
 						country 		TEXT,
 						city 			TEXT,

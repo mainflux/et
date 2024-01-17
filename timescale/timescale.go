@@ -32,7 +32,7 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata, filters
 		%s
 		GROUP BY ip_address
 	)
-	SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mf_version, t.country, t.city
+	SELECT ad.ip_address, ad.services, t.time, t.service_time, t.longitude, t.latitude, t.mg_version, t.country, t.city
 	FROM aggregated_data ad
 	INNER JOIN (
 		SELECT DISTINCT ON (ip_address) *
@@ -93,9 +93,9 @@ func (r repo) RetrieveAll(ctx context.Context, pm callhome.PageMetadata, filters
 // Save creates record in repo.
 func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 	q := `INSERT INTO telemetry (ip_address, longitude, latitude,
-		mf_version, service, time, country, city, service_time)
+		mg_version, service, time, country, city, service_time)
 		VALUES (:ip_address, :longitude, :latitude,
-			:mf_version, :service, :time, :country, :city, :service_time);`
+			:mg_version, :service, :time, :country, :city, :service_time);`
 
 	tx, err := r.db.BeginTxx(ctx, nil)
 	if err != nil {
@@ -174,7 +174,7 @@ func (r repo) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFil
 		summary.Services = append(summary.Services, val)
 	}
 
-	q3 := fmt.Sprintf(`select distinct mf_version from telemetry %s;`, filterQuery)
+	q3 := fmt.Sprintf(`select distinct mg_version from telemetry %s;`, filterQuery)
 	versionRows, err := r.db.NamedQuery(q3, params)
 	if err != nil {
 		return callhome.TelemetrySummary{}, err
@@ -213,7 +213,7 @@ func generateQuery(filters callhome.TelemetryFilters) (string, map[string]interf
 	}
 
 	if filters.Version != "" {
-		queries = append(queries, "mf_version = :version")
+		queries = append(queries, "mg_version = :version")
 		params["version"] = filters.Version
 	}
 

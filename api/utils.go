@@ -2,10 +2,10 @@ package api
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"strconv"
 
-	"github.com/absmach/magistrala/logger"
 	"github.com/absmach/magistrala/pkg/errors"
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/go-zoo/bone"
@@ -19,7 +19,7 @@ type ErrorRes struct {
 var ErrInvalidQueryParams = errors.New("invalid query params")
 
 // LoggingErrorEncoder is a go-kit error encoder logging decorator.
-func LoggingErrorEncoder(logger logger.Logger, enc kithttp.ErrorEncoder) kithttp.ErrorEncoder {
+func LoggingErrorEncoder(logger *slog.Logger, enc kithttp.ErrorEncoder) kithttp.ErrorEncoder {
 	return func(ctx context.Context, err error, w http.ResponseWriter) {
 		switch err {
 		case ErrLimitSize, ErrOffsetSize:
