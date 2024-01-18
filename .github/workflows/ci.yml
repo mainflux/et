@@ -4,26 +4,30 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+
 jobs:
   test:
-    strategy:
-      matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    name: Test
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.x
+          cache-dependency-path: "go.sum"
+
       - name: Build
-        run: go build -v ./...
+        run: make callhome
+
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
           args: --no-config --disable-all --enable gosimple --enable govet --enable unused --enable deadcode --timeout 3m
+
       - name: Run tests
-        run: go test -v --race -covermode=atomic -coverprofile cover.out ./...
+        run: make test
