@@ -33,7 +33,6 @@ services:
     networks:
       - callhome-base-net
     volumes:
-      - ../web:/web
       - ./IP2LOCATION-LITE-DB5.IPV6.BIN:/IP2LOCATION-LITE-DB5.IPV6.BIN
   certbot:
     image: certbot/certbot

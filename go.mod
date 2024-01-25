@@ -1,6 +1,6 @@
 module github.com/absmach/callhome
 
-go 1.21
+go 1.21.5
 
 require (
 	github.com/absmach/magistrala v0.0.0-20240116122552-fe97de024cf0
