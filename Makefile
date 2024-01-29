@@ -52,3 +52,6 @@ dev-cert:
 
 run:
 	docker compose -f ./docker/docker-compose.yml up
+
+test:
+	go test -v --race -covermode=atomic -coverprofile cover.out ./...
