@@ -11,9 +11,6 @@ data_path="./certbot"
 email="infos@abstractmachines.fr"
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
-echo "Domains: ${domains[@]}"
-echo "Data path: $data_path"
-
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
   if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
