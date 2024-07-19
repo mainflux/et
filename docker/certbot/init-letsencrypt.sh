@@ -11,13 +11,15 @@ data_path="./certbot"
 email="infos@abstractmachines.fr"
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
+echo "Domains: ${domains[@]}"
+echo "Data path: $data_path"
+
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
   if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
     exit
   fi
 fi
-
 
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
@@ -28,15 +30,15 @@ if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/
 fi
 
 echo "### Creating dummy certificate for $domains ..."
-path="/etc/letsencrypt/live/$domains"
-mkdir -p "$data_path/conf/live/$domains"
+path="/etc/letsencrypt/live/${domains[0]}"
+echo "Path: $path"
+mkdir -p "$data_path/conf/live/${domains[0]}"
 docker compose run --rm --entrypoint "\
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
-    -subj '/CN=$domain'" certbot
+    -subj '/CN=${domains[0]}'" certbot
 echo
-
 
 echo "### Starting nginx ..."
 docker compose up --force-recreate -d nginx
@@ -44,11 +46,10 @@ echo
 
 echo "### Deleting dummy certificate for $domains ..."
 docker compose run --rm --entrypoint "\
-  rm -Rf /etc/letsencrypt/live/$domains && \
-  rm -Rf /etc/letsencrypt/archive/$domains && \
-  rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
+  rm -Rf /etc/letsencrypt/live/${domains[0]} && \
+  rm -Rf /etc/letsencrypt/archive/${domains[0]} && \
+  rm -Rf /etc/letsencrypt/renewal/${domains[0]}.conf" certbot
 echo
-
 
 echo "### Requesting Let's Encrypt certificate for $domains ..."
 #Join $domains to -d args
