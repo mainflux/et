@@ -37,13 +37,13 @@ services:
   certbot:
     image: certbot/certbot
     volumes:
-     - ./certbot/conf:/etc/letsencrypt
-     - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
   nginx:
     image: nginx
     container_name: callhome-nginx
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
     depends_on:
       - "callhome-server"
     ports:
@@ -55,13 +55,13 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-  # jaeger:
-  #   image: jaegertracing/all-in-one:1.46.0
-  #   container_name: magistrala-jaeger
-  #   ports:
-  #     - ${MG_JAEGER_PORT}:${MG_JAEGER_PORT}/udp
-  #     - ${MG_JAEGER_FRONTEND}:${MG_JAEGER_FRONTEND}
-  #     - ${MG_JAEGER_COLLECTOR}:${MG_JAEGER_COLLECTOR}
-  #     - ${MG_JAEGER_CONFIGS}:${MG_JAEGER_CONFIGS}
-  #   networks:
-  #     - callhome-base-net
+  jaeger:
+    image: jaegertracing/all-in-one:1.46.0
+    container_name: magistrala-jaeger
+    ports:
+      - ${MG_JAEGER_PORT}:${MG_JAEGER_PORT}/udp
+      - ${MG_JAEGER_FRONTEND}:${MG_JAEGER_FRONTEND}
+      - ${MG_JAEGER_COLLECTOR}:${MG_JAEGER_COLLECTOR}
+      - ${MG_JAEGER_CONFIGS}:${MG_JAEGER_CONFIGS}
+    networks:
+      - callhome-base-net
