@@ -1,15 +1,17 @@
 # Magistrala Callhome Service
+
 [![website][preview]][website]
 
 ![build][build]
 ![Go Report Card][grc]
 [![License][LIC-BADGE]][LIC]
 
-This is a server to receive and store information regarding Magistrala deployments. 
+This is a server to receive and store information regarding Magistrala deployments.
 
 The summary is located on our [Website][website].
 
 ## Usage
+
 To Run:
 
 ```bash
@@ -17,14 +19,16 @@ make docker-image
 make run
 ```
 
-
 ### Requirements
+
 - [IP to Location database](https://lite.ip2location.com/)
 
 ## Data Collection for Magistrala
+
 Magistrala is committed to continuously improving its services and ensuring a seamless experience for its users. To achieve this, we collect certain data from your deployments. Rest assured, this data is collected solely for the purpose of enhancing Magistrala and is not used with any malicious intent. The deployment summary can be found on our [website][website].
 
 The collected data includes:
+
 - **IP Address** - Used for approximate location information on deployments.
 - **Services Used** - To understand which features are popular and prioritize future developments.
 - **Last Seen Time** - To ensure the stability and availability of Magistrala.
@@ -41,5 +45,5 @@ By utilizing Magistrala, you actively contribute to its improvement. Together, w
 [build]: https://github.com/absmach/callhome/actions/workflows/ci.yml/badge.svg
 [LIC]: LICENCE
 [LIC-BADGE]: https://img.shields.io/badge/License-Apache_2.0-blue.svg
-[website]: https://deployments.magistrala.io
+[website]: https://deployments.magistrala.abstractmachines.fr/
 [preview]: /assets/images/website.png
