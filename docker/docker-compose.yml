@@ -20,6 +20,8 @@ services:
       POSTGRES_PASSWORD: ${MG_CALLHOME_TIMESCALE_PASSWORD}
       POSTGRES_USER: ${MG_CALLHOME_TIMESCALE_USER}
       POSTGRES_DB: ${MG_CALLHOME_TIMESCALE_DB_NAME}
+    ports:
+      - 5432:5432
     networks:
       - callhome-base-net
   callhome-server:
