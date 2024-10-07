@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package api
 
 import (
@@ -62,7 +65,7 @@ func (lm *loggingMiddleware) RetrieveSummary(ctx context.Context, filters callho
 	return lm.svc.RetrieveSummary(ctx, filters)
 }
 
-// ServeUI implements callhome.Service
+// ServeUI implements callhome.Service.
 func (lm *loggingMiddleware) ServeUI(ctx context.Context, filters callhome.TelemetryFilters) (res []byte, err error) {
 	defer func(begin time.Time) {
 		message := fmt.Sprintf("Method serve ui event took %s to complete", time.Since(begin))

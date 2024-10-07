@@ -22,12 +22,12 @@ jobs:
 
       - name: Build
         run: make callhome
-
+      
       - name: Lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
-          args: --no-config --disable-all --enable gosimple --enable govet --enable unused --enable deadcode --timeout 3m
+          version: v1.59.1
+          args: --config .golangci.yml
 
       - name: Run tests
         run: make test

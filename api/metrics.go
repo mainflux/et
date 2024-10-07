@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package api
 
 import (
@@ -54,7 +57,7 @@ func (mm *metricsMiddleware) RetrieveSummary(ctx context.Context, filters callho
 	return mm.svc.RetrieveSummary(ctx, filters)
 }
 
-// ServeUI implements callhome.Service
+// ServeUI implements callhome.Service.
 func (mm *metricsMiddleware) ServeUI(ctx context.Context, filters callhome.TelemetryFilters) ([]byte, error) {
 	defer func(begin time.Time) {
 		mm.counter.With("method", "serve-ui").Add(1)

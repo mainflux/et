@@ -12,7 +12,7 @@ DOMAIN ?= deployments.magistrala.abstractmachines.fr
 
 all: $(PROGRAM)
 
-.PHONY: all clean $(PROGRAM)
+.PHONY: all clean $(PROGRAM) latest
 
 define make_docker
 	docker build \
@@ -47,6 +47,7 @@ clean:
 
 docker-image:
 	$(call make_docker)
+
 dev-cert:
 	$(call make_dev_cert)
 
@@ -55,3 +56,7 @@ run:
 
 test:
 	go test -v --race -covermode=atomic -coverprofile cover.out ./...
+
+
+latest: docker-image
+	docker push magistrala/callhome:latest

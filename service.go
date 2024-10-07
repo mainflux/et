@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package callhome
 
 import (
@@ -11,7 +14,7 @@ import (
 
 const pageLimit = 1000
 
-// Service Service to receive homing telemetry data, persist and retrieve it.
+// Service to receive homing telemetry data, persist and retrieve it.
 type Service interface {
 	// Save saves the homing telemetry data and its location information.
 	Save(ctx context.Context, t Telemetry) error
@@ -61,7 +64,7 @@ func (ts *telemetryService) RetrieveSummary(ctx context.Context, filters Telemet
 	return ts.repo.RetrieveSummary(ctx, filters)
 }
 
-// ServeUI gets the callhome index html page
+// ServeUI gets the callhome index html page.
 func (ts *telemetryService) ServeUI(ctx context.Context, filters TelemetryFilters) ([]byte, error) {
 	tmpl := template.Must(template.ParseFiles("./web/template/index.html"))
 

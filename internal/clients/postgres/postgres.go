@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package postgres
 
 import (
@@ -16,7 +19,7 @@ var (
 	errMigration = errors.New("failed to apply migrations")
 )
 
-// Config defines the options that are used when connecting to a TimescaleSQL instance
+// Config defines the options that are used when connecting to a TimescaleSQL instance.
 type Config struct {
 	Host        string `env:"TIMESCALE_HOST"            envDefault:"localhost"`
 	Port        string `env:"TIMESCALE_PORT"            envDefault:"5432"`
@@ -58,7 +61,7 @@ func SetupDB(cfg Config, migrations migrate.MemoryMigrationSource) (*sqlx.DB, er
 	return db, nil
 }
 
-// Connect creates a connection to the PostgreSQL instance
+// Connect creates a connection to the PostgreSQL instance.
 func Connect(cfg Config) (*sqlx.DB, error) {
 	url := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s sslcert=%s sslkey=%s sslrootcert=%s", cfg.Host, cfg.Port, cfg.User, cfg.Name, cfg.Pass, cfg.SSLMode, cfg.SSLCert, cfg.SSLKey, cfg.SSLRootCert)
 
@@ -70,7 +73,7 @@ func Connect(cfg Config) (*sqlx.DB, error) {
 	return db, nil
 }
 
-// MigrateDB applies any unapplied database migrations
+// MigrateDB applies any unapplied database migrations.
 func MigrateDB(db *sqlx.DB, migrations migrate.MemoryMigrationSource) error {
 	_, err := migrate.Exec(db.DB, "postgres", migrations, migrate.Up)
 	if err != nil {
