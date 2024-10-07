@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package api
 
 import (
@@ -29,7 +32,7 @@ func LoggingErrorEncoder(logger *slog.Logger, enc kithttp.ErrorEncoder) kithttp.
 	}
 }
 
-// ReadUintQuery reads the value of uint64 http query parameters for a given key
+// ReadUintQuery reads the value of uint64 http query parameters for a given key.
 func ReadUintQuery(r *http.Request, key string, def uint64) (uint64, error) {
 	vals := bone.GetQuery(r, key)
 	if len(vals) > 1 {
@@ -46,7 +49,7 @@ func ReadUintQuery(r *http.Request, key string, def uint64) (uint64, error) {
 	return val, nil
 }
 
-// ReadStringQuery reads the value of string http query parameters for a given key
+// ReadStringQuery reads the value of string http query parameters for a given key.
 func ReadStringQuery(r *http.Request, key string, def string) (string, error) {
 	vals := bone.GetQuery(r, key)
 	if len(vals) > 1 {

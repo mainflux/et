@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package mocks
 
 import (
@@ -13,7 +16,7 @@ type Service struct {
 	mock.Mock
 }
 
-// ServeUI implements callhome.Service
+// ServeUI implements callhome.Service.
 func (*Service) ServeUI(ctx context.Context, filters callhome.TelemetryFilters) ([]byte, error) {
 	return nil, nil
 }

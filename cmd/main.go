@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package main
 
 import (
@@ -49,7 +52,7 @@ func main() {
 
 	logger, err := newLogger(os.Stdout, cfg.LogLevel)
 	if err != nil {
-		log.Fatalf(fmt.Sprintf("failed to init logger: %s", err.Error()))
+		log.Fatalf("failed to init logger: %s", err.Error())
 	}
 	timescaleDB, err := postgres.Setup(envPrefix, timescale.Migration())
 	if err != nil {
@@ -60,18 +63,17 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to init Jaeger: %s", err)
 	}
-	defer func() {
-		if err := tp.Shutdown(context.Background()); err != nil {
-			log.Fatalf("Error shutting down tracer provider: %v", err)
-		}
-	}()
 	tracer := tp.Tracer(svcName)
 
 	svc, err := newService(ctx, logger, cfg.IPDatabaseFile, timescaleDB, tracer)
 	if err != nil {
 		log.Fatalf("failed to initialize service: %s", err)
-		return
 	}
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			log.Fatalf("Error shutting down tracer provider: %v", err)
+		}
+	}()
 
 	httpServerConfig := server.Config{Port: defSvcHttpPort}
 	if err := env.Parse(&httpServerConfig, env.Options{Prefix: envPrefixHttp, AltPrefix: envPrefix}); err != nil {

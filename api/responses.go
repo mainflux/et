@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package api
 
 import (
@@ -67,7 +70,7 @@ type uiRes struct {
 	html    []byte
 }
 
-// Code implements magistrala.Response
+// Code implements magistrala.Response.
 func (res uiRes) Code() int {
 	if res.code == 0 {
 		return http.StatusCreated
@@ -76,12 +79,12 @@ func (res uiRes) Code() int {
 	return res.code
 }
 
-// Empty implements magistrala.Response
+// Empty implements magistrala.Response.
 func (res uiRes) Empty() bool {
 	return res.html == nil
 }
 
-// Headers implements magistrala.Response
+// Headers implements magistrala.Response.
 func (res uiRes) Headers() map[string]string {
 	if res.headers == nil {
 		return map[string]string{}
@@ -97,17 +100,17 @@ type telemetrySummaryRes struct {
 	TotalDeployments int                       `json:"total_deployments,omitempty"`
 }
 
-// Code implements magistrala.Response
+// Code implements magistrala.Response.
 func (*telemetrySummaryRes) Code() int {
 	return http.StatusOK
 }
 
-// Empty implements magistrala.Response
+// Empty implements magistrala.Response.
 func (*telemetrySummaryRes) Empty() bool {
 	return false
 }
 
-// Headers implements magistrala.Response
+// Headers implements magistrala.Response.
 func (res *telemetrySummaryRes) Headers() map[string]string {
 	return map[string]string{}
 }

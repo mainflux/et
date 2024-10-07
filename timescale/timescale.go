@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package timescale
 
 import (
@@ -125,7 +128,7 @@ func (r repo) Save(ctx context.Context, t callhome.Telemetry) error {
 	return nil
 }
 
-// RetrieveSummary retrieve distinct
+// RetrieveSummary retrieve distinct.
 func (r repo) RetrieveSummary(ctx context.Context, filters callhome.TelemetryFilters) (callhome.TelemetrySummary, error) {
 	filterQuery, params := generateQuery(filters)
 	var summary callhome.TelemetrySummary

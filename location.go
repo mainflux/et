@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package callhome
 
 import (
@@ -27,7 +30,6 @@ func NewLocationService(dbfilepath string) (LocationService, error) {
 	return &locationService{
 		db: db,
 	}, nil
-
 }
 
 // GetLocation returns the location information for a given IP address.

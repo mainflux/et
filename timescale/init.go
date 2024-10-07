@@ -1,3 +1,6 @@
+// Copyright (c) Abstract Machines
+// SPDX-License-Identifier: Apache-2.0
+
 package timescale
 
 import (
@@ -5,7 +8,7 @@ import (
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-// Migration of telemetry service
+// Migration of Telemetry service.
 func Migration() migrate.MemoryMigrationSource {
 	return migrate.MemoryMigrationSource{
 		Migrations: []*migrate.Migration{
